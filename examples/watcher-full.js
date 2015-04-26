@@ -24,7 +24,7 @@ var alwaysDownStrategy = {
 
 var options = {
     port: 7777,
-    interval: 15000,
+    interval: 20000,
     // Add a route extensions
     routeExts: [{
         path: '/custom-route',
@@ -60,33 +60,33 @@ var options = {
     // Register some endpoints
     endpoints: [
         {
-            id: 'node.js',
-            desc: 'node.js',
+            id: 'endpoint-1',
+            desc: 'endpoint-1 desc',
             type: 'socket',
-            host: 'nodejs.org',
-            port: 80,
-            active: true,
-            notify: true
-        },
-        {
-            id: 'expressjs',
-            desc: 'expressjs',
-            type: 'http',
-            timeout: 3000,
-            url: 'http://expressjs.com/',
-            active: true,
-            notify: true
-        },
-        {
-            id: 'github',
-            desc: 'github',
-            type: 'http',
-            timeout: 3000,
-            url: 'https://github.com/',
+            host: '127.0.0.1',
+            port: 7777,
             // Apply the unbound resolution strategy with id 'always-down'
             resolutionStrategy: 'always-down',
             active: true,
-            notify: true
+            notify: false
+        },
+        {
+            id: 'endpoint-2',
+            desc: 'endpoint-2 desc',
+            type: 'http',
+            timeout: 3000,
+            url: 'http://localhost:7777/console',
+            active: true,
+            notify: false
+        },
+        {
+            id: 'endpoint-3',
+            desc: 'endpoint-3 desc',
+            type: 'http',
+            timeout: 3000,
+            url: 'http://localhost:7777/console',
+            active: true,
+            notify: false
         }
     ]
 };
