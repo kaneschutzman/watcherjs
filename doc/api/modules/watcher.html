@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>watcher - watcher.js</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="watcher.js" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 1.0.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/AbstractConnector.html">AbstractConnector</a></li>
+                                <li><a href="../classes/Dictionary.html">Dictionary</a></li>
+                                <li><a href="../classes/DictionaryFactory.html">DictionaryFactory</a></li>
+                                <li><a href="../classes/EventDispatcher.html">EventDispatcher</a></li>
+                                <li><a href="../classes/EventDispatcherFactory.html">EventDispatcherFactory</a></li>
+                                <li><a href="../classes/HttpConnector.html">HttpConnector</a></li>
+                                <li><a href="../classes/HttpConnectorFactory.html">HttpConnectorFactory</a></li>
+                                <li><a href="../classes/Logger.html">Logger</a></li>
+                                <li><a href="../classes/OnConnectionResolution.html">OnConnectionResolution</a></li>
+                                <li><a href="../classes/OnConnectionResolutionFactory.html">OnConnectionResolutionFactory</a></li>
+                                <li><a href="../classes/ResolutionStrategy.html">ResolutionStrategy</a></li>
+                                <li><a href="../classes/ResolutionStrategyFactory.html">ResolutionStrategyFactory</a></li>
+                                <li><a href="../classes/ResolverEvents.html">ResolverEvents</a></li>
+                                <li><a href="../classes/ServiceStatus.html">ServiceStatus</a></li>
+                                <li><a href="../classes/SocketConnector.html">SocketConnector</a></li>
+                                <li><a href="../classes/SocketConnectorFactory.html">SocketConnectorFactory</a></li>
+                                <li><a href="../classes/StatusResolver.html">StatusResolver</a></li>
+                                <li><a href="../classes/StatusResolverFactory.html">StatusResolverFactory</a></li>
+                                <li><a href="../classes/Validator.html">Validator</a></li>
+                                <li><a href="../classes/Watcher.html">Watcher</a></li>
+                                <li><a href="../classes/WatcherFactory.html">WatcherFactory</a></li>
+                                <li><a href="../classes/WatcherHttp.html">WatcherHttp</a></li>
+                            </ul>
+                
+                            <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/connectors.html">connectors</a></li>
+                                <li><a href="../modules/constants.html">constants</a></li>
+                                <li><a href="../modules/httpServer.html">httpServer</a></li>
+                                <li><a href="../modules/logger.html">logger</a></li>
+                                <li><a href="../modules/resolvers.html">resolvers</a></li>
+                                <li><a href="../modules/utils.html">utils</a></li>
+                                <li><a href="../modules/validator.html">validator</a></li>
+                                <li><a href="../modules/watcher.html">watcher</a></li>
+                                <li><a href="../modules/watcher-http.html">watcher-http</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1>watcher Module</h1>
+<div class="box clearfix meta">
+
+
+        <div class="foundat">
+            Defined in: <a href="../files/src_watcher.js.html#l914"><code>src&#x2F;watcher.js:914</code></a>
+        </div>
+
+</div>
+
+
+<div class="box intro">
+    <h3 id="overview">Overview</h3>
+<p>This is the main application module. It provides the factory method for creating an application,
+the so called <strong>watcher.js</strong>, that can be used to monitor service status.
+The application architecture is very simple. At regular intervals (<em>service communication interval</em>),
+service specific defined messages, either as http requests or as raw data to sockets (depending on the
+communication type of the service endpoint), are send to the monitored services, or to be more precise are send
+to the service endpoints (or simply endpoints), to find out their status (the <em>service</em> and  endpoint<em> notation
+is used interchangeably, but there is a conceptual difference between them which will be discussed shortly).
+On the service status resolution, the status is stored internally and is made available either programmatically or
+via http requests (aka the _status requests</em>).
+Actually, <strong>the entire application API is exposed as a set of HTTP requests</strong>, which, on top of this, a simple but handy
+<strong>web gui</strong> is implemented. For the HTTP interface implementation the <a href="http://expressjs.com">express</a> web framework is used.
+At the following paragraphs the http interface is described with references to the respective application API.</p>
+<ul>
+<li>A <em>status request</em> for a specific endpoint<ul>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoint/<code>&lt;id&gt;</code></strong> (request method: GET),</li>
+<li>parameters:<ul>
+<li><strong>id</strong> the endpoint id, it should be one of those defined at endpoints configuration data,</li>
+</ul>
+</li>
+<li>API reference: <strong><a href="../classes/Watcher.html#method_getEndpoint" class="crosslink">getEndpoint</a></strong>.</li>
+</ul>
+</li>
+</ul>
+<p>The response is a JSON message like the following example:</p>
+<pre class="code prettyprint"><code>// For a socket communication type
+{
+     "id": "endpoint-id",            // endpoint id
+     "desc": "an endpoint",          // endpoint description
+     "status": "up",                 // endpoint status
+     "timestamp": 1429860936846,     // the timestamp of the current status
+     "since": 1429860926846,         // the timestamp since the last change of status
+     "type": "socket",               // connector type
+     "host": "localhost",            // endpoint host (applied for &#39;socket&#39; connector)
+     "port": 7777,                   // endpoint port (applied for &#39;socket&#39; connector)
+     "active": true,                 // whether or not the endpoint is active
+     "notify": false                 // whether or not the notification is enabled
+}
+</code></pre><ul>
+<li>A status request for all registered endpoints.<ul>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints</strong> (request method: GET).
+In this case the response JSON message is an array with the information for all endpoints.</li>
+<li>API reference: <strong><a href="../classes/Watcher.html#method_getEndpoints" class="crosslink">getEndpoints</a></strong>.</li>
+</ul>
+</li>
+</ul>
+<pre class="code prettyprint"><code>// For a socket and http communication types
+[
+     {
+         "id": "endpoint-1",
+         "desc": "endpoint 1",
+         "status": "down"
+         "timestamp": 1429860936846,
+         "since": 1429860926846,
+         "type": "socket",
+         "host": "localhost",
+         "port": 7777,
+         "active": true,
+         "notify": true
+     },
+     {
+         "id": "endpoint-2",                     // endpoint id
+         "desc": "endpoint 2",                   // endpoint description
+         "status": "up"                          // endpoint status
+         "timestamp": 1429860936846,             // the timestamp of the current status
+         "since": 1429860926846,                 // the timestamp since the last change of status
+         "type": "http",                         // connector type
+         "url": "http://11.222.333.555:3333/",   // endpoint url (applied for &#39;http(s) connector&#39;)
+         "active": true,                         // whether or not the endpoint is active
+         "notify": false                         // whether or not the notification is enabled
+     }
+]
+</code></pre><ul>
+<li>Add new endpoint.<ul>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoint/add</strong> (request method POST)</li>
+<li>parameters (parameters in <em>[]</em> are optional. when not set, the default values are used - those in parentheses.):<ul>
+<li><strong>id</strong> : the endpoint id,</li>
+<li><strong>desc</strong> : the endpoint description,</li>
+<li><strong>type</strong> : the endpoint type (&#39;socket&#39; or &#39;http&#39;),</li>
+<li>[<strong>host</strong>] (localhost): the endpoint host (applied for &#39;socket&#39; communication type),</li>
+<li>[<strong>port</strong>] (9999): the endpoint port (applied for &#39;socket&#39; communication type),</li>
+<li>[<strong>url</strong>] : the endpoint port (applied for &#39;http&#39; communication type),</li>
+<li>[<strong>active</strong>] (true): true/false whether or not to activate the endpoint,</li>
+<li>[<strong>notify</strong>] (false): true/false whether or not to enable email notification on erroneous service status</li>
+</ul>
+</li>
+<li>API reference: <strong><a href="../classes/Watcher.html#method_addEndpoint" class="crosslink">addEndpoint</a></strong>.</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>Remove an endpoint<ul>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoint/remove</strong> (request method POST),</li>
+<li>parameters:<ul>
+<li><strong>id</strong> : the endpoint id</li>
+</ul>
+</li>
+<li>API reference: <strong><a href="../classes/Watcher.html#method_removeEndpoint" class="crosslink">removeEndpoint</a></strong>.</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>Activate/deactivate an endpoint<ul>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoint/activation</strong> (request method POST),</li>
+<li>parameters:<ul>
+<li><strong>id</strong> : the endpoint id,</li>
+<li><strong>activate</strong> : true/false whether to activate or not the endpoint</li>
+</ul>
+</li>
+<li>API reference: <strong><a href="../classes/Watcher.html#method_setEndpointActivationState" class="crosslink">setEndpointActivationState</a></strong>.</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>Enable/disable notification for an endpoint<ul>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoint/notification</strong> (request method POST),</li>
+<li>parameters:<ul>
+<li><strong>id</strong> : the endpoint id,</li>
+<li><strong>notify</strong> : true/false whether or not to enable email notification on erroneous service status</li>
+</ul>
+</li>
+<li>API reference: <strong><a href="../classes/Watcher.html#method_notifyOnErroneousStatus" class="crosslink">notifyOnErroneousStatus</a></strong>.</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>Get the ids of the unbound resolution strategies<ul>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/resolution-strategies</strong> (request method GET),</li>
+<li>API reference: <strong><a href="../classes/Watcher.html#method_getResolutionStrategies" class="crosslink">getResolutionStrategies</a></strong>.</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/console</strong>, a web graphical user interface for the monitored services. The <em>console</em> exposes
+the <em>watcher.js</em> API through a simple user-friendly gui.</li>
+</ul>
+<h3 id="configuration">Configuration</h3>
+<p>The application configuration requires two kinds of data, as shown below. The one that refers to the
+express framework that implements the application http interface, and the other that refers to the service
+endpoints. Note that properties in <em>[]</em> are optional. when not set, the default values are used - those in parentheses.</p>
+<ul>
+<li>Embedded http server configuration and service communication interval<ul>
+<li>[<strong>host</strong>] (&#39;localhost&#39;), the http server host name.</li>
+<li>[<strong>port</strong>] (7777), the http server port.</li>
+<li>[<strong>interval</strong>] (10000 ms), the regular interval, at ms, that the application attempts to establish
+communication with the services to resolve their status (<em>service communication interval</em>).</li>
+<li>[<strong>routeExts</strong>], an array of user defined route extensions for building custom responses for the status requests.
+A route extension should be a function that accepts the <strong><a href="../classes/Watcher.html#property__registry" class="crosslink">_registry</a></strong>
+as parameter and return a function that conforms to <a href="http://expressjs.com/guide/routing.html">express route</a> conventions
+(a function with parameters: <em>req</em>, <em>res</em>, <em>next</em>, as shown at the examples)</li>
+<li>[<strong>resolutionStrategies</strong>], an array of objects (aka unbound resolution strategy descriptor), each of them holds the
+information for an <em>unbound resolution strategy</em> (<strong><a href="../modules/resolvers.html">resolvers</a></strong>) to be registered
+at the system. These strategies are not bound to any endpoint, but they can be associated with them by setting the
+respective strategy id at the endpoint&#39;s <em>resolutionStrategy</em> configuration property (see at endpoint configuration below).
+The descriptor is an object as follows:<pre class="code prettyprint"><code>{
+ id: &lt;the resolution strategy id&gt;, (should be unique)
+ desc: &lt;the resolution strategy description&gt;
+ implementation: &lt;the implementation of resolution strategy&gt; (see at resolvers to see the interface)
+}
+</code></pre></li>
+<li>[<strong>nfOpts</strong>], the notification options. Holds the information of the sender and the email addresses
+to receive email when erroneous service status occurs. The default sender is <em>admin@watcherjs.com</em>
+(if needed, configure your email account to not filter this sender as a spam). The object structure is:<pre class="code prettyprint"><code>{
+ sender: &lt;the sender&gt;, // default value: admin@watcherjs.com
+ recipients: [&lt;recipient1&gt;, &lt;recipient1&gt;, ...] // the array of recipients email
+}
+</code></pre></li>
+<li>[<strong>exportDir</strong>] (<em>&lt;<code>project directory</code>&gt;/storage/</em>), the storage directory of dynamically created endpoints.</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>Endpoint<ul>
+<li><strong>id</strong>, the unique endpoint/service id. This <em>id</em> is used for the service identification when a service request is made.</li>
+<li><strong>type</strong>, the endpoint type, the type determines whether the message
+exchange is performed via http requests or directly with the socket. It actually dictates the underline
+connector used for the specific service (see also at <strong><a href="../modules/connectors.html">connectors</a></strong>).
+The permitted values are: <strong>&#39;socket&#39;</strong> and <strong>&#39;http&#39;</strong> for <strong><a href="../classes/SocketConnector.html" class="crosslink">SocketConnector</a></strong>
+and <strong><a href="../classes/HttpConnector.html" class="crosslink">HttpConnector</a></strong> respectively.</li>
+<li>[<strong>desc</strong>] (<strong>id</strong>), the endpoint description.</li>
+<li>[<strong>host</strong>] (localhost), the endpoint hostname when a <strong><a href="../classes/SocketConnector.html" class="crosslink">SocketConnector</a></strong> is used.</li>
+<li>[<strong>port</strong>] (9999), the endpoint port when a <strong><a href="../classes/SocketConnector.html" class="crosslink">SocketConnector</a></strong> is used.</li>
+<li>[<strong>url</strong>] (<a href="http://localhost:8080">http://localhost:8080</a>), the endpoint url when <strong><a href="../classes/HttpConnector.html" class="crosslink">HttpConnector</a></strong> is used.</li>
+<li>[<strong>timeout</strong>] (5000), the applied connector&#39;s connection timeout (see also at
+<strong><a href="../classes/SocketConnectorFactory.html#method_create" class="crosslink">create</a></strong> and
+<strong><a href="../classes/HttpConnectorFactory.html#method_create" class="crosslink">create</a></strong>).</li>
+<li>[<strong>resolutionStrategy</strong>] (<strong><a href="../classes/OnConnectionResolution.html" class="crosslink">OnConnectionResolution</a></strong>) the applied resolution strategy.
+This property can hold either an implementation of a resolution strategy or the id of the an unbound strategy.</li>
+<li>[<strong>active</strong>] (true), used to indicate whether or not the endpoint should be activated
+(enables or suspends the communication between the respective connector and the endpoint).</li>
+<li>[<strong>notify</strong>] (false), used to indicate whether or not to receive email notifications for erroneous service status.</li>
+</ul>
+</li>
+</ul>
+<p>The <em>endpoint</em> notation is used to emphases that the <em>service</em> can be proxied by another service (<em>the proxy</em>) which
+is that determines the status of the proxied service. In this case, the endpoint belongs to the proxy and not to the
+monitored service.</p>
+<h3 id="exported-objects">Exported objects</h3>
+<ul>
+<li><strong><a href="../classes/WatcherFactory.html" class="crosslink">WatcherFactory</a></strong></li>
+</ul>
+<h3 id="api-usage-samples">API Usage samples</h3>
+<p><strong>Service with route extension and resolution strategy registration</strong></p>
+<pre class="code prettyprint"><code class="lang-javascript">// Here is the configuration of two endpoints. The one is accessed via a socket and refers to the service
+// &#39;service-1&#39; hosted at &#39;11.222.333.444&#39;, whereas the other is accessed via http and refers to the service
+// &#39;service-2&#39; that is hosted at &#39;11.222.333.555&#39; (note that we use the notation _service_ since the _endpoint_
+// and the _service_ is the same component).
+// Fix the module paths
+var watcher = require(&#39;watcher&#39;);
+var constants = require(&#39;constants&#39;);
+var resolvers = require(&#39;resolvers&#39;);
+
+var down = constants.serviceStatus.down;
+var watcherFactory = watcher.watcherFactory;
+var onConnectionResolutionFactory = resolvers.onConnectionResolutionFactory;
+
+var alwaysDownStrategy = {
+      reset: function reset() {},
+      resolveOnConnection: function resolveOnConnection(connection) {
+         //mark as down only for demonstration purposes
+          return down;
+      },
+      resolveOnConversation: function resolveOnConnection(connection) {},
+      resolveNow: function resolveOnConnection(connection) {}
+  };
+
+var options = {
+    port: 7777,
+    interval: 15000,
+   routeExts: [{
+         path: &#39;/custom-route&#39;,
+         route: function service(registry) {
+             return function (req, res, next) {
+                 var id = req.query.id;
+                 var record = registry[id];
+                 if (record) {
+                     res.send(&#39;Service status: &#39; + record.status);
+                 } else {
+                     res.send(&#39;Unknown service: &#39; + id);
+                 }
+             };
+         }
+     }],
+    resolutionStrategies: [
+          {// Actually the default implementation, added for demonstration purposes
+              id: &#39;on-connection&#39;,
+              desc: &#39;resolution on connection&#39;,
+              implementation: onConnectionResolutionFactory.create()
+          },
+          {
+              id: &#39;always-down&#39;,
+              desc: &#39;always down&#39;,
+              implementation: alwaysDownStrategy
+          }
+      ],
+    nfOpts: {
+         recipients: [&#39;foo@foo.com&#39;]
+     },
+    endpoints: [
+         {
+             id: &#39;service-1&#39;,
+             desc: &#39;service 1&#39;,
+             type: &#39;socket&#39;,
+             host: &#39;11.222.333.444&#39;,
+             port: 1234,
+             // Apply an implementation of resolution strategy
+             resolutionStrategy: alwaysDownStrategy,
+             active: true,
+             notify: true
+         },
+         {
+             id: &#39;service-2&#39;,
+             desc: &#39;service 2&#39;,
+             type: &#39;http&#39;,
+             timeout: 3000,
+             // The query string could be anything
+             url: &#39;http://11.222.333.555:3333/?get-status&#39;,
+             // Apply the unbound resolution strategy with id &#39;on-connection&#39;
+             resolutionStrategy: &#39;on-connection&#39;,
+             active: true,
+             notify: true
+         }
+     ]
+ };
+watcherFactory.create(options).start();
+
+After starting the watcher the following status requests could be made in order to
+retrieve the status for the services with id &#39;service-1&#39; and &#39;service-2&#39; respectively
+http://localhost:7777/endpoint/service-1
+http://localhost:7777/endpoint/service-2
+Whereas the request http://localhost:7777/custom-route?id=service-1
+is the user defined route which returns: &#39;Service status: &lt;status&gt;&#39; where status
+the status of the &#39;service-1&#39;.
+</code></pre>
+<p><strong>Proxied services</strong></p>
+<pre class="code prettyprint"><code class="lang-javascript">// Proxied services
+// Here is the case where a proxy controls the status of two service (e.g. _proxied-service-1_
+// and _proxied-service-2_). The proxy is hosted at &#39;11.222.333.444&#39; and can be accessed via http.
+// Two http endpoints at the proxy are created, the &#39;endpoint-1&#39; and &#39;endpoint-2&#39; each one of them
+// is connected with the respective monitored proxied services (note that we use the notation _endpoint_ since
+// the _endpoint_ is not the monitored _service_).
+
+// Fix the module paths
+var watcherFactory = require(&#39;watcher&#39;).watcherFactory;
+var options = {
+    port: 7777,
+    interval: 15000,
+    endpoints: [
+         {
+             id: &#39;endpoint-1&#39;,
+             type: &#39;http&#39;,
+             timeout: 3000,
+             // request to the proxied service &#39;proxied-service-1&#39;, the query string could be anything
+             url: &#39;http://11.222.333.444:3333/?get-status-for=proxied-service-1&#39;
+         },
+         {
+             id: &#39;endpoint-2&#39;,
+             type: &#39;http&#39;,
+             timeout: 3000,
+             // request to the proxied service &#39;proxied-service-2&#39;, the query string could be anything
+             url: &#39;http://11.222.333.444:3333/?get-status-for=proxied-service-2&#39;
+         }
+     ]
+ };
+watcherFactory.create(options).start();
+
+After starting the watcher the following status requests could be made in order to
+retrieve the status for &#39;proxied-service-1&#39; and &#39;proxied-service-2&#39; respectively
+http://localhost:7777/endpoint/endpoint-1
+http://localhost:7777/endpoint/endpoint-2
+</code></pre>
+<p><strong>Add and remove endpoints dynamically</strong></p>
+<pre class="code prettyprint"><code class="lang-javascript">// Here is an example for dynamically adding and removing endpoints
+
+// Fix the module paths
+var watcherFactory = require(&#39;watcher&#39;).watcherFactory;
+var options = {
+    port: 7777,
+    interval: 15000,
+    endpoints: [
+         {
+             id: &#39;service-1&#39;,
+             type: &#39;socket&#39;,
+             host: &#39;11.222.333.444&#39;,
+             port: 1234
+         }
+     ]
+ };
+var watcher = watcherFactory.create(options).start();
+
+// Add the endpoint &#39;service-2&#39;
+setTimeout(function() {
+       watcher.addEndpoint({
+         id: &#39;service-2&#39;,
+         type: &#39;http&#39;,
+         timeout: 3000,
+         url: &#39;http://11.222.333.555:3333/?get-status&#39;
+     });
+     if (!_.isEmpty(errors)) {
+         throw new Error(&#39;validation error...&#39;);
+     }
+}, 6000);
+
+// Deactivate the endpoint &#39;service-2&#39;
+setTimeout(function () {
+     watcher.deactivateEndpoint(&#39;service-2&#39;);
+}, 12000);
+
+// Activate the endpoint &#39;service-2&#39;
+setTimeout(function () {
+       watcher.activateEndpoint(&#39;service-2&#39;);
+  }, 30000);
+
+// Remove the endpoint &#39;service-2&#39;
+setTimeout(function() {
+      watcher.removeEndpoint(&#39;service-2&#39;);
+}, 60000);
+
+// Shutdown the application
+setTimeout(function () {
+     watcher.stop();
+}, 120000);
+</code></pre>
+
+</div>
+
+
+<div class="yui3-g">
+    <div class="yui3-u-1-2">
+            <p>This module provides the following classes:</p>
+
+            <ul class="module-classes">
+                <li class="module-class">
+                    <a href="../classes/Watcher.html">
+                        Watcher
+                    </a>
+                </li>
+                <li class="module-class">
+                    <a href="../classes/WatcherFactory.html">
+                        WatcherFactory
+                    </a>
+                </li>
+            </ul>
+    </div>
+
+    <div class="yui3-u-1-2">
+    </div>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

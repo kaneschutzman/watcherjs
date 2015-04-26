@@ -1,0 +1,1891 @@
+{
+    "project": {
+        "name": "watcher.js",
+        "description": "app watcher",
+        "version": "1.0.0",
+        "url": ""
+    },
+    "files": {
+        "src/public/js/jquery-ui/bootstrap/bootstrap.min.js": {
+            "name": "src/public/js/jquery-ui/bootstrap/bootstrap.min.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/public/js/console.js": {
+            "name": "src/public/js/console.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/routes/watcher-http.js": {
+            "name": "src/routes/watcher-http.js",
+            "modules": {
+                "watcher-http": 1
+            },
+            "classes": {
+                "WatcherHttp": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/connectors.js": {
+            "name": "src/connectors.js",
+            "modules": {
+                "connectors": 1
+            },
+            "classes": {
+                "AbstractConnector": 1,
+                "SocketConnector": 1,
+                "SocketConnectorFactory": 1,
+                "HttpConnector": 1,
+                "HttpConnectorFactory": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/constants.js": {
+            "name": "src/constants.js",
+            "modules": {
+                "constants": 1
+            },
+            "classes": {
+                "ServiceStatus": 1,
+                "ResolverEvents": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/http-server.js": {
+            "name": "src/http-server.js",
+            "modules": {
+                "httpServer": 1
+            },
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/logger.js": {
+            "name": "src/logger.js",
+            "modules": {
+                "logger": 1
+            },
+            "classes": {
+                "Logger": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/resolvers.js": {
+            "name": "src/resolvers.js",
+            "modules": {
+                "resolvers": 1
+            },
+            "classes": {
+                "ResolutionStrategy": 1,
+                "ResolutionStrategyFactory": 1,
+                "StatusResolver": 1,
+                "StatusResolverFactory": 1,
+                "OnConnectionResolution": 1,
+                "OnConnectionResolutionFactory": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/utils.js": {
+            "name": "src/utils.js",
+            "modules": {
+                "utils": 1
+            },
+            "classes": {
+                "EventDispatcher": 1,
+                "EventDispatcherFactory": 1,
+                "Dictionary": 1,
+                "DictionaryFactory": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/validator.js": {
+            "name": "src/validator.js",
+            "modules": {
+                "validator": 1
+            },
+            "classes": {
+                "Validator": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/watcher.js": {
+            "name": "src/watcher.js",
+            "modules": {
+                "watcher": 1
+            },
+            "classes": {
+                "Watcher": 1,
+                "WatcherFactory": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {
+        "watcher-http": {
+            "name": "watcher-http",
+            "submodules": {},
+            "classes": {
+                "WatcherHttp": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/routes/watcher-http.js",
+            "line": 25,
+            "description": "The application's http interface implementation."
+        },
+        "connectors": {
+            "name": "connectors",
+            "submodules": {},
+            "classes": {
+                "AbstractConnector": 1,
+                "SocketConnector": 1,
+                "SocketConnectorFactory": 1,
+                "HttpConnector": 1,
+                "HttpConnectorFactory": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/connectors.js",
+            "line": 413,
+            "description": "###Overview\nProvides the connectors. A connector is responsible for connecting, communicating\nand determining the service status using the __{{#crossLink \"StatusResolver\"}}{{/crossLink}}__\nalong with the appropriate __{{#crossLink \"ResolutionStrategy\"}}{{/crossLink}}__.\nEach connector handles a specific type of communication type with an _endpoint_. Specifically, the\n__{{#crossLink \"SocketConnector\"}}{{/crossLink}}__ enables communication via raw socket\n(the data is transmitted as utf-8 encoded string) whereas the\n__{{#crossLink \"HttpConnector\"}}{{/crossLink}}__ enables communication via http(s) protocol.\nAn endpoint is actually an access point to the service. A service could have\nmany access points, each of them is handled by one connector.\nAlthough the service status resolution is performed by the underline\n__{{#crossLink \"ResolutionStrategy\"}}{{/crossLink}}__, as mentioned above, there are cases where\nit is the connector itself that makes this decision. These cases can be summarized as follows:\n\nFor the __{{#crossLink \"HttpConnector\"}}{{/crossLink}}__\n\nHttp response status code   |status\n:---------------------------|:-----------\n404                         |__{{#crossLink \"ServiceStatus/down:property\"}}{{/crossLink}}__\n500                         |__{{#crossLink \"ServiceStatus/down:property\"}}{{/crossLink}}__\n302                         |__{{#crossLink \"ServiceStatus/undetermined:property\"}}{{/crossLink}}__\n4xx (except of 404)         |__{{#crossLink \"ServiceStatus/undetermined:property\"}}{{/crossLink}}__\n5xx (except of 500)         |__{{#crossLink \"ServiceStatus/undetermined:property\"}}{{/crossLink}}__\n\n\nconnection events|error|status\n:----------------|:----|------\n__on error__|e.g. ECONNREFUSED, ENOTFOUND|__{{#crossLink \"ServiceStatus/unreachable:property\"}}{{/crossLink}}__\n__on timeout__|no response is taken for specific period of time|__{{#crossLink \"ServiceStatus/unreachable:property\"}}{{/crossLink}}__ (if resolver's last attempt to determine the status fails)\n\nFor the __{{#crossLink \"SocketConnector\"}}{{/crossLink}}__\n\nconnection events|error|status\n:----------------|:----|------\n__on error__|e.g. EHOSTUNREACH, ENOTFOUND|__{{#crossLink \"ServiceStatus/unreachable:property\"}}{{/crossLink}}__\n__on timeout__|no response is taken for specific period of time|__{{#crossLink \"ServiceStatus/unreachable:property\"}}{{/crossLink}}__ (if resolver's last attempt to determine the status fails)\n__on end event__|remote host closes the connection|__{{#crossLink \"ServiceStatus/undetermined:property\"}}{{/crossLink}}__ (if resolver's last attempt to determine the status fails)\n\n###Configuration\nThe connector's configuration is described below (note that properties in _[]_ are optional. when not set,\nthe default values are used - those in parentheses.):\n\n\n* For the __{{#crossLink \"SocketConnector\"}}{{/crossLink}}__\n * [__port__] (9999), the service socket connection port.\n * [__host__] ('localhost'), the service host.\n * [__timeout__] (5000), the socket timeout, at ms.\n * [__resolutionStrategy__] (__{{#crossLink \"OnConnectionResolution\"}}{{/crossLink}}__),\n the applied resolution strategy.\n\n\n* For the __{{#crossLink \"HttpConnector\"}}{{/crossLink}}__\n * [__url__] (http://localhost:8080), the service endpoint url.\n * [__timeout__] (5000 ms), the http(s) request timeout, at ms.\n * [__resolutionStrategy__] (__{{#crossLink \"ResolutionStrategy\"}}{{/crossLink}}__),\n the applied resolution strategy.\n\n###Exported objects\n* __{{#crossLink \"SocketConnectorFactory\"}}{{/crossLink}}__\n* __{{#crossLink \"HttpConnectorFactory\"}}{{/crossLink}}__\n\n###API Usage samples\n   ```javascript\n// socketConnectorFactory\nvar connectors = require('connectors');\nvar socketConnectorFactory = connectors.socketConnectorFactory;\nvar aResolutionStrategy = ...; //custom resolution strategy\nvar connector = socketConnectorFactory.create({\n      host: '11.222.333.444',\n      port: 55555,\n      timeout: 2000,\n      // if the property is not set, the default onConnectionResolution strategy is used.\n      resolutionStrategy: aResolutionStrategy\n  });\nconnector.addStatusResolvedListener(function onResolve(status) {\n       logger.debug('Resolution callback is called');\n });\nconnector.start();\n   ```\n\n   ```javascript\n// httpConnectorFactory\nvar connectors = require('connectors').connectors;\nvar httpConnectorFactory = connectors.httpConnectorFactory;\nvar connector = httpConnectorFactory.create(({\n     url: 'http://11.222.333.444:8080/',\n     timeout: 3000\n}));\nconnector.start();\n   ```"
+        },
+        "constants": {
+            "name": "constants",
+            "submodules": {},
+            "classes": {
+                "ServiceStatus": 1,
+                "ResolverEvents": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/constants.js",
+            "line": 70,
+            "description": "Holds application's constants"
+        },
+        "httpServer": {
+            "name": "httpServer",
+            "submodules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/http-server.js",
+            "line": 4,
+            "description": "The express web framework used to expose the __{{#crossLink \"Watcher\"}}{{/crossLink}}__ api as HTTP requests.\nSee also at __{{#crossLink \"WatcherHttp\"}}{{/crossLink}}__."
+        },
+        "logger": {
+            "name": "logger",
+            "submodules": {},
+            "classes": {
+                "Logger": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/logger.js",
+            "line": 32,
+            "description": "Exports a winston logger.\n\n###Exported objects\n__{{#crossLink \"Logger\"}}{{/crossLink}}__\n\n###API Usage samples\nSee at [winston](https://github.com/winstonjs/winston)"
+        },
+        "resolvers": {
+            "name": "resolvers",
+            "submodules": {},
+            "classes": {
+                "ResolutionStrategy": 1,
+                "ResolutionStrategyFactory": 1,
+                "StatusResolver": 1,
+                "StatusResolverFactory": 1,
+                "OnConnectionResolution": 1,
+                "OnConnectionResolutionFactory": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/resolvers.js",
+            "line": 307,
+            "description": "###Overview\nProvides the status resolvers and resolution strategies.\nThe status resolver implements the context of the applying strategy for service status resolution, whereas the\n_resolution strategy_ the strategy itself.\nThe _strategy_ is described by the following set of methods,\n__{{#crossLink \"ResolutionStrategy/resolveOnConnection:method\"}}{{/crossLink}}__,\n__{{#crossLink \"ResolutionStrategy/resolveOnConversation:method\"}}{{/crossLink}}__,\n__{{#crossLink \"ResolutionStrategy/resolveNow:method\"}}{{/crossLink}}__ and\n__{{#crossLink \"ResolutionStrategy/reset:method\"}}{{/crossLink}}__.\nEach method is called at a specific stage of the conversation with the endpoint, and returns the outcome\nof the service status. The outcome of the service status could be one of the following:\n* __{{#crossLink \"ServiceStatus/up:property\"}}{{/crossLink}}__, when the service is up and running.\n* __{{#crossLink \"ServiceStatus/down:property\"}}{{/crossLink}}__, when the service is down.\n* __{{#crossLink \"ServiceStatus/undetermined:property\"}}{{/crossLink}}__, when no decision can be made.\n* __{{#crossLink \"ServiceStatus/unreachable:property\"}}{{/crossLink}}__, status that is used by the connector\nwhen no connection with the endpoint can be made. A default implementation is provided by the\n__{{#crossLink \"ResolutionStrategy\"}}{{/crossLink}}__.\n\n###Exported objects\n* __{{#crossLink \"ResolutionStrategyFactory\"}}{{/crossLink}}__\n* __{{#crossLink \"StatusResolverFactory\"}}{{/crossLink}}__\n* __{{#crossLink \"OnConnectionResolutionFactory\"}}{{/crossLink}}__\n\n###API Usage samples\n   ```javascript\n// statusResolverFactory with onConnectionResolutionFactory\nvar resolvers = require('resolvers');\nvar statusResolverFactory = resolvers.statusResolverFactory;\nvar onConnectionResolutionFactory = resolvers.onConnectionResolutionFactory;\nvar resolver = statusResolverFactory.create(onConnectionResolutionFactory.create());\n   ```\n\n   ```javascript\n// A custom resolver\n// Fix the module paths\nvar constants = require('constants');\nvar resolvers = require('resolvers');\nvar up = constants.serviceStatus.up;\nvar statusResolverFactory = resolvers.statusResolverFactory;\n// An even simpler strategy than the default implementation (no data state is kept)\nvar resolutionStrategy = {\n     reset: function reset() {\n          //it is ok, do nothing since there is no state\n     },\n     resolveOnConnection: function resolveOnConnection(connection) {\n         //for 'socket' connector, on connection. resolve the status as up\n         return up;\n     },\n     resolveOnConversation: function resolveOnConnection(connection) {\n         //in this implementation, for 'socket' connector there is no need to do something\n         //since the resolution is performed on connection.\n         //For 'http' connector any received data means that the service is up\n         return up;\n     },\n     resolveNow: function resolveOnConnection(connection) {\n         //return always undefined\n     }\n};\nvar resolver = statusResolverFactory.create(resolutionStrategy);\n   ```"
+        },
+        "utils": {
+            "name": "utils",
+            "submodules": {},
+            "classes": {
+                "EventDispatcher": 1,
+                "EventDispatcherFactory": 1,
+                "Dictionary": 1,
+                "DictionaryFactory": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/utils.js",
+            "line": 237,
+            "description": "###Overview\nProvides the utilities.\nExported objects:\n* __{{#crossLink \"EventDispatcherFactory\"}}{{/crossLink}}__\n* __{{#crossLink \"EventDispatcher\"}}{{/crossLink}}__\n* __{{#crossLink \"DictionaryFactory\"}}{{/crossLink}}__\n\n###API Usage samples\n   ```javascript\n//DictionaryFactory\nvar dictionary = dictionaryFactory.create();\nvar value = {};\ndictionary.put('key', value);\nvalue = dictionary.get('key');\n   ```\n\n   ```javascript\n//eventDispatcher\nvar dispatcher =  eventDispatcher.create({\n    emitter: new events.EventEmitter()\n});\n   ```\n\n   ```javascript\n//eventDispatcherFactory\nvar dispatcher = eventDispatcherFactory.create();\n   ```"
+        },
+        "validator": {
+            "name": "validator",
+            "submodules": {},
+            "classes": {
+                "Validator": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/validator.js",
+            "line": 97,
+            "description": "Validates the __{{#crossLink \"Watcher\"}}{{/crossLink}}__ configuration.\n\n###Exported objects\n__{{#crossLink \"Validator\"}}{{/crossLink}}__"
+        },
+        "watcher": {
+            "name": "watcher",
+            "submodules": {},
+            "classes": {
+                "Watcher": 1,
+                "WatcherFactory": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/watcher.js",
+            "line": 914,
+            "description": "###Overview\nThis is the main application module. It provides the factory method for creating an application,\nthe so called __watcher.js__, that can be used to monitor service status.\nThe application architecture is very simple. At regular intervals (_service communication interval_),\nservice specific defined messages, either as http requests or as raw data to sockets (depending on the\ncommunication type of the service endpoint), are send to the monitored services, or to be more precise are send\nto the service endpoints (or simply endpoints), to find out their status (the _service_ and  endpoint_ notation\nis used interchangeably, but there is a conceptual difference between them which will be discussed shortly).\nOn the service status resolution, the status is stored internally and is made available either programmatically or\nvia http requests (aka the _status requests_).\nActually, __the entire application API is exposed as a set of HTTP requests__, which, on top of this, a simple but handy\n__web gui__ is implemented. For the HTTP interface implementation the [express](http://expressjs.com) web framework is used.\nAt the following paragraphs the http interface is described with references to the respective application API.\n\n* A _status request_ for a specific endpoint\n * __http://`<host>`:`<port>`/endpoint/`<id>`__ (request method: GET),\n * parameters:\n   * __id__ the endpoint id, it should be one of those defined at endpoints configuration data,\n * API reference: __{{#crossLink \"Watcher/getEndpoint:method\"}}{{/crossLink}}__.\n\nThe response is a JSON message like the following example:\n\n```\n// For a socket communication type\n{\n     \"id\": \"endpoint-id\",            // endpoint id\n     \"desc\": \"an endpoint\",          // endpoint description\n     \"status\": \"up\",                 // endpoint status\n     \"timestamp\": 1429860936846,     // the timestamp of the current status\n     \"since\": 1429860926846,         // the timestamp since the last change of status\n     \"type\": \"socket\",               // connector type\n     \"host\": \"localhost\",            // endpoint host (applied for 'socket' connector)\n     \"port\": 7777,                   // endpoint port (applied for 'socket' connector)\n     \"active\": true,                 // whether or not the endpoint is active\n     \"notify\": false                 // whether or not the notification is enabled\n}\n```\n\n* A status request for all registered endpoints.\n * __http://`<host>`:`<port>`/endpoints__ (request method: GET).\n In this case the response JSON message is an array with the information for all endpoints.\n * API reference: __{{#crossLink \"Watcher/getEndpoints:method\"}}{{/crossLink}}__.\n\n```\n// For a socket and http communication types\n[\n     {\n         \"id\": \"endpoint-1\",\n         \"desc\": \"endpoint 1\",\n         \"status\": \"down\"\n         \"timestamp\": 1429860936846,\n         \"since\": 1429860926846,\n         \"type\": \"socket\",\n         \"host\": \"localhost\",\n         \"port\": 7777,\n         \"active\": true,\n         \"notify\": true\n     },\n     {\n         \"id\": \"endpoint-2\",                     // endpoint id\n         \"desc\": \"endpoint 2\",                   // endpoint description\n         \"status\": \"up\"                          // endpoint status\n         \"timestamp\": 1429860936846,             // the timestamp of the current status\n         \"since\": 1429860926846,                 // the timestamp since the last change of status\n         \"type\": \"http\",                         // connector type\n         \"url\": \"http://11.222.333.555:3333/\",   // endpoint url (applied for 'http(s) connector')\n         \"active\": true,                         // whether or not the endpoint is active\n         \"notify\": false                         // whether or not the notification is enabled\n     }\n]\n```\n\n* Add new endpoint.\n * __http://`<host>`:`<port>`/endpoint/add__ (request method POST)\n * parameters (parameters in _[]_ are optional. when not set, the default values are used - those in parentheses.):\n   * __id__ : the endpoint id,\n   * __desc__ : the endpoint description,\n   * __type__ : the endpoint type ('socket' or 'http'),\n   * [__host__] (localhost): the endpoint host (applied for 'socket' communication type),\n   * [__port__] (9999): the endpoint port (applied for 'socket' communication type),\n   * [__url__] : the endpoint port (applied for 'http' communication type),\n   * [__active__] (true): true/false whether or not to activate the endpoint,\n   * [__notify__] (false): true/false whether or not to enable email notification on erroneous service status\n * API reference: __{{#crossLink \"Watcher/addEndpoint:method\"}}{{/crossLink}}__.\n\n\n* Remove an endpoint\n * __http://`<host>`:`<port>`/endpoint/remove__ (request method POST),\n * parameters:\n   * __id__ : the endpoint id\n * API reference: __{{#crossLink \"Watcher/removeEndpoint:method\"}}{{/crossLink}}__.\n\n\n* Activate/deactivate an endpoint\n * __http://`<host>`:`<port>`/endpoint/activation__ (request method POST),\n * parameters:\n   * __id__ : the endpoint id,\n   * __activate__ : true/false whether to activate or not the endpoint\n * API reference: __{{#crossLink \"Watcher/setEndpointActivationState:method\"}}{{/crossLink}}__.\n\n\n* Enable/disable notification for an endpoint\n * __http://`<host>`:`<port>`/endpoint/notification__ (request method POST),\n * parameters:\n   * __id__ : the endpoint id,\n   * __notify__ : true/false whether or not to enable email notification on erroneous service status\n * API reference: __{{#crossLink \"Watcher/notifyOnErroneousStatus:method\"}}{{/crossLink}}__.\n\n\n* Get the ids of the unbound resolution strategies\n * __http://`<host>`:`<port>`/resolution-strategies__ (request method GET),\n * API reference: __{{#crossLink \"Watcher/getResolutionStrategies:method\"}}{{/crossLink}}__.\n\n\n* __http://`<host>`:`<port>`/console__, a web graphical user interface for the monitored services. The _console_ exposes\nthe _watcher.js_ API through a simple user-friendly gui.\n\n\n###Configuration\nThe application configuration requires two kinds of data, as shown below. The one that refers to the\nexpress framework that implements the application http interface, and the other that refers to the service\nendpoints. Note that properties in _[]_ are optional. when not set, the default values are used - those in parentheses.\n\n\n* Embedded http server configuration and service communication interval\n * [__host__] ('localhost'), the http server host name.\n * [__port__] (7777), the http server port.\n * [__interval__] (10000 ms), the regular interval, at ms, that the application attempts to establish\n communication with the services to resolve their status (_service communication interval_).\n * [__routeExts__], an array of user defined route extensions for building custom responses for the status requests.\n A route extension should be a function that accepts the __{{#crossLink \"Watcher/_registry:property\"}}{{/crossLink}}__\n as parameter and return a function that conforms to [express route](http://expressjs.com/guide/routing.html) conventions\n (a function with parameters: _req_, _res_, _next_, as shown at the examples)\n * [__resolutionStrategies__], an array of objects (aka unbound resolution strategy descriptor), each of them holds the\n information for an _unbound resolution strategy_ (__{{#crossLinkModule \"resolvers\"}}{{/crossLinkModule}}__) to be registered\n at the system. These strategies are not bound to any endpoint, but they can be associated with them by setting the\n respective strategy id at the endpoint's _resolutionStrategy_ configuration property (see at endpoint configuration below).\n The descriptor is an object as follows:\n ```\n {\n     id: <the resolution strategy id>, (should be unique)\n     desc: <the resolution strategy description>\n     implementation: <the implementation of resolution strategy> (see at resolvers to see the interface)\n }\n ```\n * [__nfOpts__], the notification options. Holds the information of the sender and the email addresses\n to receive email when erroneous service status occurs. The default sender is _admin@watcherjs.com_\n (if needed, configure your email account to not filter this sender as a spam). The object structure is:\n ```\n {\n     sender: <the sender>, // default value: admin@watcherjs.com\n     recipients: [<recipient1>, <recipient1>, ...] // the array of recipients email\n }\n ```\n * [__exportDir__] (_<`project directory`>/storage/_), the storage directory of dynamically created endpoints.\n\n\n* Endpoint\n * __id__, the unique endpoint/service id. This _id_ is used for the service identification when a service request is made.\n * __type__, the endpoint type, the type determines whether the message\n exchange is performed via http requests or directly with the socket. It actually dictates the underline\n connector used for the specific service (see also at __{{#crossLinkModule \"connectors\"}}{{/crossLinkModule}}__).\n The permitted values are: __'socket'__ and __'http'__ for __{{#crossLink \"SocketConnector\"}}{{/crossLink}}__\n and __{{#crossLink \"HttpConnector\"}}{{/crossLink}}__ respectively.\n * [__desc__] (__id__), the endpoint description.\n * [__host__] (localhost), the endpoint hostname when a __{{#crossLink \"SocketConnector\"}}{{/crossLink}}__ is used.\n * [__port__] (9999), the endpoint port when a __{{#crossLink \"SocketConnector\"}}{{/crossLink}}__ is used.\n * [__url__] (http://localhost:8080), the endpoint url when __{{#crossLink \"HttpConnector\"}}{{/crossLink}}__ is used.\n * [__timeout__] (5000), the applied connector's connection timeout (see also at\n __{{#crossLink \"SocketConnectorFactory/create:method\"}}{{/crossLink}}__ and\n __{{#crossLink \"HttpConnectorFactory/create:method\"}}{{/crossLink}}__).\n * [__resolutionStrategy__] (__{{#crossLink \"OnConnectionResolution\"}}{{/crossLink}}__) the applied resolution strategy.\n This property can hold either an implementation of a resolution strategy or the id of the an unbound strategy.\n * [__active__] (true), used to indicate whether or not the endpoint should be activated\n (enables or suspends the communication between the respective connector and the endpoint).\n * [__notify__] (false), used to indicate whether or not to receive email notifications for erroneous service status.\n\n\nThe _endpoint_ notation is used to emphases that the _service_ can be proxied by another service (_the proxy_) which\nis that determines the status of the proxied service. In this case, the endpoint belongs to the proxy and not to the\nmonitored service.\n\n\n###Exported objects\n* __{{#crossLink \"WatcherFactory\"}}{{/crossLink}}__\n\n###API Usage samples\n__Service with route extension and resolution strategy registration__\n   ```javascript\n// Here is the configuration of two endpoints. The one is accessed via a socket and refers to the service\n// 'service-1' hosted at '11.222.333.444', whereas the other is accessed via http and refers to the service\n// 'service-2' that is hosted at '11.222.333.555' (note that we use the notation _service_ since the _endpoint_\n// and the _service_ is the same component).\n// Fix the module paths\nvar watcher = require('watcher');\nvar constants = require('constants');\nvar resolvers = require('resolvers');\n\nvar down = constants.serviceStatus.down;\nvar watcherFactory = watcher.watcherFactory;\nvar onConnectionResolutionFactory = resolvers.onConnectionResolutionFactory;\n\nvar alwaysDownStrategy = {\n      reset: function reset() {},\n      resolveOnConnection: function resolveOnConnection(connection) {\n         //mark as down only for demonstration purposes\n          return down;\n      },\n      resolveOnConversation: function resolveOnConnection(connection) {},\n      resolveNow: function resolveOnConnection(connection) {}\n  };\n\nvar options = {\n    port: 7777,\n    interval: 15000,\n   routeExts: [{\n         path: '/custom-route',\n         route: function service(registry) {\n             return function (req, res, next) {\n                 var id = req.query.id;\n                 var record = registry[id];\n                 if (record) {\n                     res.send('Service status: ' + record.status);\n                 } else {\n                     res.send('Unknown service: ' + id);\n                 }\n             };\n         }\n     }],\n    resolutionStrategies: [\n          {// Actually the default implementation, added for demonstration purposes\n              id: 'on-connection',\n              desc: 'resolution on connection',\n              implementation: onConnectionResolutionFactory.create()\n          },\n          {\n              id: 'always-down',\n              desc: 'always down',\n              implementation: alwaysDownStrategy\n          }\n      ],\n    nfOpts: {\n         recipients: ['foo@foo.com']\n     },\n    endpoints: [\n         {\n             id: 'service-1',\n             desc: 'service 1',\n             type: 'socket',\n             host: '11.222.333.444',\n             port: 1234,\n             // Apply an implementation of resolution strategy\n             resolutionStrategy: alwaysDownStrategy,\n             active: true,\n             notify: true\n         },\n         {\n             id: 'service-2',\n             desc: 'service 2',\n             type: 'http',\n             timeout: 3000,\n             // The query string could be anything\n             url: 'http://11.222.333.555:3333/?get-status',\n             // Apply the unbound resolution strategy with id 'on-connection'\n             resolutionStrategy: 'on-connection',\n             active: true,\n             notify: true\n         }\n     ]\n };\nwatcherFactory.create(options).start();\n\nAfter starting the watcher the following status requests could be made in order to\nretrieve the status for the services with id 'service-1' and 'service-2' respectively\nhttp://localhost:7777/endpoint/service-1\nhttp://localhost:7777/endpoint/service-2\nWhereas the request http://localhost:7777/custom-route?id=service-1\nis the user defined route which returns: 'Service status: <status>' where status\nthe status of the 'service-1'.\n   ```\n__Proxied services__\n   ```javascript\n// Proxied services\n// Here is the case where a proxy controls the status of two service (e.g. _proxied-service-1_\n// and _proxied-service-2_). The proxy is hosted at '11.222.333.444' and can be accessed via http.\n// Two http endpoints at the proxy are created, the 'endpoint-1' and 'endpoint-2' each one of them\n// is connected with the respective monitored proxied services (note that we use the notation _endpoint_ since\n// the _endpoint_ is not the monitored _service_).\n\n// Fix the module paths\nvar watcherFactory = require('watcher').watcherFactory;\nvar options = {\n    port: 7777,\n    interval: 15000,\n    endpoints: [\n         {\n             id: 'endpoint-1',\n             type: 'http',\n             timeout: 3000,\n             // request to the proxied service 'proxied-service-1', the query string could be anything\n             url: 'http://11.222.333.444:3333/?get-status-for=proxied-service-1'\n         },\n         {\n             id: 'endpoint-2',\n             type: 'http',\n             timeout: 3000,\n             // request to the proxied service 'proxied-service-2', the query string could be anything\n             url: 'http://11.222.333.444:3333/?get-status-for=proxied-service-2'\n         }\n     ]\n };\nwatcherFactory.create(options).start();\n\nAfter starting the watcher the following status requests could be made in order to\nretrieve the status for 'proxied-service-1' and 'proxied-service-2' respectively\nhttp://localhost:7777/endpoint/endpoint-1\nhttp://localhost:7777/endpoint/endpoint-2\n   ```\n\n__Add and remove endpoints dynamically__\n   ```javascript\n// Here is an example for dynamically adding and removing endpoints\n\n// Fix the module paths\nvar watcherFactory = require('watcher').watcherFactory;\nvar options = {\n    port: 7777,\n    interval: 15000,\n    endpoints: [\n         {\n             id: 'service-1',\n             type: 'socket',\n             host: '11.222.333.444',\n             port: 1234\n         }\n     ]\n };\nvar watcher = watcherFactory.create(options).start();\n\n// Add the endpoint 'service-2'\nsetTimeout(function() {\n       watcher.addEndpoint({\n         id: 'service-2',\n         type: 'http',\n         timeout: 3000,\n         url: 'http://11.222.333.555:3333/?get-status'\n     });\n     if (!_.isEmpty(errors)) {\n         throw new Error('validation error...');\n     }\n}, 6000);\n\n// Deactivate the endpoint 'service-2'\nsetTimeout(function () {\n     watcher.deactivateEndpoint('service-2');\n}, 12000);\n\n// Activate the endpoint 'service-2'\nsetTimeout(function () {\n       watcher.activateEndpoint('service-2');\n  }, 30000);\n\n// Remove the endpoint 'service-2'\nsetTimeout(function() {\n      watcher.removeEndpoint('service-2');\n}, 60000);\n\n// Shutdown the application\nsetTimeout(function () {\n     watcher.stop();\n}, 120000);\n\n   ```"
+        }
+    },
+    "classes": {
+        "WatcherHttp": {
+            "name": "WatcherHttp",
+            "shortname": "WatcherHttp",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "watcher-http",
+            "namespace": "",
+            "file": "src/routes/watcher-http.js",
+            "line": 25,
+            "description": "The application's http interface implementation."
+        },
+        "AbstractConnector": {
+            "name": "AbstractConnector",
+            "shortname": "AbstractConnector",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "connectors",
+            "namespace": "",
+            "file": "src/connectors.js",
+            "line": 128,
+            "description": "This class implements some common functionality for all connectors.",
+            "extends": "EventDispatcher"
+        },
+        "SocketConnector": {
+            "name": "SocketConnector",
+            "shortname": "SocketConnector",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "connectors",
+            "namespace": "",
+            "file": "src/connectors.js",
+            "line": 198,
+            "description": "This connector is used to enable communication with the service via raw socket.\nNote that the data is transmitted as string utf-8 encoded.",
+            "extends": "AbstractConnector"
+        },
+        "SocketConnectorFactory": {
+            "name": "SocketConnectorFactory",
+            "shortname": "SocketConnectorFactory",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "connectors",
+            "namespace": "",
+            "file": "src/connectors.js",
+            "line": 293,
+            "description": "SocketConnector factory.",
+            "static": 1
+        },
+        "HttpConnector": {
+            "name": "HttpConnector",
+            "shortname": "HttpConnector",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "connectors",
+            "namespace": "",
+            "file": "src/connectors.js",
+            "line": 330,
+            "description": "This connector is used to enable communication with the service via http(s) protocol.",
+            "extends": "AbstractConnector"
+        },
+        "HttpConnectorFactory": {
+            "name": "HttpConnectorFactory",
+            "shortname": "HttpConnectorFactory",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "connectors",
+            "namespace": "",
+            "file": "src/connectors.js",
+            "line": 413,
+            "description": "HttpConnector factory.",
+            "static": 1
+        },
+        "ServiceStatus": {
+            "name": "ServiceStatus",
+            "shortname": "ServiceStatus",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "constants",
+            "namespace": "",
+            "file": "src/constants.js",
+            "line": 13,
+            "description": "Service status constants."
+        },
+        "ResolverEvents": {
+            "name": "ResolverEvents",
+            "shortname": "ResolverEvents",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "constants",
+            "namespace": "",
+            "file": "src/constants.js",
+            "line": 70,
+            "description": "__{{#crossLink \"StatusResolver\"}}{{/crossLink}}__ constants."
+        },
+        "Logger": {
+            "name": "Logger",
+            "shortname": "Logger",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "logger",
+            "namespace": "",
+            "file": "src/logger.js",
+            "line": 32,
+            "description": "The winston logger",
+            "static": 1
+        },
+        "ResolutionStrategy": {
+            "name": "ResolutionStrategy",
+            "shortname": "ResolutionStrategy",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "resolvers",
+            "namespace": "",
+            "file": "src/resolvers.js",
+            "line": 86,
+            "description": "A resolution strategy implements *the strategy* for resolving the status of a service.\nEach strategy should implement the following methods:\n__{{#crossLink \"ResolutionStrategy/resolveOnConnection:method\"}}{{/crossLink}}__,\n__{{#crossLink \"ResolutionStrategy/resolveOnConversation:method\"}}{{/crossLink}}__,\n__{{#crossLink \"ResolutionStrategy/resolveNow:method\"}}{{/crossLink}}__,\n__{{#crossLink \"ResolutionStrategy/reset:method\"}}{{/crossLink}}__.\nThis is a simple default implementation."
+        },
+        "ResolutionStrategyFactory": {
+            "name": "ResolutionStrategyFactory",
+            "shortname": "ResolutionStrategyFactory",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "resolvers",
+            "namespace": "",
+            "file": "src/resolvers.js",
+            "line": 173,
+            "description": "ResolutionStrategy factory.",
+            "static": 1
+        },
+        "StatusResolver": {
+            "name": "StatusResolver",
+            "shortname": "StatusResolver",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "resolvers",
+            "namespace": "",
+            "file": "src/resolvers.js",
+            "line": 190,
+            "description": "The status resolver provides the context and implements the logic for applying\nand coordinating the resolution strategy for the service. This is the component\nthat connectors directly deal with."
+        },
+        "StatusResolverFactory": {
+            "name": "StatusResolverFactory",
+            "shortname": "StatusResolverFactory",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "resolvers",
+            "namespace": "",
+            "file": "src/resolvers.js",
+            "line": 264,
+            "description": "StatusResolver factory.",
+            "static": 1
+        },
+        "OnConnectionResolution": {
+            "name": "OnConnectionResolution",
+            "shortname": "OnConnectionResolution",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "resolvers",
+            "namespace": "",
+            "file": "src/resolvers.js",
+            "line": 289,
+            "description": "An implementation of resolution strategy that on the service connection the service status\nis resolved as *up*.",
+            "extends": "ResolutionStrategy"
+        },
+        "OnConnectionResolutionFactory": {
+            "name": "OnConnectionResolutionFactory",
+            "shortname": "OnConnectionResolutionFactory",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "resolvers",
+            "namespace": "",
+            "file": "src/resolvers.js",
+            "line": 307,
+            "description": "OnConnectionResolution factory.",
+            "static": 1
+        },
+        "EventDispatcher": {
+            "name": "EventDispatcher",
+            "shortname": "EventDispatcher",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "utils",
+            "namespace": "",
+            "file": "src/utils.js",
+            "line": 44,
+            "description": "Exposes the event emitter functionality (a delegator)."
+        },
+        "EventDispatcherFactory": {
+            "name": "EventDispatcherFactory",
+            "shortname": "EventDispatcherFactory",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "utils",
+            "namespace": "",
+            "file": "src/utils.js",
+            "line": 91,
+            "description": "EventDispatcher factory",
+            "static": 1
+        },
+        "Dictionary": {
+            "name": "Dictionary",
+            "shortname": "Dictionary",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "utils",
+            "namespace": "",
+            "file": "src/utils.js",
+            "line": 112,
+            "description": "Provides a map collection like functionality."
+        },
+        "DictionaryFactory": {
+            "name": "DictionaryFactory",
+            "shortname": "DictionaryFactory",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "utils",
+            "namespace": "",
+            "file": "src/utils.js",
+            "line": 237,
+            "description": "Dictionary factory",
+            "static": 1,
+            "return": {
+                "description": "a dictionary instance.",
+                "type": "Dictionary"
+            }
+        },
+        "Validator": {
+            "name": "Validator",
+            "shortname": "Validator",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "validator",
+            "namespace": "",
+            "file": "src/validator.js",
+            "line": 97,
+            "description": "The validator",
+            "static": 1
+        },
+        "Watcher": {
+            "name": "Watcher",
+            "shortname": "Watcher",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "watcher",
+            "namespace": "",
+            "file": "src/watcher.js",
+            "line": 429,
+            "description": "The application that can be used to monitor your services status.\nAn application overview and detailed configuration instructions and examples can be found at\n__{{#crossLinkModule \"watcher\"}}{{/crossLinkModule}}__"
+        },
+        "WatcherFactory": {
+            "name": "WatcherFactory",
+            "shortname": "WatcherFactory",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "watcher",
+            "namespace": "",
+            "file": "src/watcher.js",
+            "line": 914,
+            "description": "Watcher factory.",
+            "static": 1
+        }
+    },
+    "classitems": [
+        {
+            "file": "src/public/js/jquery-ui/bootstrap/bootstrap.min.js",
+            "line": 1,
+            "description": "Bootstrap.js by @fat & @mdo\nplugins: bootstrap-transition.js, bootstrap-modal.js, bootstrap-dropdown.js, bootstrap-scrollspy.js, bootstrap-tab.js, bootstrap-affix.js, bootstrap-alert.js, bootstrap-collapse.js, bootstrap-carousel.js, bootstrap-typeahead.js\nCopyright 2012 Twitter, Inc.\nhttp://www.apache.org/licenses/LICENSE-2.0.txt",
+            "class": "WatcherHttp"
+        },
+        {
+            "file": "src/public/js/console.js",
+            "line": 1,
+            "description": "Created by jpsoroulas.",
+            "class": "WatcherHttp"
+        },
+        {
+            "file": "src/routes/watcher-http.js",
+            "line": 1,
+            "description": "Created by jpsoroulas.",
+            "class": "WatcherHttp"
+        },
+        {
+            "file": "src/routes/watcher-http.js",
+            "line": 32,
+            "description": "callback for the HTTP request:\n_http://`<host>`:`<port>`/endpoints_ (request method: GET)",
+            "itemtype": "method",
+            "name": "endpoints",
+            "params": [
+                {
+                    "name": "watcher",
+                    "description": "the __{{#crossLink \"Watcher\"}}{{/crossLink}}__.",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "the express route function."
+            },
+            "class": "WatcherHttp",
+            "module": "watcher-http"
+        },
+        {
+            "file": "src/routes/watcher-http.js",
+            "line": 47,
+            "description": "callback for the HTTP request:\n_http://`<host>`:`<port>`/endpoint/`<id>`_ (request method: GET)",
+            "itemtype": "method",
+            "name": "endpoint",
+            "params": [
+                {
+                    "name": "watcher",
+                    "description": "the __{{#crossLink \"Watcher\"}}{{/crossLink}}__.",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "the express route function."
+            },
+            "class": "WatcherHttp",
+            "module": "watcher-http"
+        },
+        {
+            "file": "src/routes/watcher-http.js",
+            "line": 68,
+            "description": "callback for the HTTP request:\n_http://`<host>`:`<port>`/endpoint/add_ (request method POST)",
+            "itemtype": "method",
+            "name": "addEndpoint",
+            "params": [
+                {
+                    "name": "watcher",
+                    "description": "the __{{#crossLink \"Watcher\"}}{{/crossLink}}__.",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "the express route function."
+            },
+            "class": "WatcherHttp",
+            "module": "watcher-http"
+        },
+        {
+            "file": "src/routes/watcher-http.js",
+            "line": 91,
+            "description": "callback for the HTTP request:\n_http://`<host>`:`<port>`/endpoint/remove_ (request method POST)",
+            "itemtype": "method",
+            "name": "removeEndpoint",
+            "params": [
+                {
+                    "name": "watcher",
+                    "description": "the __{{#crossLink \"Watcher\"}}{{/crossLink}}__.",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "the express route function."
+            },
+            "class": "WatcherHttp",
+            "module": "watcher-http"
+        },
+        {
+            "file": "src/routes/watcher-http.js",
+            "line": 106,
+            "description": "callback for the HTTP request:\n_http://`<host>`:`<port>`/endpoint/activation_ (request method POST)",
+            "itemtype": "method",
+            "name": "endpointActivation",
+            "params": [
+                {
+                    "name": "watcher",
+                    "description": "the __{{#crossLink \"Watcher\"}}{{/crossLink}}__.",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "the express route function."
+            },
+            "class": "WatcherHttp",
+            "module": "watcher-http"
+        },
+        {
+            "file": "src/routes/watcher-http.js",
+            "line": 122,
+            "description": "callback for the HTTP request:\n_http://`<host>`:`<port>`/endpoint/notification_ (request method POST)",
+            "itemtype": "method",
+            "name": "endpointNotification",
+            "params": [
+                {
+                    "name": "watcher",
+                    "description": "the __{{#crossLink \"Watcher\"}}{{/crossLink}}__.",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "the express route function."
+            },
+            "class": "WatcherHttp",
+            "module": "watcher-http"
+        },
+        {
+            "file": "src/routes/watcher-http.js",
+            "line": 138,
+            "description": "callback for the HTTP request:\n_http://`<host>`:`<port>`/resolution-strategies_ (request method GET)",
+            "itemtype": "method",
+            "name": "resolutionStrategies",
+            "params": [
+                {
+                    "name": "watcher",
+                    "description": "the __{{#crossLink \"Watcher\"}}{{/crossLink}}__.",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "the express route function."
+            },
+            "class": "WatcherHttp",
+            "module": "watcher-http"
+        },
+        {
+            "file": "src/connectors.js",
+            "line": 1,
+            "description": "Created by jpsoroulas.",
+            "class": "AbstractConnector",
+            "module": "watcher-http"
+        },
+        {
+            "file": "src/connectors.js",
+            "line": 145,
+            "description": "Registers the specified listener to receive the\n__{{#crossLink \"ResolverEvents/resolved:property\"}}{{/crossLink}}__ event.",
+            "itemtype": "method",
+            "name": "addStatusResolvedListener",
+            "params": [
+                {
+                    "name": "listener",
+                    "description": "the listener.",
+                    "type": "Function"
+                }
+            ],
+            "class": "AbstractConnector",
+            "module": "connectors"
+        },
+        {
+            "file": "src/connectors.js",
+            "line": 156,
+            "description": "Removes the registered listeners for\n__{{#crossLink \"ResolverEvents/resolved:property\"}}{{/crossLink}}__ event.",
+            "itemtype": "method",
+            "name": "removeStatusResolvedListeners",
+            "class": "AbstractConnector",
+            "module": "connectors"
+        },
+        {
+            "file": "src/connectors.js",
+            "line": 166,
+            "description": "Resets the connector state.",
+            "access": "private",
+            "tagname": "",
+            "itemtype": "method",
+            "name": "_reset",
+            "class": "AbstractConnector",
+            "module": "connectors"
+        },
+        {
+            "file": "src/connectors.js",
+            "line": 176,
+            "description": "Starts the connector.\nThis method should be implemented by the subclasses.",
+            "itemtype": "method",
+            "name": "start",
+            "class": "AbstractConnector",
+            "module": "connectors"
+        },
+        {
+            "file": "src/connectors.js",
+            "line": 186,
+            "description": "Stops the connector.\nThis method should be implemented by the subclasses.",
+            "itemtype": "method",
+            "name": "stop",
+            "class": "AbstractConnector",
+            "module": "connectors"
+        },
+        {
+            "file": "src/connectors.js",
+            "line": 206,
+            "description": "Starts the connector.",
+            "itemtype": "method",
+            "name": "start",
+            "class": "SocketConnector",
+            "module": "connectors"
+        },
+        {
+            "file": "src/connectors.js",
+            "line": 282,
+            "description": "Stops the connector.",
+            "itemtype": "method",
+            "name": "stop",
+            "class": "SocketConnector",
+            "module": "connectors"
+        },
+        {
+            "file": "src/connectors.js",
+            "line": 299,
+            "description": "Creates a SocketConnector instance.",
+            "static": 1,
+            "itemtype": "method",
+            "name": "create",
+            "params": [
+                {
+                    "name": "options",
+                    "description": "the SocketConnector configuration.\nThe configuration properties are (the parenthesis contains the default values):\n* __port__ (9999), the service socket connection port\n* __host__ ('localhost'), the service host\n* __timeout__ (5000), the socket timeout, at ms\n* __resolutionStrategy__ (__{{#crossLink \"OnConnectionResolution\"}}{{/crossLink}}__), the applied resolution strategy",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "the SocketConnector instance.",
+                "type": "SocketConnector"
+            },
+            "class": "SocketConnectorFactory",
+            "module": "connectors"
+        },
+        {
+            "file": "src/connectors.js",
+            "line": 336,
+            "description": "Starts the connector.",
+            "itemtype": "method",
+            "name": "start",
+            "class": "HttpConnector",
+            "module": "connectors"
+        },
+        {
+            "file": "src/connectors.js",
+            "line": 401,
+            "description": "Stops the connector.",
+            "itemtype": "method",
+            "name": "stop",
+            "class": "HttpConnector",
+            "module": "connectors"
+        },
+        {
+            "file": "src/connectors.js",
+            "line": 419,
+            "description": "Creates a HttpConnector instance.",
+            "static": 1,
+            "itemtype": "method",
+            "name": "create",
+            "params": [
+                {
+                    "name": "options",
+                    "description": "the HttpConnector configuration.\nThe configuration properties are (note that properties in _[]_ are optional. when not set, the default values\nare used - those in parentheses.):\n* [__url__] (http://localhost:8080), the service endpoint url.\n* [__timeout__] (5000 ms), the http(s) request timeout, at ms.\n* [__resolutionStrategy__] (__{{#crossLink \"ResolutionStrategy\"}}{{/crossLink}}__),\nthe applied resolution strategy.",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "the HttpConnector instance.",
+                "type": "HttpConnector"
+            },
+            "class": "HttpConnectorFactory",
+            "module": "connectors"
+        },
+        {
+            "file": "src/connectors.js",
+            "line": 451,
+            "description": "Exported module object",
+            "class": "HttpConnectorFactory",
+            "module": "connectors"
+        },
+        {
+            "file": "src/constants.js",
+            "line": 1,
+            "description": "Created by jpsoroulas.",
+            "class": "ServiceStatus",
+            "module": "connectors"
+        },
+        {
+            "file": "src/constants.js",
+            "line": 19,
+            "description": "Indicates that the service is up and running",
+            "itemtype": "property",
+            "name": "up",
+            "type": "String",
+            "static": 1,
+            "final": 1,
+            "class": "ServiceStatus",
+            "module": "constants"
+        },
+        {
+            "file": "src/constants.js",
+            "line": 29,
+            "description": "Indicates that the service down",
+            "itemtype": "property",
+            "name": "down",
+            "type": "String",
+            "static": 1,
+            "final": 1,
+            "class": "ServiceStatus",
+            "module": "constants"
+        },
+        {
+            "file": "src/constants.js",
+            "line": 39,
+            "description": "Indicates that the service can not be reached",
+            "itemtype": "property",
+            "name": "unreachable",
+            "type": "String",
+            "static": 1,
+            "final": 1,
+            "class": "ServiceStatus",
+            "module": "constants"
+        },
+        {
+            "file": "src/constants.js",
+            "line": 49,
+            "description": "Indicates that the service status can not be determined",
+            "itemtype": "property",
+            "name": "undetermined",
+            "type": "String",
+            "static": 1,
+            "final": 1,
+            "class": "ServiceStatus",
+            "module": "constants"
+        },
+        {
+            "file": "src/constants.js",
+            "line": 76,
+            "description": "Event fired when the service status has been resolved.",
+            "itemtype": "property",
+            "name": "resolved",
+            "type": "String",
+            "static": 1,
+            "final": 1,
+            "class": "ResolverEvents",
+            "module": "constants"
+        },
+        {
+            "file": "src/http-server.js",
+            "line": 1,
+            "description": "Created by jpsoroulas.",
+            "class": "Logger",
+            "module": "constants"
+        },
+        {
+            "file": "src/logger.js",
+            "line": 1,
+            "description": "Created by jpsoroulas.",
+            "class": "Logger",
+            "module": "httpServer"
+        },
+        {
+            "file": "src/logger.js",
+            "line": 29,
+            "description": "Exported module object",
+            "class": "Logger",
+            "module": "logger"
+        },
+        {
+            "file": "src/resolvers.js",
+            "line": 1,
+            "description": "Created by jpsoroulas.",
+            "class": "ResolutionStrategy",
+            "module": "logger"
+        },
+        {
+            "file": "src/resolvers.js",
+            "line": 98,
+            "description": "Holds the data received from the service.",
+            "itemtype": "property",
+            "name": "data",
+            "type": "Object",
+            "class": "ResolutionStrategy",
+            "module": "resolvers"
+        },
+        {
+            "file": "src/resolvers.js",
+            "line": 106,
+            "description": "Clears the state (the data received from the service).",
+            "itemtype": "method",
+            "name": "reset",
+            "class": "ResolutionStrategy",
+            "module": "resolvers"
+        },
+        {
+            "file": "src/resolvers.js",
+            "line": 114,
+            "description": "The method is called when the connection with the service is established.\nNote that it applies only in cases that a __SocketConnector is used__.\nThe method could potentially trigger a handshaking protocol with the service.\nThe default implementation returns undefined.",
+            "itemtype": "method",
+            "name": "resolveOnConnection",
+            "params": [
+                {
+                    "name": "connection",
+                    "description": "the service connection.",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "the service status."
+            },
+            "class": "ResolutionStrategy",
+            "module": "resolvers"
+        },
+        {
+            "file": "src/resolvers.js",
+            "line": 129,
+            "description": "The method is called when the connector receives data from the server.\nAny data could be received after a successful connection with a service.\nSuccessful connections for a HttpConnector connector type are consider all http\nservice responses with status code 2xx. Whereas for a SocketConnector when the connection\nis established. Note that, currently, the data is transmitted as string encoded as __utf-8__.\nThis default implementation resolves the status as __*up*__ if any chunk of data is received.",
+            "itemtype": "method",
+            "name": "resolveOnConversation",
+            "params": [
+                {
+                    "name": "connection",
+                    "description": "the service connection.",
+                    "type": "Object"
+                },
+                {
+                    "name": "chunk",
+                    "description": "the received chunk of data.",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "the service status."
+            },
+            "class": "ResolutionStrategy",
+            "module": "resolvers"
+        },
+        {
+            "file": "src/resolvers.js",
+            "line": 154,
+            "description": "The method is called when the resolution strategy must determine the service status\nimmediately (for example when a connection error or a connection timeout is occurred).\nOrdinarily, it is the last method that is get called since the strategy must end up a result.\nAt this default implementation, the service status is resolved as __*up*__ if any data\nhas been received.",
+            "itemtype": "method",
+            "name": "resolveNow",
+            "return": {
+                "description": "the service status."
+            },
+            "class": "ResolutionStrategy",
+            "module": "resolvers"
+        },
+        {
+            "file": "src/resolvers.js",
+            "line": 179,
+            "description": "Creates a ResolutionStrategy instance.",
+            "static": 1,
+            "itemtype": "method",
+            "name": "create",
+            "return": {
+                "description": "the ResolutionStrategy instance.",
+                "type": "ResolutionStrategy"
+            },
+            "class": "ResolutionStrategyFactory",
+            "module": "resolvers"
+        },
+        {
+            "file": "src/resolvers.js",
+            "line": 198,
+            "description": "States whether the status has been resolved or not. True if it\nresolved, otherwise false.",
+            "access": "private",
+            "tagname": "",
+            "itemtype": "property",
+            "name": "_resolved",
+            "class": "StatusResolver",
+            "module": "resolvers"
+        },
+        {
+            "file": "src/resolvers.js",
+            "line": 207,
+            "description": "Resets the resolver state.",
+            "itemtype": "method",
+            "name": "reset",
+            "class": "StatusResolver",
+            "module": "resolvers"
+        },
+        {
+            "file": "src/resolvers.js",
+            "line": 217,
+            "description": "This method is called from the connector when a chunk of data has been received.\nInternally, it uses the applying status resolution strategy.",
+            "itemtype": "method",
+            "name": "consumeAndResolve",
+            "return": {
+                "description": "the service status. If the status cannot be determined undefined is returned.",
+                "type": "Object"
+            },
+            "class": "StatusResolver",
+            "module": "resolvers"
+        },
+        {
+            "file": "src/resolvers.js",
+            "line": 238,
+            "description": "It is the last method that is get called when the service status has been resolved. If no status is\nspecified the resolver forces resolution strategy to end up a result. This method is also called\nby the service connectors when the service status can be resolved by them (for example when\nthe connection can not be established, the connector resolves the status as *unreachable*)",
+            "itemtype": "method",
+            "name": "resolved",
+            "params": [
+                {
+                    "name": "status",
+                    "description": "the service status if resolved.",
+                    "type": "String",
+                    "optional": true
+                }
+            ],
+            "class": "StatusResolver",
+            "module": "resolvers"
+        },
+        {
+            "file": "src/resolvers.js",
+            "line": 270,
+            "description": "Creates a StatusResolver instance.",
+            "static": 1,
+            "itemtype": "method",
+            "name": "create",
+            "params": [
+                {
+                    "name": "resolutionStrategy",
+                    "description": "the applied resolution strategy.\nIf no strategy is set, the default implementation is used.",
+                    "type": "ResolutionStrategy"
+                }
+            ],
+            "return": {
+                "description": "the StatusResolver instance.",
+                "type": "StatusResolver"
+            },
+            "class": "StatusResolverFactory",
+            "module": "resolvers"
+        },
+        {
+            "file": "src/resolvers.js",
+            "line": 296,
+            "description": "Always returns *up*",
+            "itemtype": "method",
+            "name": "resolveOnConnection",
+            "params": [
+                {
+                    "name": "connection",
+                    "description": "the service connection",
+                    "type": "Object"
+                }
+            ],
+            "class": "OnConnectionResolution",
+            "module": "resolvers"
+        },
+        {
+            "file": "src/resolvers.js",
+            "line": 313,
+            "description": "Creates an OnConnectionResolution instance.",
+            "static": 1,
+            "itemtype": "method",
+            "name": "create",
+            "return": {
+                "description": "the OnConnectionResolution instance.",
+                "type": "OnConnectionResolution"
+            },
+            "class": "OnConnectionResolutionFactory",
+            "module": "resolvers"
+        },
+        {
+            "file": "src/resolvers.js",
+            "line": 324,
+            "description": "Exported module object",
+            "class": "OnConnectionResolutionFactory",
+            "module": "resolvers"
+        },
+        {
+            "file": "src/utils.js",
+            "line": 1,
+            "description": "Created by jpsoroulas.",
+            "class": "EventDispatcher",
+            "module": "resolvers"
+        },
+        {
+            "file": "src/utils.js",
+            "line": 52,
+            "description": "Adds a listener to the end of the listeners array for the specified event. No checks are\nmade to see if the listener has already been added.",
+            "itemtype": "method",
+            "name": "on",
+            "params": [
+                {
+                    "name": "event",
+                    "description": "the event.",
+                    "type": "String"
+                },
+                {
+                    "name": "listener",
+                    "description": "the event listener.",
+                    "type": "Function"
+                }
+            ],
+            "class": "EventDispatcher",
+            "module": "utils"
+        },
+        {
+            "file": "src/utils.js",
+            "line": 64,
+            "description": "Execute each of the listeners in order with the supplied arguments.",
+            "itemtype": "method",
+            "name": "emit",
+            "params": [
+                {
+                    "name": "event",
+                    "description": "the event.",
+                    "type": "String"
+                },
+                {
+                    "name": ", l1][, l2][, ...",
+                    "description": "the listeners.",
+                    "type": "Function",
+                    "optional": true
+                }
+            ],
+            "return": {
+                "description": "true  if event had listeners, false otherwise.",
+                "type": "Boolean"
+            },
+            "class": "EventDispatcher",
+            "module": "utils"
+        },
+        {
+            "file": "src/utils.js",
+            "line": 79,
+            "description": "Removes all listeners, or those of the specified event.",
+            "itemtype": "method",
+            "name": "removeAllListeners",
+            "params": [
+                {
+                    "name": "event",
+                    "description": "the event.",
+                    "type": "String",
+                    "optional": true
+                }
+            ],
+            "class": "EventDispatcher",
+            "module": "utils"
+        },
+        {
+            "file": "src/utils.js",
+            "line": 97,
+            "description": "creates an EventDispatcher instance.\nFor each instance a delegate emitter is created.",
+            "static": 1,
+            "itemtype": "method",
+            "name": "create",
+            "return": {
+                "description": "the EventDispatcher instance.",
+                "type": "EventDispatcher"
+            },
+            "class": "EventDispatcherFactory",
+            "module": "utils"
+        },
+        {
+            "file": "src/utils.js",
+            "line": 119,
+            "description": "An empty object (the map).",
+            "itemtype": "property",
+            "name": "elements",
+            "type": "Object",
+            "class": "Dictionary",
+            "module": "utils"
+        },
+        {
+            "file": "src/utils.js",
+            "line": 127,
+            "description": "Returns the property value with the specific key.",
+            "itemtype": "method",
+            "name": "get",
+            "params": [
+                {
+                    "name": "key",
+                    "description": "the property key.",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "the property value.",
+                "type": "Object"
+            },
+            "class": "Dictionary",
+            "module": "utils"
+        },
+        {
+            "file": "src/utils.js",
+            "line": 140,
+            "description": "Sets the property value with the specific key.",
+            "itemtype": "method",
+            "name": "set",
+            "params": [
+                {
+                    "name": "key",
+                    "description": "the property key.",
+                    "type": "String"
+                },
+                {
+                    "name": "val",
+                    "description": "the property value.",
+                    "type": "Object"
+                }
+            ],
+            "class": "Dictionary",
+            "module": "utils"
+        },
+        {
+            "file": "src/utils.js",
+            "line": 151,
+            "description": "Checks if the property of the specific key exists.",
+            "itemtype": "method",
+            "name": "contains",
+            "params": [
+                {
+                    "name": "key",
+                    "description": "the property key.",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "true if exists, otherwise false.",
+                "type": "Boolean"
+            },
+            "class": "Dictionary",
+            "module": "utils"
+        },
+        {
+            "file": "src/utils.js",
+            "line": 162,
+            "description": "Removes the property of the specific key.",
+            "itemtype": "method",
+            "name": "remove",
+            "params": [
+                {
+                    "name": "key",
+                    "description": "the property key.",
+                    "type": "String"
+                }
+            ],
+            "class": "Dictionary",
+            "module": "utils"
+        },
+        {
+            "file": "src/utils.js",
+            "line": 172,
+            "description": "Removes all properties.",
+            "itemtype": "method",
+            "name": "removeAll",
+            "class": "Dictionary",
+            "module": "utils"
+        },
+        {
+            "file": "src/utils.js",
+            "line": 183,
+            "description": "Checks if the dictionary is empty.",
+            "itemtype": "method",
+            "name": "isEmpty",
+            "return": {
+                "description": "true if is empty, otherwise false.",
+                "type": "Boolean"
+            },
+            "class": "Dictionary",
+            "module": "utils"
+        },
+        {
+            "file": "src/utils.js",
+            "line": 193,
+            "description": "foreach dictionary method implementation.",
+            "itemtype": "method",
+            "name": "foreach",
+            "params": [
+                {
+                    "name": "callback",
+                    "description": "the callback.",
+                    "type": "Function"
+                },
+                {
+                    "name": "context",
+                    "description": "the execution context.",
+                    "type": "String"
+                }
+            ],
+            "class": "Dictionary",
+            "module": "utils"
+        },
+        {
+            "file": "src/utils.js",
+            "line": 204,
+            "description": "Returns the size of the dictionary.",
+            "itemtype": "method",
+            "name": "size",
+            "return": {
+                "description": "the dictionary size.",
+                "type": "Int"
+            },
+            "class": "Dictionary",
+            "module": "utils"
+        },
+        {
+            "file": "src/utils.js",
+            "line": 214,
+            "description": "Returns the keys of the dictionary.",
+            "itemtype": "method",
+            "name": "keys",
+            "return": {
+                "description": "the dictionary keys.",
+                "type": "Array"
+            },
+            "class": "Dictionary",
+            "module": "utils"
+        },
+        {
+            "file": "src/utils.js",
+            "line": 224,
+            "description": "Returns the values of the dictionary.",
+            "itemtype": "method",
+            "name": "keys",
+            "return": {
+                "description": "the dictionary values.",
+                "type": "Array"
+            },
+            "class": "Dictionary",
+            "module": "utils"
+        },
+        {
+            "file": "src/utils.js",
+            "line": 244,
+            "description": "creates a Dictionary instance.",
+            "static": 1,
+            "itemtype": "method",
+            "name": "create",
+            "return": {
+                "description": "the Dictionary instance.",
+                "type": "Dictionary"
+            },
+            "class": "DictionaryFactory",
+            "module": "utils"
+        },
+        {
+            "file": "src/validator.js",
+            "line": 1,
+            "description": "Created by jpsoroulas.",
+            "class": "Validator",
+            "module": "utils"
+        },
+        {
+            "file": "src/validator.js",
+            "line": 94,
+            "description": "Exported module object",
+            "class": "Validator",
+            "module": "validator"
+        },
+        {
+            "file": "src/validator.js",
+            "line": 104,
+            "description": "Validates the watcher's http embedded server options.",
+            "itemtype": "method",
+            "name": "validateServer",
+            "params": [
+                {
+                    "name": "options",
+                    "description": "the server options.",
+                    "type": "Object"
+                }
+            ],
+            "class": "Validator",
+            "module": "validator"
+        },
+        {
+            "file": "src/validator.js",
+            "line": 134,
+            "description": "Validates the service communication endpoint.",
+            "itemtype": "method",
+            "name": "validateServiceEndpoint",
+            "params": [
+                {
+                    "name": "endpoint",
+                    "description": "the service communication endpoint configuration.",
+                    "type": "Object"
+                },
+                {
+                    "name": "ids",
+                    "description": "the endpoints ids.",
+                    "type": "Array"
+                },
+                {
+                    "name": "resolutionStrategies",
+                    "description": "the registered resolution strategies.",
+                    "type": "Object"
+                }
+            ],
+            "class": "Validator",
+            "module": "validator"
+        },
+        {
+            "file": "src/watcher.js",
+            "line": 1,
+            "description": "Created by jpsoroulas.",
+            "class": "Watcher",
+            "module": "validator"
+        },
+        {
+            "file": "src/watcher.js",
+            "line": 445,
+            "description": "Holds the registered endpoints.",
+            "access": "private",
+            "tagname": "",
+            "itemtype": "property",
+            "name": "_registry",
+            "type": "Object",
+            "class": "Watcher",
+            "module": "watcher"
+        },
+        {
+            "file": "src/watcher.js",
+            "line": 458,
+            "description": "Registers an endpoint.",
+            "access": "private",
+            "tagname": "",
+            "itemtype": "method",
+            "name": "_registerEndpoint",
+            "params": [
+                {
+                    "name": "endpoint",
+                    "description": "the endpoint.",
+                    "type": "Object"
+                }
+            ],
+            "class": "Watcher",
+            "module": "watcher"
+        },
+        {
+            "file": "src/watcher.js",
+            "line": 490,
+            "description": "Sends notification email if erroneous service status occurs.",
+            "access": "private",
+            "tagname": "",
+            "itemtype": "method",
+            "name": "_notify",
+            "class": "Watcher",
+            "module": "watcher"
+        },
+        {
+            "file": "src/watcher.js",
+            "line": 585,
+            "description": "Activates the system again if it is passivated.",
+            "access": "private",
+            "tagname": "",
+            "itemtype": "method",
+            "name": "_restartIfPassive",
+            "class": "Watcher",
+            "module": "watcher"
+        },
+        {
+            "file": "src/watcher.js",
+            "line": 598,
+            "description": "Stores endpoint at the persistence storage\n(at the moment, the filesystem is used).",
+            "access": "private",
+            "tagname": "",
+            "itemtype": "method",
+            "name": "_persistEndpoint",
+            "params": [
+                {
+                    "name": "endpoint",
+                    "description": "the endpoint configuration.",
+                    "type": "Object"
+                }
+            ],
+            "class": "Watcher",
+            "module": "watcher"
+        },
+        {
+            "file": "src/watcher.js",
+            "line": 626,
+            "description": "Deletes the endpoint of the specified id from the persistence storage\n(at the moment, the filesystem is used).",
+            "access": "private",
+            "tagname": "",
+            "itemtype": "method",
+            "name": "_deleteEndpoint",
+            "params": [
+                {
+                    "name": "id",
+                    "description": "the endpoint id.",
+                    "type": "String"
+                }
+            ],
+            "class": "Watcher",
+            "module": "watcher"
+        },
+        {
+            "file": "src/watcher.js",
+            "line": 647,
+            "description": "Stores endpoint info at persistence storage (currently, at the filesystem).",
+            "access": "private",
+            "tagname": "",
+            "itemtype": "method",
+            "name": "_getStoredEndpoints",
+            "return": {
+                "description": "the persistent endpoints.",
+                "type": "Array"
+            },
+            "class": "Watcher",
+            "module": "watcher"
+        },
+        {
+            "file": "src/watcher.js",
+            "line": 682,
+            "description": "Returns the endpoint with the specified id.",
+            "itemtype": "method",
+            "name": "getEndpoint",
+            "params": [
+                {
+                    "name": "id",
+                    "description": "the endpoint id.",
+                    "type": "String"
+                }
+            ],
+            "class": "Watcher",
+            "module": "watcher"
+        },
+        {
+            "file": "src/watcher.js",
+            "line": 692,
+            "description": "Returns the endpoints.",
+            "itemtype": "method",
+            "name": "getEndpoints",
+            "return": {
+                "description": "the endpoints.",
+                "type": "Array"
+            },
+            "class": "Watcher",
+            "module": "watcher"
+        },
+        {
+            "file": "src/watcher.js",
+            "line": 702,
+            "description": "Adds an endpoint with the specified configuration.\nFor the configuration see at {{#crossLinkModule \"watcher\"}}{{/crossLinkModule}}",
+            "itemtype": "method",
+            "name": "addEndpoint",
+            "params": [
+                {
+                    "name": "endpoint",
+                    "description": "the endpoint configuration (see at\n__{{#crossLink \"WatcherFactory/create:method\"}}{{/crossLink}}__).",
+                    "type": "Object"
+                },
+                {
+                    "name": "store",
+                    "description": "used to indicate whether or not to store the endpoint.",
+                    "type": "Boolean"
+                }
+            ],
+            "return": {
+                "description": "the validation errors, empty if no error exists.",
+                "type": "Array"
+            },
+            "throws": {
+                "description": "validation errors.",
+                "type": "Error"
+            },
+            "class": "Watcher",
+            "module": "watcher"
+        },
+        {
+            "file": "src/watcher.js",
+            "line": 735,
+            "description": "Removes the endpoint with the specified id.",
+            "itemtype": "method",
+            "name": "removeEndpoint",
+            "params": [
+                {
+                    "name": "id",
+                    "description": "the endpoint id.",
+                    "type": "String"
+                }
+            ],
+            "class": "Watcher",
+            "module": "watcher"
+        },
+        {
+            "file": "src/watcher.js",
+            "line": 747,
+            "description": "Activate/Deactivates the endpoint with the specified id.",
+            "itemtype": "method",
+            "name": "setEndpointActivationState",
+            "params": [
+                {
+                    "name": "id",
+                    "description": "the endpoint id.",
+                    "type": "String"
+                },
+                {
+                    "name": "active",
+                    "description": "true or false to activate or deactivate the specific endpoint respectively.",
+                    "type": "Boolean"
+                }
+            ],
+            "class": "Watcher",
+            "module": "watcher"
+        },
+        {
+            "file": "src/watcher.js",
+            "line": 771,
+            "description": "Enables/disables the notification on erroneous status for the endpoint with the specified id.",
+            "itemtype": "method",
+            "name": "notifyOnErroneousStatus",
+            "params": [
+                {
+                    "name": "id",
+                    "description": "the endpoint id.",
+                    "type": "String"
+                },
+                {
+                    "name": "notify",
+                    "description": "true or false to enable or disable the notification respectively.",
+                    "type": "Boolean"
+                }
+            ],
+            "class": "Watcher",
+            "module": "watcher"
+        },
+        {
+            "file": "src/watcher.js",
+            "line": 788,
+            "description": "Returns the registered resolution strategies.",
+            "itemtype": "method",
+            "name": "getResolutionStrategies",
+            "return": {
+                "description": "the strategies.",
+                "type": "Array"
+            },
+            "class": "Watcher",
+            "module": "watcher"
+        },
+        {
+            "file": "src/watcher.js",
+            "line": 798,
+            "description": "Setup the Watcher.",
+            "access": "private",
+            "tagname": "",
+            "itemtype": "method",
+            "name": "_setup",
+            "class": "Watcher",
+            "module": "watcher"
+        },
+        {
+            "file": "src/watcher.js",
+            "line": 864,
+            "description": "Starts the Watcher.",
+            "itemtype": "method",
+            "name": "start",
+            "class": "Watcher",
+            "module": "watcher"
+        },
+        {
+            "file": "src/watcher.js",
+            "line": 888,
+            "description": "Stops the Watcher.",
+            "itemtype": "method",
+            "name": "stop",
+            "class": "Watcher",
+            "module": "watcher"
+        },
+        {
+            "file": "src/watcher.js",
+            "line": 900,
+            "description": "Add listener specific events of the Watcher.",
+            "itemtype": "method",
+            "name": "addListener",
+            "params": [
+                {
+                    "name": "event",
+                    "description": "the event.",
+                    "type": "String"
+                },
+                {
+                    "name": "listener",
+                    "description": "the listener.",
+                    "type": "Object"
+                }
+            ],
+            "class": "Watcher",
+            "module": "watcher"
+        },
+        {
+            "file": "src/watcher.js",
+            "line": 920,
+            "description": "Creates a Watcher instance.",
+            "static": 1,
+            "itemtype": "method",
+            "name": "create",
+            "params": [
+                {
+                    "name": "options",
+                    "description": "the Watcher configuration.\nProperties in _[]_ are optional. when not set, the default values are used - those in parentheses.\n* Embedded http server configuration and service communication interval\n * [__host__] ('localhost'), the http server host name.\n * [__port__] (7777), the http server port.\n * [__interval__] (10000 ms), the service communication interval, at ms.\n * [__routeExts__], an array of user defined route extensions for building custom responses for the status requests.\n * [__resolutionStrategies__], an array of _unbound resolution strategy descriptors_.\n The descriptor is an object as follows:\n ```\n {\n     id: <the resolution strategy id>, (should be unique)\n     desc: <the resolution strategy description>\n     implementation: <the implementation of resolution strategy> (see at resolvers to see the interface)\n }\n ```\n * [__nfOpts__], the notification options. Holds the information of the sender and the email addresses\n to receive email when erroneous service status occurs. The default sender is _admin@watcherjs.com_\n (if needed, configure your email account to not filter this sender as a spam). The object structure is:\n ```\n {\n     sender: <the sender>, // default value: admin@watcherjs.com\n     recipients: [<recipient1>, <recipient1>, ...] // the array of recipients email\n }\n ```\n * [__exportDir__] (_<`project directory`>/storage/_), the storage directory of dynamically created endpoints.\n* Endpoint\n * __id__, the unique endpoint id.\n * __type__, the endpoint type.\n * [__host__] (localhost), the endpoint hostname, applied for __{{#crossLink \"SocketConnector\"}}{{/crossLink}}__.\n * [__port__] (9999), the endpoint port, applied for __{{#crossLink \"SocketConnector\"}}{{/crossLink}}__.\n * [__url__] (http://localhost:8080), the endpoint url, applied for __{{#crossLink \"HttpConnector\"}}{{/crossLink}}__.\n * [__timeout__](5000), the applied connector's connection timeout.\n * [__resolutionStrategy__] (__{{#crossLink \"OnConnectionResolution\"}}{{/crossLink}}__) the applied resolution\n strategy, either as an implementation of a resolution strategy or as a reference id of an unbound strategy.\n * [__active__] (true), whether or not the endpoint should be activated (enables or suspends\n the communication between the respective connector and the endpoint).\n * [__notify__] (false), used to indicate whether or not to receive email notifications for\n erroneous service status.\n\nMore details at __{{#crossLinkModule \"watcher\"}}{{/crossLinkModule}}__.",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "the Watcher instance.",
+                "type": "Watcher"
+            },
+            "class": "WatcherFactory",
+            "module": "watcher"
+        },
+        {
+            "file": "src/watcher.js",
+            "line": 989,
+            "description": "Exported module object",
+            "class": "WatcherFactory",
+            "module": "watcher"
+        }
+    ],
+    "warnings": [
+        {
+            "message": "Missing item type\nBootstrap.js by @fat & @mdo\nplugins: bootstrap-transition.js, bootstrap-modal.js, bootstrap-dropdown.js, bootstrap-scrollspy.js, bootstrap-tab.js, bootstrap-affix.js, bootstrap-alert.js, bootstrap-collapse.js, bootstrap-carousel.js, bootstrap-typeahead.js\nCopyright 2012 Twitter, Inc.\nhttp://www.apache.org/licenses/LICENSE-2.0.txt",
+            "line": " src/public/js/jquery-ui/bootstrap/bootstrap.min.js:1"
+        },
+        {
+            "message": "Missing item type\nCreated by jpsoroulas.",
+            "line": " src/public/js/console.js:1"
+        },
+        {
+            "message": "Missing item type\nCreated by jpsoroulas.",
+            "line": " src/routes/watcher-http.js:1"
+        },
+        {
+            "message": "Missing item type\nCreated by jpsoroulas.",
+            "line": " src/connectors.js:1"
+        },
+        {
+            "message": "Missing item type\nExported module object",
+            "line": " src/connectors.js:451"
+        },
+        {
+            "message": "Missing item type\nCreated by jpsoroulas.",
+            "line": " src/constants.js:1"
+        },
+        {
+            "message": "Missing item type\nCreated by jpsoroulas.",
+            "line": " src/http-server.js:1"
+        },
+        {
+            "message": "Missing item type\nCreated by jpsoroulas.",
+            "line": " src/logger.js:1"
+        },
+        {
+            "message": "Missing item type\nExported module object",
+            "line": " src/logger.js:29"
+        },
+        {
+            "message": "Missing item type\nCreated by jpsoroulas.",
+            "line": " src/resolvers.js:1"
+        },
+        {
+            "message": "Missing item type\nExported module object",
+            "line": " src/resolvers.js:324"
+        },
+        {
+            "message": "Missing item type\nCreated by jpsoroulas.",
+            "line": " src/utils.js:1"
+        },
+        {
+            "message": "Missing item type\nCreated by jpsoroulas.",
+            "line": " src/validator.js:1"
+        },
+        {
+            "message": "Missing item type\nExported module object",
+            "line": " src/validator.js:94"
+        },
+        {
+            "message": "Missing item type\nCreated by jpsoroulas.",
+            "line": " src/watcher.js:1"
+        },
+        {
+            "message": "Missing item type\nExported module object",
+            "line": " src/watcher.js:989"
+        }
+    ]
+}

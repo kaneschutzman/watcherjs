@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/validator.js - watcher.js</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="watcher.js" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 1.0.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/AbstractConnector.html">AbstractConnector</a></li>
+                                <li><a href="../classes/Dictionary.html">Dictionary</a></li>
+                                <li><a href="../classes/DictionaryFactory.html">DictionaryFactory</a></li>
+                                <li><a href="../classes/EventDispatcher.html">EventDispatcher</a></li>
+                                <li><a href="../classes/EventDispatcherFactory.html">EventDispatcherFactory</a></li>
+                                <li><a href="../classes/HttpConnector.html">HttpConnector</a></li>
+                                <li><a href="../classes/HttpConnectorFactory.html">HttpConnectorFactory</a></li>
+                                <li><a href="../classes/Logger.html">Logger</a></li>
+                                <li><a href="../classes/OnConnectionResolution.html">OnConnectionResolution</a></li>
+                                <li><a href="../classes/OnConnectionResolutionFactory.html">OnConnectionResolutionFactory</a></li>
+                                <li><a href="../classes/ResolutionStrategy.html">ResolutionStrategy</a></li>
+                                <li><a href="../classes/ResolutionStrategyFactory.html">ResolutionStrategyFactory</a></li>
+                                <li><a href="../classes/ResolverEvents.html">ResolverEvents</a></li>
+                                <li><a href="../classes/ServiceStatus.html">ServiceStatus</a></li>
+                                <li><a href="../classes/SocketConnector.html">SocketConnector</a></li>
+                                <li><a href="../classes/SocketConnectorFactory.html">SocketConnectorFactory</a></li>
+                                <li><a href="../classes/StatusResolver.html">StatusResolver</a></li>
+                                <li><a href="../classes/StatusResolverFactory.html">StatusResolverFactory</a></li>
+                                <li><a href="../classes/Validator.html">Validator</a></li>
+                                <li><a href="../classes/Watcher.html">Watcher</a></li>
+                                <li><a href="../classes/WatcherFactory.html">WatcherFactory</a></li>
+                                <li><a href="../classes/WatcherHttp.html">WatcherHttp</a></li>
+                            </ul>
+                
+                            <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/connectors.html">connectors</a></li>
+                                <li><a href="../modules/constants.html">constants</a></li>
+                                <li><a href="../modules/httpServer.html">httpServer</a></li>
+                                <li><a href="../modules/logger.html">logger</a></li>
+                                <li><a href="../modules/resolvers.html">resolvers</a></li>
+                                <li><a href="../modules/utils.html">utils</a></li>
+                                <li><a href="../modules/validator.html">validator</a></li>
+                                <li><a href="../modules/watcher.html">watcher</a></li>
+                                <li><a href="../modules/watcher-http.html">watcher-http</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1 class="file-heading">File: src/validator.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/**
+ * Created by jpsoroulas.
+ */
+
+/**
+ * Validates the __{{#crossLink &quot;Watcher&quot;}}{{/crossLink}}__ configuration.
+ *
+ * ###Exported objects
+ * __{{#crossLink &quot;Validator&quot;}}{{/crossLink}}__
+ *
+ * @module validator
+ */
+&#x27;use strict&#x27;;
+var _ = require(&#x27;underscore&#x27;);
+var s = require(&#x27;underscore.string&#x27;);
+var Validate = require(&#x27;validate-arguments&#x27;);
+
+var logger = require(&#x27;./logger&#x27;);
+var constants = require(&#x27;./constants&#x27;);
+var socketConnectorType = constants.connectorType.socket;
+var httpConnectorType = constants.connectorType.http;
+
+var serverValidationSpec = {
+    port: &#x27;natural&#x27;,
+    host: &#x27;string&#x27;,
+    interval: &#x27;natural&#x27;,
+    routeExts: {
+        //isa: {
+        //    route: {
+        //        isa: &#x27;function&#x27;
+        //    },
+        //    path: {
+        //        isa: &#x27;string&#x27;
+        //    }
+        //},
+        isa: &#x27;Array&#x27;,
+        optional: true
+    },
+    nfOpts: {
+        sender: {
+            isa: &#x27;string&#x27;,
+            optional: true
+        },
+        recipients: {
+            isa: &#x27;Array&#x27;,
+            optional: true
+        },
+        isa: &#x27;Object&#x27;,
+        optional: true
+    },
+    resolutionStrategies: {
+        isa: &#x27;Array&#x27;,
+        optional: true
+    }
+};
+
+var endpointValidationSpec = {
+    id: &#x27;string&#x27;,
+    type: &#x27;string&#x27;,
+    desc: {
+        isa: &#x27;string&#x27;,
+        optional: true
+    },
+    host: {
+        isa: &#x27;string&#x27;,
+        optional: true
+    },
+    port: {
+        isa: &#x27;natural&#x27;,
+        optional: true
+    },
+    url: {
+        isa: &#x27;string&#x27;,
+        optional: true
+    },
+    timeout: {
+        isa: &#x27;natural&#x27;,
+        optional: true
+    },
+    active: {
+        isa: &#x27;boolean&#x27;,
+        optional: true
+    },
+    notify: {
+        isa: &#x27;boolean&#x27;,
+        optional: true
+    },
+    resolutionStrategy: {
+        isa: &#x27;object&#x27;,
+        optional: true
+    }
+};
+
+/**
+ * Exported module object
+ */
+/**
+ * The validator
+ *
+ * @class Validator
+ * @static
+ */
+module.exports = {
+    /**
+     * Validates the watcher&#x27;s http embedded server options.
+     *
+     * @method validateServer
+     * @param {Object} options the server options.
+     */
+    validateServer: function validateServer(options) {
+        var validationErrors = [];
+        var resolutionStrategies = options.resolutionStrategies || [];
+        var ids = _.pluck(resolutionStrategies, &#x27;id&#x27;);
+        if (_.size(_.uniq(ids)) !== _.size(ids)) {
+            validationErrors.push(&#x27;duplicate resolution strategies ids&#x27;);
+        }
+        var strategyInterface = [&#x27;resolveOnConnection&#x27;, &#x27;resolveOnConversation&#x27;, &#x27;resolveNow&#x27;, &#x27;reset&#x27;];
+        _.each(resolutionStrategies, function (strategy) {
+            _.each(strategyInterface, function (fun) {
+                var impl = strategy.implementation;
+                if (!_.isFunction(impl[fun])) {
+                    validationErrors.push(&#x27;strategy, \&#x27;&#x27; + impl +
+                    &#x27;\&#x27;, function implementation missing \&#x27;&#x27; + fun + &#x27;\&#x27;&#x27;);
+                }
+            });
+        });
+        var valResult = Validate.named(options, serverValidationSpec);
+        if (!valResult.isValid()) {
+            validationErrors.push(valResult.errorString());
+        }
+        return validationErrors;
+    },
+
+    /**
+     * Validates the service communication endpoint.
+     *
+     * @method validateServiceEndpoint
+     * @param {Object} endpoint the service communication endpoint configuration.
+     * @param {Array} ids the endpoints ids.
+     * @param {Object} resolutionStrategies the registered resolution strategies.
+     */
+    validateServiceEndpoint: function validateServiceEndpoint(endpoint, ids, resolutionStrategies) {
+        var type = endpoint.type, validationErrors = [], specsValResult;
+
+        _.each(endpoint, function (val, key, obj) {
+            if (s.isBlank(val)) {
+                obj[key] = void 0;
+            }
+        });
+
+        ids.push(endpoint.id);
+        if (_.size(_.uniq(ids)) !== _.size(ids)) {
+            validationErrors.push(&#x27;duplicate endpoint ids&#x27;);
+        }
+
+        var strategy = endpoint.resolutionStrategy;
+        if (strategy &amp;&amp; !_.isFunction(strategy)) {
+            strategy = _.find(resolutionStrategies, function (entry) {
+                return strategy === entry.id;
+            });
+            if (strategy) {
+                var id = strategy.id;
+                endpoint.resolutionStrategy = strategy.implementation;
+                endpoint.resolutionStrategy.id = id;
+            } else {
+                validationErrors.push(&#x27;Unable to apply a no existing strategy \&#x27;&#x27; + strategy +
+                &#x27;\&#x27; to the endpoint \&#x27;&#x27; + endpoint.id + &#x27;\&#x27; &#x27;);
+            }
+        }
+
+        switch (type) {
+            case socketConnectorType:
+                if (!_.isUndefined(endpoint.port)) {
+                    endpoint.port = parseInt(endpoint.port);
+                }
+                specsValResult = Validate.named(endpoint, endpointValidationSpec);
+                break;
+            case httpConnectorType:
+                var url = endpoint.url;
+                if (url) {
+                    if (!(s.startsWith(url, &#x27;http&#x27;) || s.startsWith(url, &#x27;https&#x27;))) {
+                        validationErrors.push(&#x27;Only http/https protocol supported.&#x27;);
+                    }
+                }
+                specsValResult = Validate.named(endpoint, endpointValidationSpec);
+                break;
+            default:
+                validationErrors.push(&#x27;Can not prepare options for type: &#x27; + type);
+        }
+        if (!specsValResult.isValid()) {
+            validationErrors.push(specsValResult.errorString());
+        }
+        return validationErrors;
+    }
+};
+    </pre>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

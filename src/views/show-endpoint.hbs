@@ -1,0 +1,34 @@
+<!--<script id="show-endpoint" type="text/x-handlebars-template">-->
+
+    <table id="show-endpoint-table">
+        <tr>
+            <td>id</td>
+            <td>{{id}}</td>
+        </tr>
+        <tr>
+            <td>desc</td>
+            <td>{{desc}}</td>
+        </tr>
+        {{#ifEquals type 'socket'}}
+            <tr>
+                <td>host</td>
+                <td>{{host}}</td>
+            </tr>
+            <tr>
+                <td>port</td>
+                <td>{{port}}</td>
+            </tr>
+        {{/ifEquals}}
+        {{#ifEquals type 'http'}}
+            <tr>
+                <td>url</td>
+                <td>{{url}}</td>
+            </tr>
+        {{/ifEquals}}
+        <tr>
+            <td>status</td>
+            <td>{{status}}</td>
+        </tr>
+    </table>
+
+<!--</script>-->

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/utils.js - watcher.js</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="watcher.js" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 1.0.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/AbstractConnector.html">AbstractConnector</a></li>
+                                <li><a href="../classes/Dictionary.html">Dictionary</a></li>
+                                <li><a href="../classes/DictionaryFactory.html">DictionaryFactory</a></li>
+                                <li><a href="../classes/EventDispatcher.html">EventDispatcher</a></li>
+                                <li><a href="../classes/EventDispatcherFactory.html">EventDispatcherFactory</a></li>
+                                <li><a href="../classes/HttpConnector.html">HttpConnector</a></li>
+                                <li><a href="../classes/HttpConnectorFactory.html">HttpConnectorFactory</a></li>
+                                <li><a href="../classes/Logger.html">Logger</a></li>
+                                <li><a href="../classes/OnConnectionResolution.html">OnConnectionResolution</a></li>
+                                <li><a href="../classes/OnConnectionResolutionFactory.html">OnConnectionResolutionFactory</a></li>
+                                <li><a href="../classes/ResolutionStrategy.html">ResolutionStrategy</a></li>
+                                <li><a href="../classes/ResolutionStrategyFactory.html">ResolutionStrategyFactory</a></li>
+                                <li><a href="../classes/ResolverEvents.html">ResolverEvents</a></li>
+                                <li><a href="../classes/ServiceStatus.html">ServiceStatus</a></li>
+                                <li><a href="../classes/SocketConnector.html">SocketConnector</a></li>
+                                <li><a href="../classes/SocketConnectorFactory.html">SocketConnectorFactory</a></li>
+                                <li><a href="../classes/StatusResolver.html">StatusResolver</a></li>
+                                <li><a href="../classes/StatusResolverFactory.html">StatusResolverFactory</a></li>
+                                <li><a href="../classes/Validator.html">Validator</a></li>
+                                <li><a href="../classes/Watcher.html">Watcher</a></li>
+                                <li><a href="../classes/WatcherFactory.html">WatcherFactory</a></li>
+                                <li><a href="../classes/WatcherHttp.html">WatcherHttp</a></li>
+                            </ul>
+                
+                            <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/connectors.html">connectors</a></li>
+                                <li><a href="../modules/constants.html">constants</a></li>
+                                <li><a href="../modules/httpServer.html">httpServer</a></li>
+                                <li><a href="../modules/logger.html">logger</a></li>
+                                <li><a href="../modules/resolvers.html">resolvers</a></li>
+                                <li><a href="../modules/utils.html">utils</a></li>
+                                <li><a href="../modules/validator.html">validator</a></li>
+                                <li><a href="../modules/watcher.html">watcher</a></li>
+                                <li><a href="../modules/watcher-http.html">watcher-http</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1 class="file-heading">File: src/utils.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/**
+ * Created by jpsoroulas.
+ */
+
+/**
+ * ###Overview
+ * Provides the utilities.
+ * Exported objects:
+ * * __{{#crossLink &quot;EventDispatcherFactory&quot;}}{{/crossLink}}__
+ * * __{{#crossLink &quot;EventDispatcher&quot;}}{{/crossLink}}__
+ * * __{{#crossLink &quot;DictionaryFactory&quot;}}{{/crossLink}}__
+ *
+ * ###API Usage samples
+ *    &#x60;&#x60;&#x60;javascript
+ * //DictionaryFactory
+ * var dictionary = dictionaryFactory.create();
+ * var value = {};
+ * dictionary.put(&#x27;key&#x27;, value);
+ * value = dictionary.get(&#x27;key&#x27;);
+ *    &#x60;&#x60;&#x60;
+
+ *    &#x60;&#x60;&#x60;javascript
+ * //eventDispatcher
+ * var dispatcher =  eventDispatcher.create({
+ *     emitter: new events.EventEmitter()
+ * });
+ *    &#x60;&#x60;&#x60;
+ *
+ *    &#x60;&#x60;&#x60;javascript
+ * //eventDispatcherFactory
+ * var dispatcher = eventDispatcherFactory.create();
+ *    &#x60;&#x60;&#x60;
+ * @module utils
+ */
+&#x27;use strict&#x27;;
+var events = require(&#x27;events&#x27;);
+var _ = require(&#x27;underscore&#x27;);
+var stampit = require(&#x27;stampit&#x27;);
+//var fs = require(&#x27;fs&#x27;);
+//var async = require(&#x27;async&#x27;);
+
+var eventDispatcher, eventDispatcherFactory, dictionary, dictionaryFactory;
+
+/**
+ * Exposes the event emitter functionality (a delegator).
+ *
+ * @class EventDispatcher
+ */
+eventDispatcher = stampit().state({
+    emitter: void 0
+}).enclose(function () {
+    /**
+     * Adds a listener to the end of the listeners array for the specified event. No checks are
+     * made to see if the listener has already been added.
+     *
+     * @method on
+     * @param {String} event the event.
+     * @param {Function} listener the event listener.
+     */
+    this.on = function on(event, listener) {
+        this.emitter.on(event, listener);
+    };
+
+    /**
+     * Execute each of the listeners in order with the supplied arguments.
+     *
+     * @method emit
+     * @param {String} event the event.
+     * @param {Function} [, l1][, l2][, ...] the listeners.
+     * @return {boolean} true  if event had listeners, false otherwise.
+     */
+    this.emit = function emit(event) {
+        // if you do not set as context the this.emitter the apply does not work
+        return this.emitter.emit.apply(this.emitter, _.toArray(arguments));
+        // or simply call
+        //return this.emitter.emit.apply(this.emitter, arguments);
+    };
+
+    /**
+     * Removes all listeners, or those of the specified event.
+     *
+     *  @method removeAllListeners
+     *  @param {String} [event] the event.
+     */
+    this.removeAllListeners = function removeAllListeners(event) {
+        this.emitter.removeAllListeners(event);
+    };
+
+});
+
+/**
+ * EventDispatcher factory
+ * @class EventDispatcherFactory
+ * @static
+ */
+eventDispatcherFactory = {
+    /**
+     * creates an EventDispatcher instance.
+     * For each instance a delegate emitter is created.
+     * @static
+     * @method create
+     * @return {EventDispatcher} the EventDispatcher instance.
+     */
+    create: function create() {
+        return eventDispatcher.create({
+            emitter: new events.EventEmitter()
+        });
+    }
+};
+
+
+/**
+ * Provides a map collection like functionality.
+ *
+ * @class Dictionary
+ */
+dictionary = stampit()
+    .state({
+        /**
+         * An empty object (the map).
+         *
+         * @property elements
+         * @type Object
+         */
+        elements: Object.create(null)
+    }).methods({
+        /**
+         * Returns the property value with the specific key.
+         *
+         * @method get
+         * @param {String} key the property key.
+         * @return {Object} the property value.
+         */
+        get: function get(key) {
+            if (_.has(this.elements, key)) {
+                return this.elements[key].val;
+            }
+        },
+
+        /**
+         * Sets the property value with the specific key.
+         *
+         * @method set
+         * @param {String} key the property key.
+         * @param {Object} val the property value.
+         */
+        set: function set(key, val) {
+            this.elements[key] = {val: val};
+        },
+
+        /**
+         * Checks if the property of the specific key exists.
+         *
+         * @method contains
+         * @param {String} key the property key.
+         * @return {boolean} true if exists, otherwise false.
+         */
+        contains: function contains(key) {
+            return _.has(this.elements, key);
+        },
+
+        /**
+         * Removes the property of the specific key.
+         *
+         * @method remove
+         * @param {String} key the property key.
+         */
+        remove: function remove(key) {
+            delete this.elements[key];
+        },
+
+        /**
+         * Removes all properties.
+         *
+         * @method removeAll
+         */
+        removeAll: function removeAll() {
+            for (var key in this.elements) {
+                this.remove(key);
+            }
+        },
+
+        /**
+         * Checks if the dictionary is empty.
+         *
+         * @method isEmpty
+         * @return {boolean} true if is empty, otherwise false.
+         */
+        isEmpty: function isEmpty() {
+            _.isEmpty(this.elements);
+        },
+
+        /**
+         * foreach dictionary method implementation.
+         *
+         * @method foreach
+         * @param {Function} callback the callback.
+         * @param {String} context the execution context.
+         */
+        foreach: function foreach(callback, context) {
+            _.each(this.elements, callback, context);
+        },
+
+        /**
+         * Returns the size of the dictionary.
+         *
+         * @method size
+         * @return {int} the dictionary size.
+         */
+        size: function size() {
+            return _.keys(this.elements).length;
+        },
+
+        /**
+         * Returns the keys of the dictionary.
+         *
+         * @method keys
+         * @return {Array} the dictionary keys.
+         */
+        keys: function keys() {
+            return _.keys(this.elements);
+        },
+
+        /**
+         * Returns the values of the dictionary.
+         *
+         * @method keys
+         * @return {Array} the dictionary values.
+         */
+        values: function values() {
+            return _.map(_.values(this.elements), function (wrapper) {
+                return wrapper.val;
+            });
+        }
+    });
+
+/**
+ * Dictionary factory
+ * @class DictionaryFactory
+ * @static
+ * @return {Dictionary} a dictionary instance.
+ */
+dictionaryFactory = {
+    /**
+     * creates a Dictionary instance.
+     * @static
+     * @method create
+     * @return {Dictionary} the Dictionary instance.
+     */
+    create: function create() {
+        return dictionary.create({
+            elements: Object.create(null)
+        });
+    }
+};
+
+module.exports = {
+    eventDispatcher: eventDispatcher,
+    eventDispatcherFactory: eventDispatcherFactory,
+    dictionaryFactory: dictionaryFactory
+};
+
+    </pre>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

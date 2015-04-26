@@ -1,0 +1,167 @@
+.table-hover tbody tr:hover td {
+    /*background-color: #fffbe2;*/
+    background-color: snow;
+    /*background-color: #e3efef;*/
+}
+
+#endpoints-table .table-head,
+#endpoints-table tfoot {
+    /*background-color: #E0F3FF;*/
+    background-color: #e3efef;
+}
+
+#endpoints-table tfoot div {
+    font-weight: bold;
+    display: inline-block;
+    margin-right: 5%;
+}
+
+#endpoints-table tfoot div.up-stats {
+    color: green;
+}
+
+#endpoints-table tfoot div.erroneous-stats {
+    color: red;
+}
+
+#endpoints-table tfoot div.undetermined-stats {
+    color: #06b6ef;
+}
+
+body {
+    /*background-size: 100% 100%;*/
+    /*background-size:cover;*/
+    /*background-attachment: fixed;*/
+    /*margin-right: 200px;*/
+    /*background-color: #A9F5F2;*/
+    background-repeat: no-repeat;
+    background-image: url("../images/watcher.jpg");
+    background-position: center top;
+    background-size: 200px 90px;
+    /*margin: 10px;*/
+}
+
+.ui-dialog-titlebar.ui-widget-header,
+.ui-button.ui-widget {
+    color: #ffffff;
+    background: #006dcc;
+}
+
+.ui-button.ui-widget[aria-pressed='true'] {
+    color: #ffffff;
+    background: #149c82;
+}
+
+.ui-button.ui-widget[aria-pressed='false'] {
+    color: #ffffff;
+    background: #b03d7b;
+}
+
+/*#info-dialog {
+    white-space: pre;
+}*/
+
+.dialog-div {
+    display: none
+}
+
+.form-entry label {
+    /*text-align: right;*/
+    display: block;
+    width: 200px;
+    float: left;
+    padding-right: 10px;
+}
+
+.form-entry input,
+.form-entry select {
+    margin-bottom: 10px;
+}
+
+#endpoints-table-content td:first-child {
+    font-weight: bold;
+    color: blue;
+    cursor: pointer;
+}
+
+#endpoints-table-content td:nth-of-type(3),
+#endpoints-table-content td:nth-of-type(4),
+#endpoints-table-content td:nth-of-type(5),
+#endpoints-table-content td:nth-of-type(6) {
+    display: none;
+}
+
+#show-endpoint-table td:first-child {
+    font-weight: bold;
+}
+
+#show-endpoint-table td:nth-of-type(1) {
+    float: left;
+    width: 80px;
+}
+
+.hidden {
+    display: none
+}
+
+.status-up {
+    content: url("../images/good-mark.png");
+}
+
+.status-down {
+    content: url("../images/bad-mark.png");
+}
+
+.status-undetermined {
+    content: url("../images/question.png");
+}
+
+.status-unreachable {
+    content: url("../images/fall.png");
+}
+
+#endpoints-table td > div {
+    display: inline-block;
+}
+
+.action-deactivate-endpoint {
+    cursor: pointer;
+    content: url("../images/eye-clr.png");
+}
+
+.action-activate-endpoint {
+    cursor: pointer;
+    content: url("../images/eye-bw.png");
+}
+
+.action-deactivate-notification {
+    cursor: pointer;
+    content: url("../images/email-go.png");
+}
+
+.action-activate-notification {
+    cursor: pointer;
+    content: url("../images/email.png");
+}
+
+.undetermined-endpoint {
+    /*background-color: #fffeb3;*/
+    background-color: #b6ddef;
+}
+
+.inactive-endpoint {
+    background-color: #e3dfff;
+}
+
+.erroneous-endpoint {
+    background-color: #ffc7ca;
+}
+
+.healthy-endpoint {
+    background-color: #d4ffda;
+}
+
+.action-delete {
+    cursor: pointer;
+    content: url("../images/delete.png");
+}

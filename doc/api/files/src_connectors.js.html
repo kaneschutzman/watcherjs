@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/connectors.js - watcher.js</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="watcher.js" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 1.0.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/AbstractConnector.html">AbstractConnector</a></li>
+                                <li><a href="../classes/Dictionary.html">Dictionary</a></li>
+                                <li><a href="../classes/DictionaryFactory.html">DictionaryFactory</a></li>
+                                <li><a href="../classes/EventDispatcher.html">EventDispatcher</a></li>
+                                <li><a href="../classes/EventDispatcherFactory.html">EventDispatcherFactory</a></li>
+                                <li><a href="../classes/HttpConnector.html">HttpConnector</a></li>
+                                <li><a href="../classes/HttpConnectorFactory.html">HttpConnectorFactory</a></li>
+                                <li><a href="../classes/Logger.html">Logger</a></li>
+                                <li><a href="../classes/OnConnectionResolution.html">OnConnectionResolution</a></li>
+                                <li><a href="../classes/OnConnectionResolutionFactory.html">OnConnectionResolutionFactory</a></li>
+                                <li><a href="../classes/ResolutionStrategy.html">ResolutionStrategy</a></li>
+                                <li><a href="../classes/ResolutionStrategyFactory.html">ResolutionStrategyFactory</a></li>
+                                <li><a href="../classes/ResolverEvents.html">ResolverEvents</a></li>
+                                <li><a href="../classes/ServiceStatus.html">ServiceStatus</a></li>
+                                <li><a href="../classes/SocketConnector.html">SocketConnector</a></li>
+                                <li><a href="../classes/SocketConnectorFactory.html">SocketConnectorFactory</a></li>
+                                <li><a href="../classes/StatusResolver.html">StatusResolver</a></li>
+                                <li><a href="../classes/StatusResolverFactory.html">StatusResolverFactory</a></li>
+                                <li><a href="../classes/Validator.html">Validator</a></li>
+                                <li><a href="../classes/Watcher.html">Watcher</a></li>
+                                <li><a href="../classes/WatcherFactory.html">WatcherFactory</a></li>
+                                <li><a href="../classes/WatcherHttp.html">WatcherHttp</a></li>
+                            </ul>
+                
+                            <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/connectors.html">connectors</a></li>
+                                <li><a href="../modules/constants.html">constants</a></li>
+                                <li><a href="../modules/httpServer.html">httpServer</a></li>
+                                <li><a href="../modules/logger.html">logger</a></li>
+                                <li><a href="../modules/resolvers.html">resolvers</a></li>
+                                <li><a href="../modules/utils.html">utils</a></li>
+                                <li><a href="../modules/validator.html">validator</a></li>
+                                <li><a href="../modules/watcher.html">watcher</a></li>
+                                <li><a href="../modules/watcher-http.html">watcher-http</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1 class="file-heading">File: src/connectors.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/**
+ * Created by jpsoroulas.
+ */
+/**
+ * ###Overview
+ * Provides the connectors. A connector is responsible for connecting, communicating
+ * and determining the service status using the __{{#crossLink &quot;StatusResolver&quot;}}{{/crossLink}}__
+ * along with the appropriate __{{#crossLink &quot;ResolutionStrategy&quot;}}{{/crossLink}}__.
+ * Each connector handles a specific type of communication type with an _endpoint_. Specifically, the
+ * __{{#crossLink &quot;SocketConnector&quot;}}{{/crossLink}}__ enables communication via raw socket
+ * (the data is transmitted as utf-8 encoded string) whereas the
+ * __{{#crossLink &quot;HttpConnector&quot;}}{{/crossLink}}__ enables communication via http(s) protocol.
+ * An endpoint is actually an access point to the service. A service could have
+ * many access points, each of them is handled by one connector.
+ * Although the service status resolution is performed by the underline
+ * __{{#crossLink &quot;ResolutionStrategy&quot;}}{{/crossLink}}__, as mentioned above, there are cases where
+ * it is the connector itself that makes this decision. These cases can be summarized as follows:
+ *
+ * For the __{{#crossLink &quot;HttpConnector&quot;}}{{/crossLink}}__
+ *
+ * Http response status code   |status
+ * :---------------------------|:-----------
+ * 404                         |__{{#crossLink &quot;ServiceStatus/down:property&quot;}}{{/crossLink}}__
+ * 500                         |__{{#crossLink &quot;ServiceStatus/down:property&quot;}}{{/crossLink}}__
+ * 302                         |__{{#crossLink &quot;ServiceStatus/undetermined:property&quot;}}{{/crossLink}}__
+ * 4xx (except of 404)         |__{{#crossLink &quot;ServiceStatus/undetermined:property&quot;}}{{/crossLink}}__
+ * 5xx (except of 500)         |__{{#crossLink &quot;ServiceStatus/undetermined:property&quot;}}{{/crossLink}}__
+ *
+ *
+ * connection events|error|status
+ * :----------------|:----|------
+ * __on error__|e.g. ECONNREFUSED, ENOTFOUND|__{{#crossLink &quot;ServiceStatus/unreachable:property&quot;}}{{/crossLink}}__
+ * __on timeout__|no response is taken for specific period of time|__{{#crossLink &quot;ServiceStatus/unreachable:property&quot;}}{{/crossLink}}__ (if resolver&#x27;s last attempt to determine the status fails)
+ *
+ * For the __{{#crossLink &quot;SocketConnector&quot;}}{{/crossLink}}__
+ *
+ * connection events|error|status
+ * :----------------|:----|------
+ * __on error__|e.g. EHOSTUNREACH, ENOTFOUND|__{{#crossLink &quot;ServiceStatus/unreachable:property&quot;}}{{/crossLink}}__
+ * __on timeout__|no response is taken for specific period of time|__{{#crossLink &quot;ServiceStatus/unreachable:property&quot;}}{{/crossLink}}__ (if resolver&#x27;s last attempt to determine the status fails)
+ * __on end event__|remote host closes the connection|__{{#crossLink &quot;ServiceStatus/undetermined:property&quot;}}{{/crossLink}}__ (if resolver&#x27;s last attempt to determine the status fails)
+ *
+ * ###Configuration
+ * The connector&#x27;s configuration is described below (note that properties in _[]_ are optional. when not set,
+ * the default values are used - those in parentheses.):
+ *
+ *
+ * * For the __{{#crossLink &quot;SocketConnector&quot;}}{{/crossLink}}__
+ *  * [__port__] (9999), the service socket connection port.
+ *  * [__host__] (&#x27;localhost&#x27;), the service host.
+ *  * [__timeout__] (5000), the socket timeout, at ms.
+ *  * [__resolutionStrategy__] (__{{#crossLink &quot;OnConnectionResolution&quot;}}{{/crossLink}}__),
+ *  the applied resolution strategy.
+ *
+ *
+ * * For the __{{#crossLink &quot;HttpConnector&quot;}}{{/crossLink}}__
+ *  * [__url__] (http://localhost:8080), the service endpoint url.
+ *  * [__timeout__] (5000 ms), the http(s) request timeout, at ms.
+ *  * [__resolutionStrategy__] (__{{#crossLink &quot;ResolutionStrategy&quot;}}{{/crossLink}}__),
+ *  the applied resolution strategy.
+ *
+ * ###Exported objects
+ * * __{{#crossLink &quot;SocketConnectorFactory&quot;}}{{/crossLink}}__
+ * * __{{#crossLink &quot;HttpConnectorFactory&quot;}}{{/crossLink}}__
+ *
+ * ###API Usage samples
+ *    &#x60;&#x60;&#x60;javascript
+ * // socketConnectorFactory
+ * var connectors = require(&#x27;connectors&#x27;);
+ * var socketConnectorFactory = connectors.socketConnectorFactory;
+ * var aResolutionStrategy = ...; //custom resolution strategy
+ * var connector = socketConnectorFactory.create({
+ *       host: &#x27;11.222.333.444&#x27;,
+ *       port: 55555,
+ *       timeout: 2000,
+ *       // if the property is not set, the default onConnectionResolution strategy is used.
+ *       resolutionStrategy: aResolutionStrategy
+ *   });
+ * connector.addStatusResolvedListener(function onResolve(status) {
+ *        logger.debug(&#x27;Resolution callback is called&#x27;);
+ *  });
+ * connector.start();
+ *    &#x60;&#x60;&#x60;
+ *
+ *    &#x60;&#x60;&#x60;javascript
+ * // httpConnectorFactory
+ * var connectors = require(&#x27;connectors&#x27;).connectors;
+ * var httpConnectorFactory = connectors.httpConnectorFactory;
+ * var connector = httpConnectorFactory.create(({
+ *      url: &#x27;http://11.222.333.444:8080/&#x27;,
+ *      timeout: 3000
+ * }));
+ * connector.start();
+ *    &#x60;&#x60;&#x60;
+ *
+ * @module connectors
+ */
+&#x27;use strict&#x27;;
+//added to ignore invalid and self-signed ssl certificate in https request
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = &#x27;0&#x27;;
+var net = require(&#x27;net&#x27;);
+var http = require(&#x27;http&#x27;);
+var https = require(&#x27;https&#x27;);
+var events = require(&#x27;events&#x27;);
+var _ = require(&#x27;underscore&#x27;);
+var s = require(&#x27;underscore.string&#x27;);
+var stampit = require(&#x27;stampit&#x27;);
+
+var resolvers = require(&#x27;./resolvers&#x27;);
+var constants = require(&#x27;./constants&#x27;);
+var logger = require(&#x27;./logger&#x27;);
+var utils = require(&#x27;./utils&#x27;);
+
+var eventDispatcher = utils.eventDispatcher;
+var onConnectionResolutionFactory = resolvers.onConnectionResolutionFactory;
+var statusResolverFactory = resolvers.statusResolverFactory;
+var down = constants.serviceStatus.down;
+var unreachable = constants.serviceStatus.unreachable;
+var undetermined = constants.serviceStatus.undetermined;
+var resolvedEv = constants.resolverEvents.resolved;
+var errorEv = constants.streamEvents.error;
+var dataEv = constants.streamEvents.data;
+var endEv = constants.streamEvents.end;
+var closeEv = constants.streamEvents.close;
+
+var abstractConnector, socketConnector, socketConnectorFactory, httpConnector, httpConnectorFactory;
+
+/**
+ * This class implements some common functionality for all connectors.
+ *
+ * @extends EventDispatcher
+ * @class AbstractConnector
+ */
+abstractConnector = stampit.compose(eventDispatcher, stampit().state({
+    options: void 0,
+    resolver: void 0,
+    emitter: void 0
+}).enclose(function () {
+    // add a listener that stops this connector when the status is resolved
+    var _self = this;
+    _self.addStatusResolvedListener(function (listener, status) {
+        _self.stop();
+    });
+}).methods({
+    /**
+     * Registers the specified listener to receive the
+     * __{{#crossLink &quot;ResolverEvents/resolved:property&quot;}}{{/crossLink}}__ event.
+     *
+     * @method addStatusResolvedListener
+     * @param {Function} listener the listener.
+     */
+    addStatusResolvedListener: function addStatusResolvedListener(listener) {
+        this.resolver.on(resolvedEv, listener);
+    },
+
+    /**
+     * Removes the registered listeners for
+     * __{{#crossLink &quot;ResolverEvents/resolved:property&quot;}}{{/crossLink}}__ event.
+     *
+     * @method removeStatusResolvedListeners
+     */
+    removeStatusResolvedListeners: function removeStatusResolvedListeners() {
+        this.resolver.removeAllListeners(resolvedEv);
+    },
+
+    /**
+     * Resets the connector state.
+     *
+     * @private
+     * @method _reset
+     */
+    _reset: function _reset() {
+        this.resolver.reset();
+    },
+
+    /**
+     * Starts the connector.
+     * This method should be implemented by the subclasses.
+     *
+     * @method start
+     */
+    start: function start() {
+        throw &#x27;abstractServiceHandler, start method: implementation needed&#x27;;
+    },
+
+    /**
+     * Stops the connector.
+     * This method should be implemented by the subclasses.
+     *
+     * @method stop
+     */
+    stop: function stop() {
+        throw &#x27;abstractServiceHandler, stop method: implementation needed&#x27;;
+    }
+}));
+
+
+/**
+ * This connector is used to enable communication with the service via raw socket.
+ * Note that the data is transmitted as string utf-8 encoded.
+ *
+ * @extends AbstractConnector
+ * @class SocketConnector
+ */
+socketConnector = stampit.compose(abstractConnector, stampit().methods({
+    /**
+     * Starts the connector.
+     *
+     * @method start
+     */
+    start: function start() {
+        var options = this.options, _established = false;
+        var resolver = this.resolver;
+        // Reset the state
+        this._reset();
+
+        var client = this.client = net.connect(options, function () {
+            _established = true;
+            logger.debug(&#x27;Connection established for host: &#x27; + options.host + &#x27; at port: &#x27; + options.port);
+            resolver.consumeAndResolve(client);
+        });
+
+        /* Data, in Node.js, is transmitted as a buffer or a string. It is emitted as a buffer by default,
+         but if you set the socket.setEncoding() function, you will see that the data are
+         transmitted as a string. We could also sent data via the Socket.write() method,
+         which defaults to sending the data with UTF-8 encoding. */
+        client.setEncoding(&#x27;utf8&#x27;);
+
+        // Listener on data received
+        client.on(dataEv, function (chunk) {
+            // Collect the data and try to resolve
+            resolver.consumeAndResolve(client, chunk);
+        });
+
+        // Listener on error
+        client.on(errorEv, function (err) {
+            // This means that the service is unreachable
+            // possible errors: EHOSTUNREACH, ENOTFOUND
+            logger.error(&#x27;Connection Error: &#x27; + err.message);
+            resolver.resolved(unreachable);
+        });
+
+        /* This version of setTimeout() takes a timeout in milliseconds as its first argument.
+         If the socket is idle for this amount of time, a timeout event is emitted. A one-time timeout event
+         handler can optionally be passed as the second argument to setTimeout(). A timeout event does not
+         close the socket; you are responsible for closing it using end() or destroy().*/
+        client.setTimeout(options.timeout, function () {
+            /* This means that the service may be reachable, but no response is taken
+             for the specific period of time */
+            logger.warn(&#x27;Timeout elapsed: &#x27; + options.timeout + &#x27;, closing the connection...&#x27;);
+            if (_established) {
+                resolver.resolved();
+            } else {
+                resolver.resolved(unreachable);
+            }
+            // The end() method invocation does not close the connection
+            //client.destroy(); this method is now called by the resolved callback proxy
+        });
+
+        /* When the remote host calls end() or destroy(), the local side emits an end event. If the socket was
+         created with the allowHalfOpen option set to false (the default), the local side writes out any pending
+         data and closes its side of the connection as well. However, if allowHalfOpen is true, the local
+         side must explicitly call end() or destroy(). */
+        client.on(endEv, function () {
+            logger.info(&#x27;The remote host has closed the connection.&#x27;);
+            // a socket is closed using the end() method.
+            // Not need if allowHalfOpen option is to false (the default value)
+            resolver.resolved();
+            client.end(); // not needed in this case
+        });
+
+        /* Once both sides of the connection are closed, a close event is emitted. If a close event handler
+         is present, it accepts a single Boolean argument, which is true if the socket had any transmission errors,
+         or false otherwise.*/
+        client.on(closeEv, function (error) {
+            //the error is true when the port is closed
+            //the error is false when the host is unreachable
+            logger.debug(&#x27;Connection is closed.&#x27;);
+        });
+    },
+
+    /**
+     * Stops the connector.
+     *
+     * @method stop
+     */
+    stop: function stop() {
+        logger.debug(&#x27;Stopping handler...&#x27;);
+        this.client.destroy();
+    }
+}));
+
+/**
+ * SocketConnector factory.
+ * @class SocketConnectorFactory
+ * @static
+ */
+socketConnectorFactory = {
+    /**
+     * Creates a SocketConnector instance.
+     * @static
+     * @method create
+     * @param {Object} options the SocketConnector configuration.
+     * The configuration properties are (the parenthesis contains the default values):
+     * * __port__ (9999), the service socket connection port
+     * * __host__ (&#x27;localhost&#x27;), the service host
+     * * __timeout__ (5000), the socket timeout, at ms
+     * * __resolutionStrategy__ (__{{#crossLink &quot;OnConnectionResolution&quot;}}{{/crossLink}}__), the applied resolution strategy
+     * @return {SocketConnector} the SocketConnector instance.
+     */
+    create: function create(options) {
+        var _options = {
+            port: 9999,
+            host: &#x27;localhost&#x27;,
+            timeout: 5000,
+            resolutionStrategy: onConnectionResolutionFactory.create()
+        };
+        options = options || {};
+        _.defaults(options, _options);
+        var resolver = statusResolverFactory.create(options.resolutionStrategy);
+        return socketConnector.create({
+            // do not forget to create a new event emitter, stampit makes a shallow copy of state
+            emitter: new events.EventEmitter(),
+            options: options,
+            resolver: resolver
+        });
+    }
+};
+
+/**
+ * This connector is used to enable communication with the service via http(s) protocol.
+ * @extends AbstractConnector
+ * @class HttpConnector
+ */
+httpConnector = stampit.compose(abstractConnector, stampit().methods({
+    /**
+     * Starts the connector.
+     *
+     * @method start
+     */
+    start: function start() {
+        var options = this.options, _established = false,
+            failedStatusCode = [404, 500], redirectStatus = 302;
+
+        var resolver = this.resolver;
+        var url = options.url;
+        // Find the protocol
+        var protocol = http;
+        if (&#x27;https&#x27; === url.split(&#x27;:&#x27;)[0]) {
+            protocol = https;
+        }
+        // Reset the state
+        this._reset();
+
+        var request = this.request = protocol.get(url, function (response) {
+            response.setEncoding(&#x27;utf8&#x27;);
+            var statusCode = response.statusCode;
+            logger.debug(&#x27;Receiving response from: &#x27; + url + &#x27; with http status code: &#x27; + statusCode);
+
+            // Check the http status code and resolved the service status if possible
+            if (_.contains(failedStatusCode, statusCode)) {
+                resolver.resolved(down);
+            } else if (s.startsWith(statusCode, &#x27;4&#x27;) || s.startsWith(statusCode, &#x27;5&#x27;) ||
+                redirectStatus === statusCode) {
+                resolver.resolved(undetermined);
+            }
+
+            // listener on data received
+            response.on(dataEv, function (chunk) {
+                logger.debug(&#x27;Receiving data from: &#x27; + url);
+                _established = true;
+                resolver.consumeAndResolve(request, chunk);
+            });
+
+            // listener on response completed
+            response.on(endEv, function () {
+                logger.debug(&#x27;Connection is closed.&#x27;);
+                resolver.resolved();
+            });
+        });
+
+        // listener on http request timeout
+        request.setTimeout(options.timeout, function () {
+            /* This means that the service may be reachable, but no response is taken
+             for the specific period of time */
+            logger.warn(&#x27;Timeout elapsed: &#x27; + options.timeout + &#x27;, aborting request...&#x27;);
+            if (_established) {
+                resolver.resolved();
+            } else {
+                resolver.resolved(unreachable);
+            }
+        });
+
+        request.on(errorEv, function (err) {
+            // possible errors: ECONNREFUSED, ENOTFOUND
+            logger.error(&#x27;Connection error: &#x27; + err.message);
+            resolver.resolved(unreachable);
+        });
+    },
+
+    /**
+     * Stops the connector.
+     *
+     * @method stop
+     */
+    stop: function stop() {
+        logger.debug(&#x27;Stopping handler...&#x27;);
+        this.request.abort();
+    }
+}));
+
+
+/**
+ * HttpConnector factory.
+ * @class HttpConnectorFactory
+ * @static
+ */
+httpConnectorFactory = {
+    /**
+     * Creates a HttpConnector instance.
+     * @static
+     * @method create
+     * @param {Object} options the HttpConnector configuration.
+     * The configuration properties are (note that properties in _[]_ are optional. when not set, the default values
+     * are used - those in parentheses.):
+     * * [__url__] (http://localhost:8080), the service endpoint url.
+     * * [__timeout__] (5000 ms), the http(s) request timeout, at ms.
+     * * [__resolutionStrategy__] (__{{#crossLink &quot;ResolutionStrategy&quot;}}{{/crossLink}}__),
+     * the applied resolution strategy.
+     * @return {HttpConnector} the HttpConnector instance.
+     */
+    create: function create(options) {
+        var _options = {
+            url: &#x27;http://localhost:8080&#x27;,
+            timeout: 5000,
+            resolutionStrategy: void 0
+        };
+        options = options || {};
+        _.defaults(options, _options);
+        var resolver = statusResolverFactory.create(options.resolutionStrategy);
+        return httpConnector.create({
+            // do not forget to create a new event emitter, stampit makes a shallow copy of state
+            emitter: new events.EventEmitter(),
+            options: options,
+            resolver: resolver
+        });
+    }
+};
+
+
+/**
+ * Exported module object
+ */
+module.exports = {
+    socketConnectorFactory: socketConnectorFactory,
+    httpConnectorFactory: httpConnectorFactory
+};
+    </pre>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

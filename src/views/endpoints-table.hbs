@@ -1,0 +1,84 @@
+<!--<script id="endpoints-table" type="text/x-handlebars-template">-->
+
+    <table class="table table-hover">
+        <thead>
+            <tr class="table-head">
+                <th>Id</th>
+                <th>Description</th>
+                <th>Timestamp</th>
+                <th>Duration</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="endpoints-table-content">
+            {{#each endpoints}}
+            <tr>
+                <td title="Show info">{{id}}</td>
+                <td>{{desc}}</td>
+                <td>{{type}}</td>
+                <td>{{host}}</td>
+                <td>{{port}}</td>
+                <td>{{url}}</td>
+                <td>{{timestamp}}</td>
+                <td>{{since}}</td>
+
+                {{#ifEquals status 'up'}}
+                    <td title="Up"><img class="status-up"></td>
+                {{/ifEquals}}
+
+                {{#ifEquals status 'down'}}
+                    <td title="Down"><img class="status-down"></td>
+                {{/ifEquals}}
+
+                {{#ifEquals status 'undetermined'}}
+                    <td title="Undetermined"><img class="status-undetermined"></td>
+                {{/ifEquals}}
+
+                {{#ifEquals status 'unreachable'}}
+                    <td title="Unreachable"><img class="status-unreachable"></td>
+                {{/ifEquals}}
+
+                <td>
+                    {{#ifEquals active true}}
+                        <div title="Deactivate endpoint" style="display: inline-block;">
+                            <img class="action-deactivate-endpoint">
+                        </div>
+                    {{/ifEquals}}
+                    {{#ifEquals active false}}
+                        <div title="Activate endpoint">
+                            <img class="action-activate-endpoint">
+                        </div>
+                    {{/ifEquals}}
+                    {{#ifEquals notify true}}
+                    <div title="Disable notification">
+                        <img class="action-deactivate-notification">
+                    </div>
+                    {{/ifEquals}}
+                    {{#ifEquals notify false}}
+                    <div title="Enable notification">
+                        <img class="action-activate-notification">
+                    </div>
+                    {{/ifEquals}}
+                    <div title="Delete endpoint">
+                        <img class="action-delete">
+                    </div>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="6">
+                    <div>Total endpoints: {{total}}</div>
+                    <div class="up-stats">up: {{statusUp}}</div>
+                    <div class="erroneous-stats">erroneous: {{statusErr}}</div>
+                    <div class="undetermined-stats">undetermined: {{statusUndet}}</div>
+                    <div class="up-stats">Up ratio: {{upRatio}}%</div>
+                    <div class="erroneous-stats">Erroneous ratio: {{errRatio}}%</div>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+
+<!--</script>-->

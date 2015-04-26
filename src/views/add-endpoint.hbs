@@ -1,0 +1,52 @@
+<!--<script id="add-endpoint" type="text/x-handlebars-template"> -->
+
+    <form id="add-endpoint-form" method="post">
+        <div class="form-entry">
+            <label for="endpoint-id">id: *</label>
+            <input id="endpoint-id" value="{{id}}" name="endpoint-id" type="text" required>
+        </div>
+        <div class="form-entry">
+            <label for="desc">desc:</label>
+            <input id="desc" value="{{desc}}" name="desc" type="text">
+        </div>
+        <div class="form-entry">
+            <label for="endpoint-type">endpoint type: *</label>
+            <select id="endpoint-type" name="endpoint-type">
+                <option selected="selected">socket</option>
+                <option>http</option>
+            </select>
+        </div>
+        <div class="form-entry socket-enabled">
+            <label for="host">host:</label>
+            <input id="host" value="{{host}}" name="host" type="text">
+        </div>
+        <div class="form-entry socket-enabled">
+            <label for="port">port:</label>
+            <input id="port" value="{{port}}" name="port" type="text">
+        </div>
+        <div class="form-entry http-enabled">
+            <label for="url">url:</label>
+            <input id="url" value="{{url}}" name="url" type="text">
+        </div>
+
+        <div class="form-entry">
+            <label for="resolution-strategy">Resolution strategy:</label>
+            <select id="resolution-strategy" name="resolution-strategy">
+                <option selected="selected"></option>
+                {{#each strategies}}
+                    <option>{{this}}</option>
+                {{/each}}
+            </select>
+        </div>
+
+        <div class="form-entry">
+            <input id="endpoint-state" type="checkbox"/>
+            <label id="endpoint-state-label" for="endpoint-state">Inactive</label>
+        </div>
+        <div class="form-entry">
+            <input id="notification" type="checkbox"/>
+            <label id="notification-label" for="notification">Notification disabled</label>
+        </div>
+    </form>
+
+<!--</script> -->
