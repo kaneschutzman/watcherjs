@@ -110,7 +110,7 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/src_watcher.js.html#l914"><code>src&#x2F;watcher.js:914</code></a>
+            Defined in: <a href="../files/src_watcher.js.html#l924"><code>src&#x2F;watcher.js:924</code></a>
         </div>
 
 </div>
@@ -320,10 +320,10 @@ monitored service.</p>
 </ul>
 <h3 id="api-usage-samples">API Usage samples</h3>
 <p><strong>Service with route extension and resolution strategy registration</strong></p>
-<pre class="code prettyprint"><code class="lang-javascript">// Here is the configuration of two endpoints. The one is accessed via a socket and refers to the service
-// &#39;service-1&#39; hosted at &#39;11.222.333.444&#39;, whereas the other is accessed via http and refers to the service
-// &#39;service-2&#39; that is hosted at &#39;11.222.333.555&#39; (note that we use the notation _service_ since the _endpoint_
-// and the _service_ is the same component).
+<pre class="code prettyprint"><code class="lang-javascript">// Here is the configuration of three endpoints. Two of them are accessed via sockets and refer to the services
+// &#39;service-1&#39; and &#39;service-2&#39; hosted at &#39;11.222.333.444&#39; and &#39;11.222.333.555&#39; respectively, whereas the other is
+// accessed via http and refers to the service &#39;service-3&#39; that is also hosted at &#39;11.222.333.555&#39; (note that we use
+// the notation _service_ since the _endpoint_ and the _service_ is the same component).
 // Fix the module paths
 var watcher = require(&#39;watcher&#39;);
 var constants = require(&#39;constants&#39;);
@@ -390,12 +390,21 @@ var options = {
          {
              id: &#39;service-2&#39;,
              desc: &#39;service 2&#39;,
+             type: &#39;socket&#39;,
+             host: &#39;11.222.333.555&#39;,
+             port: 1234,
+             // Apply the unbound resolution strategy with id &#39;on-connection&#39;
+             resolutionStrategy: &#39;on-connection&#39;,
+             active: true,
+             notify: true
+         },
+         {
+             id: &#39;service-3&#39;,
+             desc: &#39;service 3&#39;,
              type: &#39;http&#39;,
              timeout: 3000,
              // The query string could be anything
              url: &#39;http://11.222.333.555:3333/?get-status&#39;,
-             // Apply the unbound resolution strategy with id &#39;on-connection&#39;
-             resolutionStrategy: &#39;on-connection&#39;,
              active: true,
              notify: true
          }
@@ -404,9 +413,10 @@ var options = {
 watcherFactory.create(options).start();
 
 After starting the watcher the following status requests could be made in order to
-retrieve the status for the services with id &#39;service-1&#39; and &#39;service-2&#39; respectively
+retrieve the status for the services with id &#39;service-1&#39;, &#39;service-2&#39; and &#39;service-3&#39; respectively
 http://localhost:7777/endpoint/service-1
 http://localhost:7777/endpoint/service-2
+http://localhost:7777/endpoint/service-3
 Whereas the request http://localhost:7777/custom-route?id=service-1
 is the user defined route which returns: &#39;Service status: &lt;status&gt;&#39; where status
 the status of the &#39;service-1&#39;.

@@ -302,10 +302,10 @@
  * ###API Usage samples
  * __Service with route extension and resolution strategy registration__
  *    &#x60;&#x60;&#x60;javascript
- * // Here is the configuration of two endpoints. The one is accessed via a socket and refers to the service
- * // &#x27;service-1&#x27; hosted at &#x27;11.222.333.444&#x27;, whereas the other is accessed via http and refers to the service
- * // &#x27;service-2&#x27; that is hosted at &#x27;11.222.333.555&#x27; (note that we use the notation _service_ since the _endpoint_
- * // and the _service_ is the same component).
+ * // Here is the configuration of three endpoints. Two of them are accessed via sockets and refer to the services
+ * // &#x27;service-1&#x27; and &#x27;service-2&#x27; hosted at &#x27;11.222.333.444&#x27; and &#x27;11.222.333.555&#x27; respectively, whereas the other is
+ * // accessed via http and refers to the service &#x27;service-3&#x27; that is also hosted at &#x27;11.222.333.555&#x27; (note that we use
+ * // the notation _service_ since the _endpoint_ and the _service_ is the same component).
  * // Fix the module paths
  * var watcher = require(&#x27;watcher&#x27;);
  * var constants = require(&#x27;constants&#x27;);
@@ -372,12 +372,21 @@
  *          {
  *              id: &#x27;service-2&#x27;,
  *              desc: &#x27;service 2&#x27;,
+ *              type: &#x27;socket&#x27;,
+ *              host: &#x27;11.222.333.555&#x27;,
+ *              port: 1234,
+ *              // Apply the unbound resolution strategy with id &#x27;on-connection&#x27;
+ *              resolutionStrategy: &#x27;on-connection&#x27;,
+ *              active: true,
+ *              notify: true
+ *          },
+ *          {
+ *              id: &#x27;service-3&#x27;,
+ *              desc: &#x27;service 3&#x27;,
  *              type: &#x27;http&#x27;,
  *              timeout: 3000,
  *              // The query string could be anything
  *              url: &#x27;http://11.222.333.555:3333/?get-status&#x27;,
- *              // Apply the unbound resolution strategy with id &#x27;on-connection&#x27;
- *              resolutionStrategy: &#x27;on-connection&#x27;,
  *              active: true,
  *              notify: true
  *          }
@@ -386,9 +395,10 @@
  * watcherFactory.create(options).start();
  *
  * After starting the watcher the following status requests could be made in order to
- * retrieve the status for the services with id &#x27;service-1&#x27; and &#x27;service-2&#x27; respectively
+ * retrieve the status for the services with id &#x27;service-1&#x27;, &#x27;service-2&#x27; and &#x27;service-3&#x27; respectively
  * http://localhost:7777/endpoint/service-1
  * http://localhost:7777/endpoint/service-2
+ * http://localhost:7777/endpoint/service-3
  * Whereas the request http://localhost:7777/custom-route?id=service-1
  * is the user defined route which returns: &#x27;Service status: &lt;status&gt;&#x27; where status
  * the status of the &#x27;service-1&#x27;.

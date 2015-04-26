@@ -191,10 +191,10 @@
  * ###API Usage samples
  * __Service with route extension and resolution strategy registration__
  *    ```javascript
- * // Here is the configuration of two endpoints. The one is accessed via a socket and refers to the service
- * // 'service-1' hosted at '11.222.333.444', whereas the other is accessed via http and refers to the service
- * // 'service-2' that is hosted at '11.222.333.555' (note that we use the notation _service_ since the _endpoint_
- * // and the _service_ is the same component).
+ * // Here is the configuration of three endpoints. Two of them are accessed via sockets and refer to the services
+ * // 'service-1' and 'service-2' hosted at '11.222.333.444' and '11.222.333.555' respectively, whereas the other is
+ * // accessed via http and refers to the service 'service-3' that is also hosted at '11.222.333.555' (note that we use
+ * // the notation _service_ since the _endpoint_ and the _service_ is the same component).
  * // Fix the module paths
  * var watcher = require('watcher');
  * var constants = require('constants');
@@ -261,12 +261,21 @@
  *          {
  *              id: 'service-2',
  *              desc: 'service 2',
+ *              type: 'socket',
+ *              host: '11.222.333.555',
+ *              port: 1234,
+ *              // Apply the unbound resolution strategy with id 'on-connection'
+ *              resolutionStrategy: 'on-connection',
+ *              active: true,
+ *              notify: true
+ *          },
+ *          {
+ *              id: 'service-3',
+ *              desc: 'service 3',
  *              type: 'http',
  *              timeout: 3000,
  *              // The query string could be anything
  *              url: 'http://11.222.333.555:3333/?get-status',
- *              // Apply the unbound resolution strategy with id 'on-connection'
- *              resolutionStrategy: 'on-connection',
  *              active: true,
  *              notify: true
  *          }
@@ -275,9 +284,10 @@
  * watcherFactory.create(options).start();
  *
  * After starting the watcher the following status requests could be made in order to
- * retrieve the status for the services with id 'service-1' and 'service-2' respectively
+ * retrieve the status for the services with id 'service-1', 'service-2' and 'service-3' respectively
  * http://localhost:7777/endpoint/service-1
  * http://localhost:7777/endpoint/service-2
+ * http://localhost:7777/endpoint/service-3
  * Whereas the request http://localhost:7777/custom-route?id=service-1
  * is the user defined route which returns: 'Service status: <status>' where status
  * the status of the 'service-1'.
