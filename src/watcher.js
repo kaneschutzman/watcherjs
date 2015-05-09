@@ -550,7 +550,7 @@ watcher = stampit().state({
         _onStatusResolve: function _onStatusResolve(record, status) {
             if (!this._stopped) {
                 record.timestamp = moment.utc();
-                if (record.previousStatus !== record.status) {
+                if (status !== record.status) {
                     record.since = record.timestamp;
                 }
                 record.previousStatus = record.status;
