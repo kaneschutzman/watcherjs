@@ -1,0 +1,26 @@
+<table class="table table-hover">
+    <thead>
+        <tr class="table-head">
+            <th>Id</th>
+            <th>Description</th>
+            <th>Timestamp</th>
+            <th>Duration</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="endpoints-table-content">
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="6">
+                <div>Total endpoints: {{total}}</div>
+                <div class="up-stats">up: {{statusUp}}</div>
+                <div class="erroneous-stats">erroneous: {{statusErr}}</div>
+                <div class="undetermined-stats">undetermined: {{statusUndet}}</div>
+                <div class="up-stats">Up ratio: {{upRatio}}%</div>
+                <div class="erroneous-stats">Erroneous ratio: {{errRatio}}%</div>
+            </td>
+        </tr>
+    </tfoot>
+</table>

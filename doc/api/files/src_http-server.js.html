@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="watcher.js" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 1.0.0</em>
+            <em>API Docs for: 2.0.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -159,24 +159,13 @@ var httpServer = stampit().methods({
             next(err);
         });
 
-        // Development error handler will print stacktrace
-        if (app.get(&#x27;env&#x27;) === &#x27;development&#x27;) {
-            app.locals.pretty = true;
-            app.use(function (err, req, res, next) {
-                res.status(err.status || 500);
-                res.render(&#x27;error&#x27;, {
-                    message: err.message,
-                    error: err
-                });
-            });
-        }
-
-        // Production error handler no stacktraces leaked to user
+        app.locals.pretty = true;
         app.use(function (err, req, res, next) {
-            res.status(err.status || 500);
-            res.render(&#x27;error&#x27;, {
-                message: err.message,
-                error: {}
+            var message = err.message || &#x27;Undefined Error!&#x27;;
+            var errors = err.errors || [message];
+            res.status(err.status || 500).json({
+                message: message,
+                errors: errors
             });
         });
     },

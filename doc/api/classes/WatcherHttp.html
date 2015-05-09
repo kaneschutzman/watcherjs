@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="watcher.js" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 1.0.0</em>
+            <em>API Docs for: 2.0.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -148,11 +148,19 @@
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_endpointActivation">endpointActivation</a>
+                                <a href="#method_endpointActivate">endpointActivate</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_endpointNotification">endpointNotification</a>
+                                <a href="#method_endpointDeactivate">endpointDeactivate</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_endpointEnableNotification">endpointEnableNotification</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_endpointEnableNotification">endpointEnableNotification</a>
 
                             </li>
                             <li class="index-item method">
@@ -210,7 +218,7 @@
 
     <div class="description">
         <p>callback for the HTTP request:
-<em>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoint/add</em> (request method POST)</p>
+<em>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints</em> (request method POST)</p>
 
     </div>
 
@@ -276,7 +284,7 @@
 
     <div class="description">
         <p>callback for the HTTP request:
-<em>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoint/<code>&lt;id&gt;</code></em> (request method: GET)</p>
+<em>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints/<code>&lt;id&gt;</code></em> (request method: GET)</p>
 
     </div>
 
@@ -309,8 +317,8 @@
 
 
 </div>
-<div id="method_endpointActivation" class="method item">
-    <h3 class="name"><code>endpointActivation</code></h3>
+<div id="method_endpointActivate" class="method item">
+    <h3 class="name"><code>endpointActivate</code></h3>
 
         <div class="args">
             <span class="paren">(</span><ul class="args-list inline commas">
@@ -333,7 +341,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_routes_watcher-http.js.html#l106"><code>src&#x2F;routes&#x2F;watcher-http.js:106</code></a>
+        <a href="../files/src_routes_watcher-http.js.html#l112"><code>src&#x2F;routes&#x2F;watcher-http.js:112</code></a>
         </p>
 
 
@@ -342,7 +350,7 @@
 
     <div class="description">
         <p>callback for the HTTP request:
-<em>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoint/activation</em> (request method POST)</p>
+<em>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints/<code>&lt;id&gt;</code>/activate</em> (request method POST)</p>
 
     </div>
 
@@ -375,8 +383,8 @@
 
 
 </div>
-<div id="method_endpointNotification" class="method item">
-    <h3 class="name"><code>endpointNotification</code></h3>
+<div id="method_endpointDeactivate" class="method item">
+    <h3 class="name"><code>endpointDeactivate</code></h3>
 
         <div class="args">
             <span class="paren">(</span><ul class="args-list inline commas">
@@ -399,7 +407,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_routes_watcher-http.js.html#l122"><code>src&#x2F;routes&#x2F;watcher-http.js:122</code></a>
+        <a href="../files/src_routes_watcher-http.js.html#l126"><code>src&#x2F;routes&#x2F;watcher-http.js:126</code></a>
         </p>
 
 
@@ -408,7 +416,139 @@
 
     <div class="description">
         <p>callback for the HTTP request:
-<em>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoint/notification</em> (request method POST)</p>
+<em>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoint/<code>&lt;id&gt;</code>/activate</em> (request method DELETE)</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">watcher</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                        <p>the <strong><a href="../classes/Watcher.html" class="crosslink">Watcher</a></strong>.</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                    <p>the express route function.</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_endpointEnableNotification" class="method item">
+    <h3 class="name"><code>endpointEnableNotification</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>watcher</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type"></span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_routes_watcher-http.js.html#l150"><code>src&#x2F;routes&#x2F;watcher-http.js:150</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>callback for the HTTP request:
+<em>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints/<code>&lt;id&gt;</code>/notify</em> (request method POST)</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">watcher</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                        <p>the <strong><a href="../classes/Watcher.html" class="crosslink">Watcher</a></strong>.</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                    <p>the express route function.</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_endpointEnableNotification" class="method item">
+    <h3 class="name"><code>endpointEnableNotification</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>watcher</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type"></span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_routes_watcher-http.js.html#l164"><code>src&#x2F;routes&#x2F;watcher-http.js:164</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>callback for the HTTP request:
+<em>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints/<code>&lt;id&gt;</code>/notify</em> (request method DELETE)</p>
 
     </div>
 
@@ -531,7 +671,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_routes_watcher-http.js.html#l91"><code>src&#x2F;routes&#x2F;watcher-http.js:91</code></a>
+        <a href="../files/src_routes_watcher-http.js.html#l97"><code>src&#x2F;routes&#x2F;watcher-http.js:97</code></a>
         </p>
 
 
@@ -540,7 +680,7 @@
 
     <div class="description">
         <p>callback for the HTTP request:
-<em>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoint/remove</em> (request method POST)</p>
+<em>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints/<code>&lt;id&gt;</code></em> (request method DELETE)</p>
 
     </div>
 
@@ -597,7 +737,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_routes_watcher-http.js.html#l138"><code>src&#x2F;routes&#x2F;watcher-http.js:138</code></a>
+        <a href="../files/src_routes_watcher-http.js.html#l185"><code>src&#x2F;routes&#x2F;watcher-http.js:185</code></a>
         </p>
 
 

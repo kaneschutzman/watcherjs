@@ -12,12 +12,12 @@
  * is used interchangeably, but there is a conceptual difference between them which will be discussed shortly).
  * On the service status resolution, the status is stored internally and is made available either programmatically or
  * via http requests (aka the _status requests_).
- * Actually, __the entire application API is exposed as a set of HTTP requests__, which, on top of this, a simple but handy
- * __web gui__ is implemented. For the HTTP interface implementation the [express](http://expressjs.com) web framework is used.
- * At the following paragraphs the http interface is described with references to the respective application API.
+ * Actually, __the entire application API is also exposed as REST services__, which, on top of this, a simple but handy
+ * __web gui__ is implemented. For the REST services implementation the [express](http://expressjs.com) web framework is used.
+ * At the following paragraphs the REST interface is described with references to the respective application API.
  *
  * * A _status request_ for a specific endpoint
- *  * __http://`<host>`:`<port>`/endpoint/`<id>`__ (request method: GET),
+ *  * __http://`<host>`:`<port>`/endpoints/`<id>`__ (request method: GET),
  *  * parameters:
  *    * __id__ the endpoint id, it should be one of those defined at endpoints configuration data,
  *  * API reference: __{{#crossLink "Watcher/getEndpoint:method"}}{{/crossLink}}__.
@@ -75,7 +75,7 @@
  * ```
  *
  * * Add new endpoint.
- *  * __http://`<host>`:`<port>`/endpoint/add__ (request method POST)
+ *  * __http://`<host>`:`<port>`/endpoints__ (request method POST)
  *  * parameters (parameters in _[]_ are optional. when not set, the default values are used - those in parentheses.):
  *    * __id__ : the endpoint id,
  *    * __desc__ : the endpoint description,
@@ -89,25 +89,25 @@
  *
  *
  * * Remove an endpoint
- *  * __http://`<host>`:`<port>`/endpoint/remove__ (request method POST),
+ *  * __http://`<host>`:`<port>`/endpoints/`<id>`__ (request method: DELETE),
  *  * parameters:
  *    * __id__ : the endpoint id
  *  * API reference: __{{#crossLink "Watcher/removeEndpoint:method"}}{{/crossLink}}__.
  *
  *
  * * Activate/deactivate an endpoint
- *  * __http://`<host>`:`<port>`/endpoint/activation__ (request method POST),
+ *  * __http://`<host>`:`<port>`/endpoints/`<id>`/activate__ (request method POST),
+ *  * __http://`<host>`:`<port>`/endpoints/`<id>`/activate__ (request method DELETE),
  *  * parameters:
  *    * __id__ : the endpoint id,
- *    * __activate__ : true/false whether to activate or not the endpoint
  *  * API reference: __{{#crossLink "Watcher/setEndpointActivationState:method"}}{{/crossLink}}__.
  *
  *
  * * Enable/disable notification for an endpoint
- *  * __http://`<host>`:`<port>`/endpoint/notification__ (request method POST),
+ *  * __http://`<host>`:`<port>`/endpoints/`<id>`/notify__ (request method POST),
+ *  * __http://`<host>`:`<port>`/endpoints/`<id>`/notify__ (request method DELETE),
  *  * parameters:
  *    * __id__ : the endpoint id,
- *    * __notify__ : true/false whether or not to enable email notification on erroneous service status
  *  * API reference: __{{#crossLink "Watcher/notifyOnErroneousStatus:method"}}{{/crossLink}}__.
  *
  *
@@ -550,7 +550,7 @@ watcher = stampit().state({
         _onStatusResolve: function _onStatusResolve(record, status) {
             if (!this._stopped) {
                 record.timestamp = moment.utc();
-                if(record.previousStatus !== record.status) {
+                if (record.previousStatus !== record.status) {
                     record.since = record.timestamp;
                 }
                 record.previousStatus = record.status;
@@ -643,7 +643,11 @@ watcher = stampit().state({
          */
         _deleteEndpoint: function _deleteEndpoint(id) {
             var fileName = path.join(this.options.exportDir, id + '.json');
-            fs.remove(fileName, function (err) {
+            if (!fs.existsSync(fileName)) {
+                logger.debug('Endpoint \'' + id + '\' is not persisted at local store.');
+                return;
+            }
+            fs.removeSync(fileName, function (err) {
                 if (err) {
                     logger.error('Unable to remove endpoint \'' + id +
                     '\' from storage: ' + fileName + '\n' + err);
@@ -694,6 +698,7 @@ watcher = stampit().state({
          *
          * @method getEndpoint
          * @param {String} id the endpoint id.
+         * @return {Object} the endpoint.
          */
         getEndpoint: function getEndpoint(id) {
             return this._registry[id];
@@ -717,29 +722,30 @@ watcher = stampit().state({
          * @param {Object} endpoint the endpoint configuration (see at
          * __{{#crossLink "WatcherFactory/create:method"}}{{/crossLink}}__).
          * @param {Boolean} store used to indicate whether or not to store the endpoint.
-         * @return {Array} the validation errors, empty if no error exists.
-         * @throws {Error} validation errors.
+         * @return {Object} an object that holds the registered endpoint (if succeeded) and the array with the validation errors,
+         * empty if no error exists.
          */
         addEndpoint: function addEndpoint(endpoint, store) {
-            var registry = this._registry;
-            var validationErrors = validator.validateServiceEndpoint(endpoint, _.keys(registry),
-                this.options.resolutionStrategies);
-            if (_.isEmpty(validationErrors)) {
-                var record = this._registerEndpoint(endpoint);
+            var record, registry = this._registry;
+            var errors = validator.validateServiceEndpoint(
+                endpoint, _.keys(registry), this.options.resolutionStrategies);
+            var succeeded = _.isEmpty(errors);
+            if (succeeded) {
+                record = this._registerEndpoint(endpoint);
                 if (store) {
                     this._persistEndpoint(endpoint);
                 }
                 if (record.active) {
                     this._restartIfPassive();
                 }
+                logger.info('Endpoint registration \'' + endpoint.id + '\' succeeded');
             } else {
-                var error = '';
-                _.each(validationErrors, function (ve) {
-                    error += (ve + '\n');
-                });
-                //logger.error('Unable to register service endpoint: ' + id + ', ' + error);
-                throw new Error(error);
+                logger.error('Endpoint registration \'' + endpoint.id + '\' failed, errors: ' + errors);
             }
+            return {
+                errors: errors,
+                endpoint: record
+            };
         },
 
         /**
@@ -747,11 +753,16 @@ watcher = stampit().state({
          *
          * @method removeEndpoint
          * @param {String} id the endpoint id.
+         * @return {Object} the removed endpoint.
          */
         removeEndpoint: function removeEndpoint(id) {
-            delete this._registry[id];
-            this._deleteEndpoint(id);
-            logger.debug('Endpoint has been removed: ' + id);
+            var record = this.getEndpoint(id);
+            if (record) {
+                delete this._registry[id];
+                this._deleteEndpoint(id);
+            }
+            logger.debug('Endpoint \'' + id + '\' has been removed!');
+            return record;
         },
 
         /**
@@ -760,6 +771,7 @@ watcher = stampit().state({
          * @method setEndpointActivationState
          * @param {String} id the endpoint id.
          * @param {Boolean} active true or false to activate or deactivate the specific endpoint respectively.
+         * @return {Object} the endpoint.
          */
         setEndpointActivationState: function setEndpointActivationState(id, active) {
             var record = this._registry[id];
@@ -776,6 +788,7 @@ watcher = stampit().state({
             } else {
                 logger.warn('Unable to set the activation state, endpoint \'' + id + '\' does not exist.');
             }
+            return record;
         },
 
         /**
@@ -784,6 +797,7 @@ watcher = stampit().state({
          * @method notifyOnErroneousStatus
          * @param {String} id the endpoint id.
          * @param {Boolean} notify true or false to enable or disable the notification respectively.
+         * @return {Object} the endpoint.
          */
         notifyOnErroneousStatus: function notifyOnErroneousStatus(id, notify) {
             var record = this._registry[id];
@@ -793,6 +807,7 @@ watcher = stampit().state({
             } else {
                 logger.warn('Unable to set the notification state, endpoint \'' + id + '\' does not exist.');
             }
+            return record;
         },
 
         /**
@@ -828,14 +843,15 @@ watcher = stampit().state({
                             req.id = id;
                             next();
                         });
-                        app.get('/endpoint/:id', routes.endpoint(_self));
-                        app.post('/endpoint/add', routes.addEndpoint(_self));
-                        app.post('/endpoint/remove', routes.removeEndpoint(_self));
-                        app.post('/endpoint/activation', routes.endpointActivation(_self));
-                        app.post('/endpoint/notification', routes.endpointNotification(_self));
                         app.get('/endpoints', routes.endpoints(_self));
+                        app.get('/endpoints/:id', routes.endpoint(_self));
+                        app.post('/endpoints/:id', routes.addEndpoint(_self));
+                        app.delete('/endpoints/:id', routes.removeEndpoint(_self));
+                        app.post('/endpoints/:id/activate', routes.endpointActivate(_self));
+                        app.delete('/endpoints/:id/activate', routes.endpointDeactivate(_self));
+                        app.post('/endpoints/:id/notify', routes.endpointEnableNotification(_self));
+                        app.delete('/endpoints/:id/notify', routes.endpointDisableNotification(_self));
                         app.get('/resolution-strategies', routes.resolutionStrategies(_self));
-
                         app.get('/console', function (req, res) {
                             res.render('console');
                         });

@@ -138,6 +138,7 @@ module.exports = {
      * @param {Object} endpoint the service communication endpoint configuration.
      * @param {Array} ids the endpoints ids.
      * @param {Object} resolutionStrategies the registered resolution strategies.
+     * @return {Array} the validation errors, empty if no error exists.
      */
     validateServiceEndpoint: function validateServiceEndpoint(endpoint, ids, resolutionStrategies) {
         var type = endpoint.type, validationErrors = [], specsValResult;

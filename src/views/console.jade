@@ -21,35 +21,33 @@ html(lang='en')
             br
             div#endpoints-table
 
-            #add-endpoint-dialog.dialog-div(title='Service endpoint')
-
-            #connection-lost-dialog(title='Connection has been lost').dialog-div
-                p.
-                    Wait the connection to be restored, or refresh the page by pressing F5.
+            #endpoint-form-dialog.dialog-div(title='Endpoint')
 
             #info-dialog(title='Info').dialog-div
                 p.
                     Some information.
 
-            #delete-confirm-dialog(title='Confirm deletion').dialog-div
+            #confirm-dialog(title='Confirm your action').dialog-div
                 p.
-                    Endpoint deletion configmation message.
+                    Configmation message.
 
         //script(src='https://code.jquery.com/jquery-1.10.2.js')
         //script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-bootstrap/0.5pre/assets/js/bootstrap.min.js')
         //script(src='https://code.jquery.com/ui/1.11.4/jquery-ui.js')
         //script(src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js')
+        //script(src='https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone.js')
         //script(src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js')
         //script(src='https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.min.js')
         //script(src='http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js')
 
-        script(src='/js/utils/jquery.min.js')
-        script(src='/js/jquery-ui/bootstrap/bootstrap.min.js')
-        script(src='/js/jquery-ui/jquery-ui.min.js')
-        script(src='/js/utils/underscore-min.js')
-        script(src='/js/utils/moment.min.js')
-        script(src='/js/utils/moment-duration-format.js')
-        script(src='/js/utils/handlebars.min.js')
-        script(src='/js/utils/jquery.validate.min.js')
+        script(src='/js/lib/jquery.min.js')
+        script(src='/js/lib/jquery-ui/bootstrap/bootstrap.min.js')
+        script(src='/js/lib/jquery-ui/jquery-ui.min.js')
+        script(src='/js/lib/underscore-min.js')
+        script(src='/js/lib/moment.min.js')
+        script(src='/js/lib/moment-duration-format.js')
+        script(src='/js/lib/handlebars.min.js')
+        script(src='/js/lib/jquery.validate.min.js')
+        script(src='/js/lib/backbone-min.js')
         script(src='/js/templates/templates.js')
-        script(src='/js/console.js')
+        script(src='/js/main.js')

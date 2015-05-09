@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="watcher.js" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 1.0.0</em>
+            <em>API Docs for: 2.0.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -305,7 +305,7 @@ An application overview and detailed configuration instructions and examples can
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l657"><code>src&#x2F;watcher.js:657</code></a>
+        <a href="../files/src_watcher.js.html#l661"><code>src&#x2F;watcher.js:661</code></a>
         </p>
 
 
@@ -521,7 +521,7 @@ An application overview and detailed configuration instructions and examples can
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l808"><code>src&#x2F;watcher.js:808</code></a>
+        <a href="../files/src_watcher.js.html#l823"><code>src&#x2F;watcher.js:823</code></a>
         </p>
 
 
@@ -552,7 +552,7 @@ An application overview and detailed configuration instructions and examples can
         </div>
 
         <span class="returns-inline">
-            <span class="type">Array</span>
+            <span class="type">Object</span>
         </span>
 
 
@@ -564,7 +564,7 @@ An application overview and detailed configuration instructions and examples can
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l712"><code>src&#x2F;watcher.js:712</code></a>
+        <a href="../files/src_watcher.js.html#l717"><code>src&#x2F;watcher.js:717</code></a>
         </p>
 
 
@@ -611,21 +611,13 @@ For the configuration see at <a href="../modules/watcher.html">watcher</a></p>
             <h4>Returns:</h4>
 
             <div class="returns-description">
-                        <span class="type">Array</span>:
-                    <p>the validation errors, empty if no error exists.</p>
+                        <span class="type">Object</span>:
+                    <p>an object that holds the registered endpoint (if succeeded) and the array with the validation errors,
+empty if no error exists.</p>
 
             </div>
         </div>
 
-        <div class="throws">
-            <h4>Throws:</h4>
-
-            <div class="throws-description">
-                        <span class="type">Error</span>:
-                    <p>validation errors.</p>
-
-            </div>
-        </div>
 
 </div>
 <div id="method_addListener" class="method item">
@@ -652,7 +644,7 @@ For the configuration see at <a href="../modules/watcher.html">watcher</a></p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l910"><code>src&#x2F;watcher.js:910</code></a>
+        <a href="../files/src_watcher.js.html#l926"><code>src&#x2F;watcher.js:926</code></a>
         </p>
 
 
@@ -707,6 +699,9 @@ For the configuration see at <a href="../modules/watcher.html">watcher</a></p>
             </ul><span class="paren">)</span>
         </div>
 
+        <span class="returns-inline">
+            <span class="type">Object</span>
+        </span>
 
 
 
@@ -717,7 +712,7 @@ For the configuration see at <a href="../modules/watcher.html">watcher</a></p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l692"><code>src&#x2F;watcher.js:692</code></a>
+        <a href="../files/src_watcher.js.html#l696"><code>src&#x2F;watcher.js:696</code></a>
         </p>
 
 
@@ -747,6 +742,15 @@ For the configuration see at <a href="../modules/watcher.html">watcher</a></p>
             </ul>
         </div>
 
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Object</span>:
+                    <p>the endpoint.</p>
+
+            </div>
+        </div>
 
 
 </div>
@@ -768,7 +772,7 @@ For the configuration see at <a href="../modules/watcher.html">watcher</a></p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l702"><code>src&#x2F;watcher.js:702</code></a>
+        <a href="../files/src_watcher.js.html#l707"><code>src&#x2F;watcher.js:707</code></a>
         </p>
 
 
@@ -811,7 +815,7 @@ For the configuration see at <a href="../modules/watcher.html">watcher</a></p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l798"><code>src&#x2F;watcher.js:798</code></a>
+        <a href="../files/src_watcher.js.html#l813"><code>src&#x2F;watcher.js:813</code></a>
         </p>
 
 
@@ -850,6 +854,9 @@ For the configuration see at <a href="../modules/watcher.html">watcher</a></p>
             </ul><span class="paren">)</span>
         </div>
 
+        <span class="returns-inline">
+            <span class="type">Object</span>
+        </span>
 
 
 
@@ -860,7 +867,7 @@ For the configuration see at <a href="../modules/watcher.html">watcher</a></p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l781"><code>src&#x2F;watcher.js:781</code></a>
+        <a href="../files/src_watcher.js.html#l794"><code>src&#x2F;watcher.js:794</code></a>
         </p>
 
 
@@ -901,6 +908,15 @@ For the configuration see at <a href="../modules/watcher.html">watcher</a></p>
             </ul>
         </div>
 
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Object</span>:
+                    <p>the endpoint.</p>
+
+            </div>
+        </div>
 
 
 </div>
@@ -915,6 +931,9 @@ For the configuration see at <a href="../modules/watcher.html">watcher</a></p>
             </ul><span class="paren">)</span>
         </div>
 
+        <span class="returns-inline">
+            <span class="type">Object</span>
+        </span>
 
 
 
@@ -925,7 +944,7 @@ For the configuration see at <a href="../modules/watcher.html">watcher</a></p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l745"><code>src&#x2F;watcher.js:745</code></a>
+        <a href="../files/src_watcher.js.html#l751"><code>src&#x2F;watcher.js:751</code></a>
         </p>
 
 
@@ -955,6 +974,15 @@ For the configuration see at <a href="../modules/watcher.html">watcher</a></p>
             </ul>
         </div>
 
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Object</span>:
+                    <p>the removed endpoint.</p>
+
+            </div>
+        </div>
 
 
 </div>
@@ -972,6 +1000,9 @@ For the configuration see at <a href="../modules/watcher.html">watcher</a></p>
             </ul><span class="paren">)</span>
         </div>
 
+        <span class="returns-inline">
+            <span class="type">Object</span>
+        </span>
 
 
 
@@ -982,7 +1013,7 @@ For the configuration see at <a href="../modules/watcher.html">watcher</a></p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l757"><code>src&#x2F;watcher.js:757</code></a>
+        <a href="../files/src_watcher.js.html#l768"><code>src&#x2F;watcher.js:768</code></a>
         </p>
 
 
@@ -1023,6 +1054,15 @@ For the configuration see at <a href="../modules/watcher.html">watcher</a></p>
             </ul>
         </div>
 
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Object</span>:
+                    <p>the endpoint.</p>
+
+            </div>
+        </div>
 
 
 </div>
@@ -1041,7 +1081,7 @@ For the configuration see at <a href="../modules/watcher.html">watcher</a></p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l874"><code>src&#x2F;watcher.js:874</code></a>
+        <a href="../files/src_watcher.js.html#l890"><code>src&#x2F;watcher.js:890</code></a>
         </p>
 
 
@@ -1072,7 +1112,7 @@ For the configuration see at <a href="../modules/watcher.html">watcher</a></p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l898"><code>src&#x2F;watcher.js:898</code></a>
+        <a href="../files/src_watcher.js.html#l914"><code>src&#x2F;watcher.js:914</code></a>
         </p>
 
 

@@ -41,14 +41,14 @@ describe('watcher', function () {
         });
 
         it('a status request with wrong endpoint id, should return 404', function (done) {
-            http.get('http://localhost:7777/endpoint/no-exist', function (res) {
+            http.get('http://localhost:7777/endpoints/no-exist', function (res) {
                 assert.equal(404, res.statusCode);
                 done();
             });
         });
 
         it('a valid status request, with undetermined service status', function (done) {
-            http.get('http://localhost:7777/endpoint/dummy', function (res) {
+            http.get('http://localhost:7777/endpoints/dummy', function (res) {
                 assert.equal(200, res.statusCode);
                 res.on('data', function (chunk) {
                     var service = JSON.parse(s(chunk).value());

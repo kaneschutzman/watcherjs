@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="watcher.js" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 1.0.0</em>
+            <em>API Docs for: 2.0.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -110,7 +110,7 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/src_watcher.js.html#l924"><code>src&#x2F;watcher.js:924</code></a>
+            Defined in: <a href="../files/src_watcher.js.html#l940"><code>src&#x2F;watcher.js:940</code></a>
         </div>
 
 </div>
@@ -127,12 +127,12 @@ to the service endpoints (or simply endpoints), to find out their status (the <e
 is used interchangeably, but there is a conceptual difference between them which will be discussed shortly).
 On the service status resolution, the status is stored internally and is made available either programmatically or
 via http requests (aka the _status requests</em>).
-Actually, <strong>the entire application API is exposed as a set of HTTP requests</strong>, which, on top of this, a simple but handy
-<strong>web gui</strong> is implemented. For the HTTP interface implementation the <a href="http://expressjs.com">express</a> web framework is used.
-At the following paragraphs the http interface is described with references to the respective application API.</p>
+Actually, <strong>the entire application API is also exposed as REST services</strong>, which, on top of this, a simple but handy
+<strong>web gui</strong> is implemented. For the REST services implementation the <a href="http://expressjs.com">express</a> web framework is used.
+At the following paragraphs the REST interface is described with references to the respective application API.</p>
 <ul>
 <li>A <em>status request</em> for a specific endpoint<ul>
-<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoint/<code>&lt;id&gt;</code></strong> (request method: GET),</li>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints/<code>&lt;id&gt;</code></strong> (request method: GET),</li>
 <li>parameters:<ul>
 <li><strong>id</strong> the endpoint id, it should be one of those defined at endpoints configuration data,</li>
 </ul>
@@ -191,7 +191,7 @@ In this case the response JSON message is an array with the information for all 
 ]
 </code></pre><ul>
 <li>Add new endpoint.<ul>
-<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoint/add</strong> (request method POST)</li>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints</strong> (request method POST)</li>
 <li>parameters (parameters in <em>[]</em> are optional. when not set, the default values are used - those in parentheses.):<ul>
 <li><strong>id</strong> : the endpoint id,</li>
 <li><strong>desc</strong> : the endpoint description,</li>
@@ -209,7 +209,7 @@ In this case the response JSON message is an array with the information for all 
 </ul>
 <ul>
 <li>Remove an endpoint<ul>
-<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoint/remove</strong> (request method POST),</li>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints/<code>&lt;id&gt;</code></strong> (request method: DELETE),</li>
 <li>parameters:<ul>
 <li><strong>id</strong> : the endpoint id</li>
 </ul>
@@ -220,10 +220,10 @@ In this case the response JSON message is an array with the information for all 
 </ul>
 <ul>
 <li>Activate/deactivate an endpoint<ul>
-<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoint/activation</strong> (request method POST),</li>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints/<code>&lt;id&gt;</code>/activate</strong> (request method POST),</li>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints/<code>&lt;id&gt;</code>/activate</strong> (request method DELETE),</li>
 <li>parameters:<ul>
 <li><strong>id</strong> : the endpoint id,</li>
-<li><strong>activate</strong> : true/false whether to activate or not the endpoint</li>
 </ul>
 </li>
 <li>API reference: <strong><a href="../classes/Watcher.html#method_setEndpointActivationState" class="crosslink">setEndpointActivationState</a></strong>.</li>
@@ -232,10 +232,10 @@ In this case the response JSON message is an array with the information for all 
 </ul>
 <ul>
 <li>Enable/disable notification for an endpoint<ul>
-<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoint/notification</strong> (request method POST),</li>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints/<code>&lt;id&gt;</code>/notify</strong> (request method POST),</li>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints/<code>&lt;id&gt;</code>/notify</strong> (request method DELETE),</li>
 <li>parameters:<ul>
 <li><strong>id</strong> : the endpoint id,</li>
-<li><strong>notify</strong> : true/false whether or not to enable email notification on erroneous service status</li>
 </ul>
 </li>
 <li>API reference: <strong><a href="../classes/Watcher.html#method_notifyOnErroneousStatus" class="crosslink">notifyOnErroneousStatus</a></strong>.</li>
