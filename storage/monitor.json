@@ -2,9 +2,7 @@
   "id": "monitor",
   "desc": "monitor",
   "type": "http",
-  "host": "",
-  "port": "",
   "url": "http://localhost:7777/console",
-  "active": true,
-  "notify": false
+  "active": false,
+  "notify": true
 }

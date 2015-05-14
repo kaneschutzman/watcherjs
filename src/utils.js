@@ -9,6 +9,7 @@
  * * __{{#crossLink "EventDispatcherFactory"}}{{/crossLink}}__
  * * __{{#crossLink "EventDispatcher"}}{{/crossLink}}__
  * * __{{#crossLink "DictionaryFactory"}}{{/crossLink}}__
+ * * __{{#crossLink "TransactionalExecutor"}}{{/crossLink}}__
  *
  * ###API Usage samples
  *    ```javascript
@@ -35,11 +36,12 @@
 'use strict';
 var events = require('events');
 var _ = require('underscore');
+var async = require('async');
 var stampit = require('stampit');
 //var fs = require('fs');
 //var async = require('async');
 
-var eventDispatcher, eventDispatcherFactory, dictionary, dictionaryFactory;
+var eventDispatcher, eventDispatcherFactory, dictionary, dictionaryFactory, transactionalExecutor;
 
 /**
  * Exposes the event emitter functionality (a delegator).
@@ -254,8 +256,45 @@ dictionaryFactory = {
     }
 };
 
+/**
+ * Enables functions transactional execution
+ * @class TransactionalExecutor
+ * @static
+ */
+transactionalExecutor = {
+    /**
+     * Executes the provided operations transactional.
+     * @static
+     * @method execute
+     * @param {Array} ops the array of functions for execution.
+     * @param {Function} [onCompletedCallback] on transaction complete callback.
+     * @param {String} [type] the async type model, 'series' or 'waterfall'.
+     */
+    execute: function execute(ops, onCompletedCallback, type) {
+        onCompletedCallback = onCompletedCallback || _.noop;
+        type = type || 'series';
+        var asyncFun = (type === 'series' ? async.series : async.waterfall);
+        var cc = 0;
+        var exeOps = _.map(_.pluck(ops, 'execute'), function (exOp) {
+            return _.wrap(exOp, function (func, callback) {
+                cc++;
+                func(callback);
+            });
+        });
+        asyncFun(exeOps, function (errors, results) {
+            if (errors) {
+                for (var i = 0; i < cc - 1; i++) {
+                    ops[i].rollback();
+                }
+            }
+            onCompletedCallback(errors, results);
+        });
+    }
+};
+
 module.exports = {
     eventDispatcher: eventDispatcher,
     eventDispatcherFactory: eventDispatcherFactory,
-    dictionaryFactory: dictionaryFactory
+    dictionaryFactory: dictionaryFactory,
+    transactionalExecutor: transactionalExecutor
 };

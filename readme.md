@@ -6,7 +6,7 @@ Although, it can be a solution for simple cases.
 The application architecture is simple. At regular intervals service specific defined messages,
 either as http requests or as raw data to sockets, are send to the service endpoints to find out their status.
 On the service status resolution, the status is stored internally and is made available either programmatically or
-via http requests. The application, at design level, is extensible since custom defined behaviors can be easily
+via REST requests. The application, at design level, is extensible since custom defined behaviors can be easily
 applied.
 
 ----
@@ -52,8 +52,8 @@ Detailed documentation and examples can be found at:
 [watcher](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/modules/watcher.html),
 [watcher-full.js](examples/watcher-full.js) and [watcher-minimal.js](examples/watcher-minimal.js)
 
-### _[HTTP interface](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/modules/watcher.html)_
-The entire application API is exposed a set of HTTP requests. For the application's http interface implementation
+### _[REST API](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/modules/watcher-http.html)_
+The entire application API is exposed as REST API. For the REST API implementation
 the [express](http://expressjs.com) web framework is used. It is worth mentioning that the user can define
 __route extension points__ in order to build custom responses for the status requests.
 
@@ -65,7 +65,7 @@ Detailed information about the http interface and examples can be found at:
 ----
 
 ## Watcher web console
-On top of the application's http interface, a simple but handy web GUI is implemented, the _watcher web console_.
+On top of the application's REST API, a simple but handy web GUI is implemented, the _watcher web console_.
 The console enables the user to dynamically add/remove/modify and monitor endpoints visually.
 It can be accessed at http://localhost:`<port>`/console, where `<port>` the http-server port defined at
 application startup (7777, if default configuration is used). The refresh data interval is set to 30 sec.
@@ -100,6 +100,13 @@ The application features can be summarized as follows:
   * define custom _status resolution strategy_ for specific endpoint
   * define pool of custom _unbound status resolution strategies_
   * define route extensions for building custom responses for the _status requests_
+
+----
+
+## Release Notes
+
+Changelog: For change logs and release notes,
+see the [changelog](https://github.com/jpsoroulas/watcherjs/blob/master/changelog.md) file.
 
 ## Installation
 

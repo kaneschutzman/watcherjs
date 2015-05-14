@@ -48,24 +48,13 @@ var httpServer = stampit().methods({
             next(err);
         });
 
-        // Development error handler will print stacktrace
-        if (app.get('env') === 'development') {
-            app.locals.pretty = true;
-            app.use(function (err, req, res, next) {
-                res.status(err.status || 500);
-                res.render('error', {
-                    message: err.message,
-                    error: err
-                });
-            });
-        }
-
-        // Production error handler no stacktraces leaked to user
+        app.locals.pretty = true;
         app.use(function (err, req, res, next) {
-            res.status(err.status || 500);
-            res.render('error', {
-                message: err.message,
-                error: {}
+            var message = err.message || 'Unknown Error!';
+            //var errors = err.errors || [message];
+            res.status(err.status || 500).json({
+                message: message,
+                errors: err.errors
             });
         });
     },

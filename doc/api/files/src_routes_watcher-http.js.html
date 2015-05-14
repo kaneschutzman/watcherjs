@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="watcher.js" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 1.0.0</em>
+            <em>API Docs for: 2.0.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -56,6 +56,7 @@
                                 <li><a href="../classes/SocketConnectorFactory.html">SocketConnectorFactory</a></li>
                                 <li><a href="../classes/StatusResolver.html">StatusResolver</a></li>
                                 <li><a href="../classes/StatusResolverFactory.html">StatusResolverFactory</a></li>
+                                <li><a href="../classes/TransactionalExecutor.html">TransactionalExecutor</a></li>
                                 <li><a href="../classes/Validator.html">Validator</a></li>
                                 <li><a href="../classes/Watcher.html">Watcher</a></li>
                                 <li><a href="../classes/WatcherFactory.html">WatcherFactory</a></li>
@@ -113,7 +114,209 @@
  * Created by jpsoroulas.
  */
 /**
- * The application&#x27;s http interface implementation.
+ * The application&#x27;s REST API implementation.
+ * ###REST API
+ * In case of failure the server returns an object with the following structure:
+ * &#x60;&#x60;&#x60;
+ * {
+ *      message: message,   //generic error message
+ *      errors: errors      //array of specific errors
+ * }
+ *&#x60;&#x60;&#x60;
+ *
+ * #### Get information for a specific endpoint.
+ * ----
+ *  * __http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;/endpoints/&#x60;&lt;id&gt;&#x60;__ (request method: GET),
+ *  * parameters:
+ *    * __id__ the endpoint id, it should be one of those defined at endpoints configuration data,
+ *  * API reference: __{{#crossLink &quot;Watcher/getEndpoint:method&quot;}}{{/crossLink}}__.
+ *
+ *
+ * __Response on success:__
+ *
+ * &#x60;&#x60;&#x60;
+ * // For a socket communication type
+ * {
+ *      &quot;id&quot;: &quot;endpoint-id&quot;,            // endpoint id
+ *      &quot;desc&quot;: &quot;an endpoint&quot;,          // endpoint description
+ *      &quot;status&quot;: &quot;up&quot;,                 // endpoint status
+ *      &quot;timestamp&quot;: 1429860936846,     // the timestamp of the current status
+ *      &quot;since&quot;: 1429860926846,         // the timestamp since the last change of status
+ *      &quot;type&quot;: &quot;socket&quot;,               // connector type
+ *      &quot;host&quot;: &quot;localhost&quot;,            // endpoint host (applied for &#x27;socket&#x27; connector)
+ *      &quot;port&quot;: 7777,                   // endpoint port (applied for &#x27;socket&#x27; connector)
+ *      &quot;active&quot;: true,                 // whether or not the endpoint is active
+ *      &quot;notify&quot;: false                 // whether or not the notification is enabled
+ * }
+ * &#x60;&#x60;&#x60;
+ *
+ * __Response on error:__
+ * &#x60;&#x60;&#x60;
+ * If the endpoint does not exist an error message with http status 422 is send
+ *&#x60;&#x60;&#x60;
+ *
+ * #### Get information for all registered endpoints.
+ * ----
+ *  * __http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;/endpoints__ (request method: GET).
+ *  * API reference: __{{#crossLink &quot;Watcher/getEndpoints:method&quot;}}{{/crossLink}}__.
+ *
+ *
+ *  __Response on success:__
+ *
+ * &#x60;&#x60;&#x60;
+ * An array with the information for all endpoints.
+ * // For a socket and http communication types
+ * [
+ *      {
+ *          &quot;id&quot;: &quot;endpoint-1&quot;,
+ *          &quot;desc&quot;: &quot;endpoint 1&quot;,
+ *          &quot;status&quot;: &quot;down&quot;
+ *          &quot;timestamp&quot;: 1429860936846,
+ *          &quot;since&quot;: 1429860926846,
+ *          &quot;type&quot;: &quot;socket&quot;,
+ *          &quot;host&quot;: &quot;localhost&quot;,
+ *          &quot;port&quot;: 7777,
+ *          &quot;active&quot;: true,
+ *          &quot;notify&quot;: true
+ *      },
+ *      {
+ *          &quot;id&quot;: &quot;endpoint-2&quot;,                     // endpoint id
+ *          &quot;desc&quot;: &quot;endpoint 2&quot;,                   // endpoint description
+ *          &quot;status&quot;: &quot;up&quot;                          // endpoint status
+ *          &quot;timestamp&quot;: 1429860936846,             // the timestamp of the current status
+ *          &quot;since&quot;: 1429860926846,                 // the timestamp since the last change of status
+ *          &quot;type&quot;: &quot;http&quot;,                         // connector type
+ *          &quot;url&quot;: &quot;http://11.222.333.555:3333/&quot;,   // endpoint url (applied for &#x27;http(s) connector&#x27;)
+ *          &quot;active&quot;: true,                         // whether or not the endpoint is active
+ *          &quot;notify&quot;: false                         // whether or not the notification is enabled
+ *      }
+ * ]
+ * &#x60;&#x60;&#x60;
+ *
+ * __Response on error:__
+ * &#x60;&#x60;&#x60;
+ * Generic error message with http status 500
+ *&#x60;&#x60;&#x60;
+ *
+ * #### Add new endpoint.
+ * ----
+ *  * __http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;/endpoints__ (request method POST)
+ *  * parameters (parameters in _[]_ are optional. when not set, the default values are used - those in parentheses.):
+ *    * __id__ : the endpoint id,
+ *    * __desc__ : the endpoint description,
+ *    * __type__ : the endpoint type (&#x27;socket&#x27; or &#x27;http&#x27;),
+ *    * [__host__] (localhost): the endpoint host (applied for &#x27;socket&#x27; communication type),
+ *    * [__port__] (9999): the endpoint port (applied for &#x27;socket&#x27; communication type),
+ *    * [__url__] : the endpoint port (applied for &#x27;http&#x27; communication type),
+ *    * [__active__] (true): true/false whether or not to activate the endpoint,
+ *    * [__notify__] (false): true/false whether or not to enable email notification on erroneous service status
+ *  * API reference: __{{#crossLink &quot;Watcher/addEndpoint:method&quot;}}{{/crossLink}}__.
+ *
+ *
+ *  __Response on success:__
+ *
+ * &#x60;&#x60;&#x60;
+ * {
+ *      &quot;id&quot;:     &quot;&lt;endpoint id&gt;&quot;         //endpoint id
+ *      &quot;uri&quot;:    &quot;&lt;access endpoint uri&gt;&quot; //endpoint uri, e.g. /endpoints/&lt;endpoint id&gt;
+ *      &quot;status&quot;: &quot;&lt;endpoint status&gt;&quot;     //endpoint status (e.g. &#x27;undetermined&#x27;)
+ * }
+ *
+ * &#x60;&#x60;&#x60;
+ *
+ * __Response on error:__
+ * &#x60;&#x60;&#x60;
+ * Validation error messages with http status 422
+ *&#x60;&#x60;&#x60;
+ *
+ * #### Remove an endpoint.
+ * ----
+ *  * __http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;/endpoints/&#x60;&lt;id&gt;&#x60;__ (request method: DELETE),
+ *  * parameters:
+ *    * __id__ : the endpoint id
+ *  * API reference: __{{#crossLink &quot;Watcher/removeEndpoint:method&quot;}}{{/crossLink}}__.
+ *
+ *
+ *  __Response on success:__
+ *
+ * &#x60;&#x60;&#x60;
+ * {
+ *      &quot;id&quot;: &quot;&lt;endpoint id&gt;&quot;   //removed endpoint id
+ * }
+ * &#x60;&#x60;&#x60;
+ *
+ * __Response on error:__
+ * &#x60;&#x60;&#x60;
+ * If the endpoint does not exist an error message with http status 422 is send
+ *&#x60;&#x60;&#x60;
+ *
+ * #### Activate/deactivate an endpoint.
+ * ----
+ *  * __http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;/endpoints/&#x60;&lt;id&gt;&#x60;/activate__ (request method POST),
+ *  * __http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;/endpoints/&#x60;&lt;id&gt;&#x60;/activate__ (request method DELETE),
+ *  * parameters:
+ *    * __id__ : the endpoint id,
+ *  * API reference: __{{#crossLink &quot;Watcher/setEndpointActivationState:method&quot;}}{{/crossLink}}__.
+ *
+ *
+ *  __Response on success:__
+ *
+ * &#x60;&#x60;&#x60;
+ * {
+ *      &quot;id&quot;: &quot;&lt;endpoint id&gt;&quot;           //endpoint id
+ *      &quot;active&quot;: &quot;&lt;activation state&gt;&quot;  //activation state
+ *      &quot;status&quot;: &quot;&lt;endpoint status&gt;&quot;   //endpoint status
+ * }
+ * &#x60;&#x60;&#x60;
+ *
+ * __Response on error:__
+ * &#x60;&#x60;&#x60;
+ * If the endpoint does not exist an error message with http status 422 is send
+ *&#x60;&#x60;&#x60;
+ *
+ * #### Enable/disable notification for an endpoint.
+ * ----
+ *  * __http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;/endpoints/&#x60;&lt;id&gt;&#x60;/notify__ (request method POST),
+ *  * __http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;/endpoints/&#x60;&lt;id&gt;&#x60;/notify__ (request method DELETE),
+ *  * parameters:
+ *    * __id__ : the endpoint id,
+ *  * API reference: __{{#crossLink &quot;Watcher/notifyOnErroneousStatus:method&quot;}}{{/crossLink}}__.
+ *
+ *
+ *  __Response on success:__
+ *
+ * &#x60;&#x60;&#x60;
+ * {
+ *      &quot;id&quot;: &quot;&lt;endpoint id&gt;&quot;               //endpoint id
+ *      &quot;notify&quot;: &quot;&lt;notification state&gt;&quot;    //activation state
+ * }
+ * &#x60;&#x60;&#x60;
+ *
+ * __Response on error:__
+ * &#x60;&#x60;&#x60;
+ * If the endpoint does not exist an error message with http status 422 is send
+ *&#x60;&#x60;&#x60;
+ *
+ * #### Get the the unbound resolution strategies.
+ * ----
+ *  * __http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;/resolution-strategies__ (request method GET),
+ *  * API reference: __{{#crossLink &quot;Watcher/getResolutionStrategies:method&quot;}}{{/crossLink}}__.
+ *
+ *
+ *  __Response on success:__
+ *
+ * &#x60;&#x60;&#x60;
+ * An array with the unbound resolution strategies, e.g.:
+ * [
+ *  &quot;on-connection&quot;,
+ *  &quot;always-down&quot;
+ * ]
+ * &#x60;&#x60;&#x60;
+ *
+ * __Response on error:__
+ * &#x60;&#x60;&#x60;
+ * Generic error message with http status 500
+ *&#x60;&#x60;&#x60;
  *
  * @module watcher-http
  */
@@ -126,8 +329,8 @@ var s = require(&#x27;underscore.string&#x27;);
 var logger = require(&#x27;../logger&#x27;);
 
 
-function prepareRecord(record) {
-    var rec = _.omit(record, &#x27;connector&#x27;, &#x27;timeout&#x27;, &#x27;processed&#x27;, &#x27;notified&#x27;, &#x27;previousStatus&#x27;);
+function prepareEndpoint(endpoint) {
+    var rec = _.omit(endpoint, &#x27;connector&#x27;, &#x27;timeout&#x27;, &#x27;processed&#x27;, &#x27;notified&#x27;, &#x27;previousStatus&#x27;);
     rec.timestamp = rec.timestamp.valueOf();
     rec.since = rec.since.valueOf();
     return rec;
@@ -149,36 +352,35 @@ module.exports = {
      * */
     endpoints: function endpoints(watcher) {
         return function (req, res, next) {
-            res.json(_.map(watcher.getEndpoints(), function (record) {
-                return prepareRecord(record);
+            res.json(_.map(watcher.getEndpoints(), function (endpoint) {
+                return prepareEndpoint(endpoint);
             }));
         };
     },
 
     /**
      * callback for the HTTP request:
-     * _http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;/endpoint/&#x60;&lt;id&gt;&#x60;_ (request method: GET)
+     * _http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;/endpoints/&#x60;&lt;id&gt;&#x60;_ (request method: GET)
      * @method endpoint
      * @param {Object} watcher the __{{#crossLink &quot;Watcher&quot;}}{{/crossLink}}__.
      * @return the express route function.
      * */
     endpoint: function endpoint(watcher) {
+        var _self = this;
         return function (req, res, next) {
             var id = req.params.id;
-            var record = watcher.getEndpoint(id);
-            if (!_.isUndefined(record)) {
-                res.json(prepareRecord(record));
+            var endpoint = watcher.getEndpoint(id);
+            if (!_.isUndefined(endpoint)) {
+                res.json(prepareEndpoint(endpoint));
             } else {
-                var err = new Error(&#x27;Unknown endpoint: &#x27; + id);
-                err.status = 404;
-                next(err);
+                _self._unknownEndpointError(id, next);
             }
         };
     },
 
     /**
      * callback for the HTTP request:
-     * _http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;/endpoint/add_ (request method POST)
+     * _http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;/endpoints_ (request method POST)
      * @method addEndpoint
      * @param {Object} watcher the __{{#crossLink &quot;Watcher&quot;}}{{/crossLink}}__.
      * @return the express route function.
@@ -186,64 +388,136 @@ module.exports = {
     addEndpoint: function addEndpoint(watcher) {
         return function (req, res, next) {
             var id = req.body.id;
-            try {
-                req.body.active = s.toBoolean(req.body.active);
-                req.body.notify = s.toBoolean(req.body.notify);
-                watcher.addEndpoint(req.body, true);
-                res.send(&#x27;Endpoint \&#x27;&#x27; + id + &#x27;\&#x27; added&#x27;);
-            } catch (e) {
-                var msg = &#x27;Endpoint &#x27; + id + &#x27; registration failed: &#x27; + e.message;
-                logger.error(msg);
-                res.send(msg);
-            }
+            req.body.active = s.toBoolean(req.body.active);
+            req.body.notify = s.toBoolean(req.body.notify);
+            watcher.addEndpoint(req.body, true, function (err, endpoint) {
+                if (!err) {
+                    res.json({
+                        id: endpoint.id,
+                        uri: &#x27;/endpoints/&#x27; + id,
+                        status: endpoint.status
+                    });
+                } else {
+                    err.status = 422;
+                    next(err);
+                }
+            });
         };
     },
 
     /**
      * callback for the HTTP request:
-     * _http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;/endpoint/remove_ (request method POST)
+     * _http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;/endpoints/&#x60;&lt;id&gt;&#x60;_ (request method DELETE)
      * @method removeEndpoint
      * @param {Object} watcher the __{{#crossLink &quot;Watcher&quot;}}{{/crossLink}}__.
      * @return the express route function.
      * */
     removeEndpoint: function removeEndpoint(watcher) {
+        var _self = this;
         return function (req, res, next) {
-            var id = req.body.id;
-            watcher.removeEndpoint(id);
-            res.send(&#x27;Endpoint \&#x27;&#x27; + id + &#x27;\&#x27; removed&#x27;);
+            var id = req.params.id;
+            watcher.removeEndpoint(id, function(err, id) {
+                if (!err) {
+                    res.json({id: id});
+                } else {
+                    _self._unknownEndpointError(id, next);
+                }
+            });
         };
     },
 
     /**
      * callback for the HTTP request:
-     * _http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;/endpoint/activation_ (request method POST)
-     * @method endpointActivation
+     * _http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;/endpoints/&#x60;&lt;id&gt;&#x60;/activate_ (request method POST)
+     * @method endpointActivate
      * @param {Object} watcher the __{{#crossLink &quot;Watcher&quot;}}{{/crossLink}}__.
      * @return the express route function.
      * */
-    endpointActivation: function endpointActivation(watcher) {
+    endpointActivate: function endpointActivate(watcher) {
+        var _self = this;
         return function (req, res, next) {
-            var id = req.body.id;
-            var activate = s.toBoolean(req.body.activate);
-            watcher.setEndpointActivationState(id, activate);
-            res.send(&#x27;Endpoint \&#x27;&#x27; + id + &#x27;\&#x27; activation: &#x27; + activate);
+            _self._changeEndpointActivationState(watcher, req, res, true, next);
         };
     },
 
     /**
      * callback for the HTTP request:
-     * _http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;/endpoint/notification_ (request method POST)
-     * @method endpointNotification
+     * _http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;/endpoint/&#x60;&lt;id&gt;&#x60;/activate_ (request method DELETE)
+     * @method endpointDeactivate
      * @param {Object} watcher the __{{#crossLink &quot;Watcher&quot;}}{{/crossLink}}__.
      * @return the express route function.
      * */
-    endpointNotification: function endpointNotification(watcher) {
+    endpointDeactivate: function endpointDeactivate(watcher) {
+        var _self = this;
         return function (req, res, next) {
-            var id = req.body.id;
-            var notify = s.toBoolean(req.body.notify);
-            watcher.notifyOnErroneousStatus(id, notify);
-            res.send(&#x27;Endpoint \&#x27;&#x27; + id + &#x27;\&#x27; notification: &#x27; + notify);
+            _self._changeEndpointActivationState(watcher, req, res, false, next);
         };
+    },
+
+    _changeEndpointActivationState: function _changeEndpointActivationState(watcher, req, res, active, next) {
+        var _self = this;
+        var id = req.params.id;
+        watcher.setEndpointActivationState(id, active, function(err, endpoint) {
+            if (!err) {
+                res.json({
+                    id: endpoint.id,
+                    active: endpoint.active,
+                    status: endpoint.status
+                });
+            } else {
+                _self._unknownEndpointError(id, next);
+            }
+        });
+    },
+
+    _unknownEndpointError: function _unknownEndpointError(id, next) {
+        next({
+            status: 422,
+            message: &#x27;Unknown endpoint \&#x27;&#x27; + id + &#x27;\&#x27;&#x27;
+        });
+    },
+
+    /**
+     * callback for the HTTP request:
+     * _http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;/endpoints/&#x60;&lt;id&gt;&#x60;/notify_ (request method POST)
+     * @method endpointEnableNotification
+     * @param {Object} watcher the __{{#crossLink &quot;Watcher&quot;}}{{/crossLink}}__.
+     * @return the express route function.
+     * */
+    endpointEnableNotification: function endpointEnableNotification(watcher) {
+        var _self = this;
+        return function (req, res, next) {
+            _self._changeEndpointNotificationState(watcher, req, res, true, next);
+        };
+    },
+
+    /**
+     * callback for the HTTP request:
+     * _http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;/endpoints/&#x60;&lt;id&gt;&#x60;/notify_ (request method DELETE)
+     * @method endpointEnableNotification
+     * @param {Object} watcher the __{{#crossLink &quot;Watcher&quot;}}{{/crossLink}}__.
+     * @return the express route function.
+     * */
+    endpointDisableNotification: function endpointDisableNotification(watcher) {
+        var _self = this;
+        return function (req, res, next) {
+            _self._changeEndpointNotificationState(watcher, req, res, false, next);
+        };
+    },
+
+    _changeEndpointNotificationState: function _changeEndpointNotificationState(watcher, req, res, notify, next) {
+        var _self = this;
+        var id = req.params.id;
+        watcher.notifyOnErroneousStatus(id, notify, function(err, endpoint) {
+            if (!err) {
+                res.json({
+                    id: endpoint.id,
+                    notify: endpoint.notify
+                });
+            } else {
+                _self._unknownEndpointError(id, next);
+            }
+        });
     },
 
     /**

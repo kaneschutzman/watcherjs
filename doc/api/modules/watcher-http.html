@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="watcher.js" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 1.0.0</em>
+            <em>API Docs for: 2.0.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -56,6 +56,7 @@
                                 <li><a href="../classes/SocketConnectorFactory.html">SocketConnectorFactory</a></li>
                                 <li><a href="../classes/StatusResolver.html">StatusResolver</a></li>
                                 <li><a href="../classes/StatusResolverFactory.html">StatusResolverFactory</a></li>
+                                <li><a href="../classes/TransactionalExecutor.html">TransactionalExecutor</a></li>
                                 <li><a href="../classes/Validator.html">Validator</a></li>
                                 <li><a href="../classes/Watcher.html">Watcher</a></li>
                                 <li><a href="../classes/WatcherFactory.html">WatcherFactory</a></li>
@@ -110,15 +111,175 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/src_routes_watcher-http.js.html#l25"><code>src&#x2F;routes&#x2F;watcher-http.js:25</code></a>
+            Defined in: <a href="../files/src_routes_watcher-http.js.html#l227"><code>src&#x2F;routes&#x2F;watcher-http.js:227</code></a>
         </div>
 
 </div>
 
 
 <div class="box intro">
-    <p>The application&#39;s http interface implementation.</p>
-
+    <p>The application&#39;s REST API implementation.</p>
+<h3 id="rest-api">REST API</h3>
+<p>In case of failure the server returns an object with the following structure:</p>
+<pre class="code prettyprint"><code>{
+     message: message,   //generic error message
+     errors: errors      //array of specific errors
+}
+</code></pre><h4 id="get-information-for-a-specific-endpoint-">Get information for a specific endpoint.</h4>
+<hr>
+<ul>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints/<code>&lt;id&gt;</code></strong> (request method: GET),</li>
+<li>parameters:<ul>
+<li><strong>id</strong> the endpoint id, it should be one of those defined at endpoints configuration data,</li>
+</ul>
+</li>
+<li>API reference: <strong><a href="../classes/Watcher.html#method_getEndpoint" class="crosslink">getEndpoint</a></strong>.</li>
+</ul>
+<p><strong>Response on success:</strong></p>
+<pre class="code prettyprint"><code>// For a socket communication type
+{
+     "id": "endpoint-id",            // endpoint id
+     "desc": "an endpoint",          // endpoint description
+     "status": "up",                 // endpoint status
+     "timestamp": 1429860936846,     // the timestamp of the current status
+     "since": 1429860926846,         // the timestamp since the last change of status
+     "type": "socket",               // connector type
+     "host": "localhost",            // endpoint host (applied for &#39;socket&#39; connector)
+     "port": 7777,                   // endpoint port (applied for &#39;socket&#39; connector)
+     "active": true,                 // whether or not the endpoint is active
+     "notify": false                 // whether or not the notification is enabled
+}
+</code></pre><p><strong>Response on error:</strong></p>
+<pre class="code prettyprint"><code>If the endpoint does not exist an error message with http status 422 is send
+</code></pre><h4 id="get-information-for-all-registered-endpoints-">Get information for all registered endpoints.</h4>
+<hr>
+<ul>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints</strong> (request method: GET).</li>
+<li>API reference: <strong><a href="../classes/Watcher.html#method_getEndpoints" class="crosslink">getEndpoints</a></strong>.</li>
+</ul>
+<p> <strong>Response on success:</strong></p>
+<pre class="code prettyprint"><code>An array with the information for all endpoints.
+// For a socket and http communication types
+[
+     {
+         "id": "endpoint-1",
+         "desc": "endpoint 1",
+         "status": "down"
+         "timestamp": 1429860936846,
+         "since": 1429860926846,
+         "type": "socket",
+         "host": "localhost",
+         "port": 7777,
+         "active": true,
+         "notify": true
+     },
+     {
+         "id": "endpoint-2",                     // endpoint id
+         "desc": "endpoint 2",                   // endpoint description
+         "status": "up"                          // endpoint status
+         "timestamp": 1429860936846,             // the timestamp of the current status
+         "since": 1429860926846,                 // the timestamp since the last change of status
+         "type": "http",                         // connector type
+         "url": "http://11.222.333.555:3333/",   // endpoint url (applied for &#39;http(s) connector&#39;)
+         "active": true,                         // whether or not the endpoint is active
+         "notify": false                         // whether or not the notification is enabled
+     }
+]
+</code></pre><p><strong>Response on error:</strong></p>
+<pre class="code prettyprint"><code>Generic error message with http status 500
+</code></pre><h4 id="add-new-endpoint-">Add new endpoint.</h4>
+<hr>
+<ul>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints</strong> (request method POST)</li>
+<li>parameters (parameters in <em>[]</em> are optional. when not set, the default values are used - those in parentheses.):<ul>
+<li><strong>id</strong> : the endpoint id,</li>
+<li><strong>desc</strong> : the endpoint description,</li>
+<li><strong>type</strong> : the endpoint type (&#39;socket&#39; or &#39;http&#39;),</li>
+<li>[<strong>host</strong>] (localhost): the endpoint host (applied for &#39;socket&#39; communication type),</li>
+<li>[<strong>port</strong>] (9999): the endpoint port (applied for &#39;socket&#39; communication type),</li>
+<li>[<strong>url</strong>] : the endpoint port (applied for &#39;http&#39; communication type),</li>
+<li>[<strong>active</strong>] (true): true/false whether or not to activate the endpoint,</li>
+<li>[<strong>notify</strong>] (false): true/false whether or not to enable email notification on erroneous service status</li>
+</ul>
+</li>
+<li>API reference: <strong><a href="../classes/Watcher.html#method_addEndpoint" class="crosslink">addEndpoint</a></strong>.</li>
+</ul>
+<p> <strong>Response on success:</strong></p>
+<pre class="code prettyprint"><code>{
+     "id":     "&lt;endpoint id&gt;"         //endpoint id
+     "uri":    "&lt;access endpoint uri&gt;" //endpoint uri, e.g. /endpoints/&lt;endpoint id&gt;
+     "status": "&lt;endpoint status&gt;"     //endpoint status (e.g. &#39;undetermined&#39;)
+}
+</code></pre><p><strong>Response on error:</strong></p>
+<pre class="code prettyprint"><code>Validation error messages with http status 422
+</code></pre><h4 id="remove-an-endpoint-">Remove an endpoint.</h4>
+<hr>
+<ul>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints/<code>&lt;id&gt;</code></strong> (request method: DELETE),</li>
+<li>parameters:<ul>
+<li><strong>id</strong> : the endpoint id</li>
+</ul>
+</li>
+<li>API reference: <strong><a href="../classes/Watcher.html#method_removeEndpoint" class="crosslink">removeEndpoint</a></strong>.</li>
+</ul>
+<p> <strong>Response on success:</strong></p>
+<pre class="code prettyprint"><code>{
+     "id": "&lt;endpoint id&gt;"   //removed endpoint id
+}
+</code></pre><p><strong>Response on error:</strong></p>
+<pre class="code prettyprint"><code>If the endpoint does not exist an error message with http status 422 is send
+</code></pre><h4 id="activate-deactivate-an-endpoint-">Activate/deactivate an endpoint.</h4>
+<hr>
+<ul>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints/<code>&lt;id&gt;</code>/activate</strong> (request method POST),</li>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints/<code>&lt;id&gt;</code>/activate</strong> (request method DELETE),</li>
+<li>parameters:<ul>
+<li><strong>id</strong> : the endpoint id,</li>
+</ul>
+</li>
+<li>API reference: <strong><a href="../classes/Watcher.html#method_setEndpointActivationState" class="crosslink">setEndpointActivationState</a></strong>.</li>
+</ul>
+<p> <strong>Response on success:</strong></p>
+<pre class="code prettyprint"><code>{
+     "id": "&lt;endpoint id&gt;"           //endpoint id
+     "active": "&lt;activation state&gt;"  //activation state
+     "status": "&lt;endpoint status&gt;"   //endpoint status
+}
+</code></pre><p><strong>Response on error:</strong></p>
+<pre class="code prettyprint"><code>If the endpoint does not exist an error message with http status 422 is send
+</code></pre><h4 id="enable-disable-notification-for-an-endpoint-">Enable/disable notification for an endpoint.</h4>
+<hr>
+<ul>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints/<code>&lt;id&gt;</code>/notify</strong> (request method POST),</li>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints/<code>&lt;id&gt;</code>/notify</strong> (request method DELETE),</li>
+<li>parameters:<ul>
+<li><strong>id</strong> : the endpoint id,</li>
+</ul>
+</li>
+<li>API reference: <strong><a href="../classes/Watcher.html#method_notifyOnErroneousStatus" class="crosslink">notifyOnErroneousStatus</a></strong>.</li>
+</ul>
+<p> <strong>Response on success:</strong></p>
+<pre class="code prettyprint"><code>{
+     "id": "&lt;endpoint id&gt;"               //endpoint id
+     "notify": "&lt;notification state&gt;"    //activation state
+}
+</code></pre><p><strong>Response on error:</strong></p>
+<pre class="code prettyprint"><code>If the endpoint does not exist an error message with http status 422 is send
+</code></pre><h4 id="get-the-the-unbound-resolution-strategies-">Get the the unbound resolution strategies.</h4>
+<hr>
+<ul>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/resolution-strategies</strong> (request method GET),</li>
+<li>API reference: <strong><a href="../classes/Watcher.html#method_getResolutionStrategies" class="crosslink">getResolutionStrategies</a></strong>.</li>
+</ul>
+<p> <strong>Response on success:</strong></p>
+<pre class="code prettyprint"><code>An array with the unbound resolution strategies, e.g.:
+[
+ "on-connection",
+ "always-down"
+]
+</code></pre><p><strong>Response on error:</strong></p>
+<pre class="code prettyprint"><code>Generic error message with http status 500
+</code></pre>
 </div>
 
 

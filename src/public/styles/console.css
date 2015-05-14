@@ -134,12 +134,12 @@ body {
     content: url("../images/eye-bw.png");
 }
 
-.action-deactivate-notification {
+.action-disable-notification {
     cursor: pointer;
     content: url("../images/email-go.png");
 }
 
-.action-activate-notification {
+.action-enable-notification {
     cursor: pointer;
     content: url("../images/email.png");
 }

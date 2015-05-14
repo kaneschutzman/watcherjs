@@ -12,112 +12,10 @@
  * is used interchangeably, but there is a conceptual difference between them which will be discussed shortly).
  * On the service status resolution, the status is stored internally and is made available either programmatically or
  * via http requests (aka the _status requests_).
- * Actually, __the entire application API is exposed as a set of HTTP requests__, which, on top of this, a simple but handy
- * __web gui__ is implemented. For the HTTP interface implementation the [express](http://expressjs.com) web framework is used.
- * At the following paragraphs the http interface is described with references to the respective application API.
- *
- * * A _status request_ for a specific endpoint
- *  * __http://`<host>`:`<port>`/endpoint/`<id>`__ (request method: GET),
- *  * parameters:
- *    * __id__ the endpoint id, it should be one of those defined at endpoints configuration data,
- *  * API reference: __{{#crossLink "Watcher/getEndpoint:method"}}{{/crossLink}}__.
- *
- * The response is a JSON message like the following example:
- *
- * ```
- * // For a socket communication type
- * {
- *      "id": "endpoint-id",            // endpoint id
- *      "desc": "an endpoint",          // endpoint description
- *      "status": "up",                 // endpoint status
- *      "timestamp": 1429860936846,     // the timestamp of the current status
- *      "since": 1429860926846,         // the timestamp since the last change of status
- *      "type": "socket",               // connector type
- *      "host": "localhost",            // endpoint host (applied for 'socket' connector)
- *      "port": 7777,                   // endpoint port (applied for 'socket' connector)
- *      "active": true,                 // whether or not the endpoint is active
- *      "notify": false                 // whether or not the notification is enabled
- * }
- * ```
- *
- * * A status request for all registered endpoints.
- *  * __http://`<host>`:`<port>`/endpoints__ (request method: GET).
- *  In this case the response JSON message is an array with the information for all endpoints.
- *  * API reference: __{{#crossLink "Watcher/getEndpoints:method"}}{{/crossLink}}__.
- *
- * ```
- * // For a socket and http communication types
- * [
- *      {
- *          "id": "endpoint-1",
- *          "desc": "endpoint 1",
- *          "status": "down"
- *          "timestamp": 1429860936846,
- *          "since": 1429860926846,
- *          "type": "socket",
- *          "host": "localhost",
- *          "port": 7777,
- *          "active": true,
- *          "notify": true
- *      },
- *      {
- *          "id": "endpoint-2",                     // endpoint id
- *          "desc": "endpoint 2",                   // endpoint description
- *          "status": "up"                          // endpoint status
- *          "timestamp": 1429860936846,             // the timestamp of the current status
- *          "since": 1429860926846,                 // the timestamp since the last change of status
- *          "type": "http",                         // connector type
- *          "url": "http://11.222.333.555:3333/",   // endpoint url (applied for 'http(s) connector')
- *          "active": true,                         // whether or not the endpoint is active
- *          "notify": false                         // whether or not the notification is enabled
- *      }
- * ]
- * ```
- *
- * * Add new endpoint.
- *  * __http://`<host>`:`<port>`/endpoint/add__ (request method POST)
- *  * parameters (parameters in _[]_ are optional. when not set, the default values are used - those in parentheses.):
- *    * __id__ : the endpoint id,
- *    * __desc__ : the endpoint description,
- *    * __type__ : the endpoint type ('socket' or 'http'),
- *    * [__host__] (localhost): the endpoint host (applied for 'socket' communication type),
- *    * [__port__] (9999): the endpoint port (applied for 'socket' communication type),
- *    * [__url__] : the endpoint port (applied for 'http' communication type),
- *    * [__active__] (true): true/false whether or not to activate the endpoint,
- *    * [__notify__] (false): true/false whether or not to enable email notification on erroneous service status
- *  * API reference: __{{#crossLink "Watcher/addEndpoint:method"}}{{/crossLink}}__.
- *
- *
- * * Remove an endpoint
- *  * __http://`<host>`:`<port>`/endpoint/remove__ (request method POST),
- *  * parameters:
- *    * __id__ : the endpoint id
- *  * API reference: __{{#crossLink "Watcher/removeEndpoint:method"}}{{/crossLink}}__.
- *
- *
- * * Activate/deactivate an endpoint
- *  * __http://`<host>`:`<port>`/endpoint/activation__ (request method POST),
- *  * parameters:
- *    * __id__ : the endpoint id,
- *    * __activate__ : true/false whether to activate or not the endpoint
- *  * API reference: __{{#crossLink "Watcher/setEndpointActivationState:method"}}{{/crossLink}}__.
- *
- *
- * * Enable/disable notification for an endpoint
- *  * __http://`<host>`:`<port>`/endpoint/notification__ (request method POST),
- *  * parameters:
- *    * __id__ : the endpoint id,
- *    * __notify__ : true/false whether or not to enable email notification on erroneous service status
- *  * API reference: __{{#crossLink "Watcher/notifyOnErroneousStatus:method"}}{{/crossLink}}__.
- *
- *
- * * Get the ids of the unbound resolution strategies
- *  * __http://`<host>`:`<port>`/resolution-strategies__ (request method GET),
- *  * API reference: __{{#crossLink "Watcher/getResolutionStrategies:method"}}{{/crossLink}}__.
- *
- *
- * * __http://`<host>`:`<port>`/console__, a web graphical user interface for the monitored services. The _console_ exposes
- * the _watcher.js_ API through a simple user-friendly gui.
+ * Actually, __the entire application API is also exposed as REST API__, which, on top of this, a simple but handy
+ * __web gui__ is implemented. For the REST API implementation the [express](http://expressjs.com) web framework is used.
+ * The REST interface description with references to the respective application API can be found at
+ * __{{#crossLinkModule "watcher-http"}}{{/crossLinkModule}}__.
  *
  *
  * ###Configuration
@@ -188,6 +86,7 @@
  * ###Exported objects
  * * __{{#crossLink "WatcherFactory"}}{{/crossLink}}__
  *
+ *
  * ###API Usage samples
  * __Service with route extension and resolution strategy registration__
  *    ```javascript
@@ -222,9 +121,9 @@
  *          route: function service(registry) {
  *              return function (req, res, next) {
  *                  var id = req.query.id;
- *                  var record = registry[id];
- *                  if (record) {
- *                      res.send('Service status: ' + record.status);
+ *                  var endpoint = registry[id];
+ *                  if (endpoint) {
+ *                      res.send('Service status: ' + endpoint.status);
  *                  } else {
  *                      res.send('Unknown service: ' + id);
  *                  }
@@ -285,9 +184,9 @@
  *
  * After starting the watcher the following status requests could be made in order to
  * retrieve the status for the services with id 'service-1', 'service-2' and 'service-3' respectively
- * http://localhost:7777/endpoint/service-1
- * http://localhost:7777/endpoint/service-2
- * http://localhost:7777/endpoint/service-3
+ * http://localhost:7777/endpoints/service-1
+ * http://localhost:7777/endpoints/service-2
+ * http://localhost:7777/endpoints/service-3
  * Whereas the request http://localhost:7777/custom-route?id=service-1
  * is the user defined route which returns: 'Service status: <status>' where status
  * the status of the 'service-1'.
@@ -327,8 +226,8 @@
  *
  * After starting the watcher the following status requests could be made in order to
  * retrieve the status for 'proxied-service-1' and 'proxied-service-2' respectively
- * http://localhost:7777/endpoint/endpoint-1
- * http://localhost:7777/endpoint/endpoint-2
+ * http://localhost:7777/endpoints/endpoint-1
+ * http://localhost:7777/endpoints/endpoint-2
  *    ```
  *
  * __Add and remove endpoints dynamically__
@@ -358,20 +257,21 @@
  *          type: 'http',
  *          timeout: 3000,
  *          url: 'http://11.222.333.555:3333/?get-status'
+ *      }, false, function() {
+ *            if (!_.isEmpty(errors)) {
+ *               throw new Error('validation error...');
+ *           }
  *      });
- *      if (!_.isEmpty(errors)) {
- *          throw new Error('validation error...');
- *      }
  * }, 6000);
  *
  * // Deactivate the endpoint 'service-2'
  * setTimeout(function () {
- *      watcher.deactivateEndpoint('service-2');
+ *      watcher.setEndpointActivationState('service-2', false);
  * }, 12000);
  *
  * // Activate the endpoint 'service-2'
  * setTimeout(function () {
- *        watcher.activateEndpoint('service-2');
+ *        watcher.setEndpointActivationState('service-2', true);
  *   }, 30000);
  *
  * // Remove the endpoint 'service-2'
@@ -385,6 +285,7 @@
  * }, 120000);
  *
  *    ```
+ *
  * @module watcher
  */
 'use strict';
@@ -470,11 +371,12 @@ watcher = stampit().state({
          *
          * @private
          * @method _registerEndpoint
-         * @param {Object} endpoint the endpoint.
+         * @param {Object} config the endpoint configuration.
+         * @return the endpoint.
          */
-        _registerEndpoint: function _registerEndpoint(endpoint) {
+        _registerEndpoint: function _registerEndpoint(config) {
             var now = moment.utc();
-            var _record = {
+            var _endpoint = {
                 status: undetermined,
                 timestamp: now,
                 since: now,
@@ -482,19 +384,19 @@ watcher = stampit().state({
                 active: true,
                 notify: false
             };
-            endpoint = _.clone(endpoint);
-            var connector = createConnector(endpoint);
-            var record = _.omit(_.defaults(endpoint, _record), 'resolutionStrategy');
-            var id = record.id;
-            record.desc = record.desc || id;
-            record.connector = connector;
+            config = _.clone(config);
+            var connector = createConnector(config);
+            var endpoint = _.omit(_.defaults(config, _endpoint), 'resolutionStrategy');
+            var id = endpoint.id;
+            endpoint.desc = endpoint.desc || id;
+            endpoint.connector = connector;
             // Register status resolved listener
-            var listener = _.bind(_.partial(this._onStatusResolve, record), this);
+            var listener = _.bind(_.partial(this._onStatusResolve, endpoint), this);
             connector.addStatusResolvedListener(listener);
 
-            this._registry[id] = record;
+            this._registry[id] = endpoint;
             logger.debug('New endpoint registered: ' + id);
-            return record;
+            return endpoint;
         },
 
         /**
@@ -508,23 +410,23 @@ watcher = stampit().state({
             var sender = this.options.nfOpts.sender;
             var recipients = this.options.nfOpts.recipients;
             if (!_.isEmpty(recipients)) {
-                toBeNotified = _.filter(this._registry, function (record) {
-                    var status = record.status;
-                    if (record.active && up !== status && undetermined !== status) {
-                        if (record.notify && (status !== record.previousStatus || !record.notified)) {
+                toBeNotified = _.filter(this._registry, function (endpoint) {
+                    var status = endpoint.status;
+                    if (endpoint.active && up !== status && undetermined !== status) {
+                        if (endpoint.notify && (status !== endpoint.previousStatus || !endpoint.notified)) {
                             return true;
                         }
                     } else {
-                        record.notified = false;
+                        endpoint.notified = false;
                     }
                     return false;
                 });
 
                 if (!_.isEmpty(toBeNotified)) {
                     var msg = [];
-                    _.each(toBeNotified, function (record) {
-                        msg.push('Endpoint, \'' + record.id + '\', status: ' + record.status +
-                        ', timestamp: ' + record.timestamp.format('MMMM Do YYYY, h:mm:ss'));
+                    _.each(toBeNotified, function (endpoint) {
+                        msg.push('Endpoint, \'' + endpoint.id + '\', status: ' + endpoint.status +
+                        ', timestamp: ' + endpoint.timestamp.format('MMMM Do YYYY, h:mm:ss'));
                     });
                     msg = msg.join('');
                     this._transporter.sendMail({
@@ -537,8 +439,8 @@ watcher = stampit().state({
                             logger.warn('Notification message failed: ' + error);
                         } else {
                             logger.info('Notification message send: ' + msg);
-                            _.each(toBeNotified, function (record) {
-                                record.notified = true;
+                            _.each(toBeNotified, function (endpoint) {
+                                endpoint.notified = true;
                             });
                         }
                     });
@@ -547,19 +449,19 @@ watcher = stampit().state({
             }
         },
 
-        _onStatusResolve: function _onStatusResolve(record, status) {
+        _onStatusResolve: function _onStatusResolve(endpoint, status) {
             if (!this._stopped) {
-                record.timestamp = moment.utc();
-                if(status !== record.status) {
-                    record.since = record.timestamp;
+                endpoint.timestamp = moment.utc();
+                if (status !== endpoint.status) {
+                    endpoint.since = endpoint.timestamp;
                 }
-                record.previousStatus = record.status;
-                record.status = status;
-                record.processed = true;
-                logger.debug('Update registry, id/status: ' + record.id + '/' + status);
+                endpoint.previousStatus = endpoint.status;
+                endpoint.status = status;
+                endpoint.processed = true;
+                logger.debug('Update registry, id/status: ' + endpoint.id + '/' + status);
                 if (_.every(this._registry,
-                        function (record) {
-                            return (record.processed === true);
+                        function (endpoint) {
+                            return (endpoint.processed === true);
                         })) {
                     this._notify();
                     setTimeout(_.bind(this._pollEndpoints, this), this.options.interval).unref();
@@ -571,25 +473,35 @@ watcher = stampit().state({
             var _self = this;
             if (!_self._stopped) {
                 var registry = _self._registry;
-                _.each(registry, function (record) {
-                    record.processed = false;
+                _.each(registry, function (endpoint) {
+                    endpoint.processed = false;
                 });
-                var passive = this._passive = _.every(registry, function (record) {
-                    return !(record.active);
+                var passive = this._passive = _.every(registry, function (endpoint) {
+                    return !(endpoint.active);
                 });
                 if (passive) {
                     logger.debug('No active endpoints, system passivated.');
                 } else {
                     logger.debug('Poll for services status...');
-                    _.each(registry, function (record) {
-                        if (record.active) {
-                            record.connector.start.call(record.connector);
+                    _.each(registry, function (endpoint) {
+                        if (endpoint.active) {
+                            endpoint.connector.start.call(endpoint.connector);
                         } else {
-                            record.processed = true;
+                            endpoint.processed = true;
                         }
                     });
                 }
             }
+        },
+
+        _writeEndpointConfigToFile: function _writeEndpointConfigToFile(fileName, config, callback) {
+            fs.outputJson(fileName, config, function (err) {
+                if (err) {
+                    logger.error('Endpoint storage \'' + config.id + '\' failed: ' + err);
+                    err = 'Update endpoint configuration at storage failed (' + err.message + ')';
+                }
+                callback(err, config);
+            });
         },
 
         /**
@@ -610,27 +522,19 @@ watcher = stampit().state({
          * (at the moment, the filesystem is used).
          *
          * @private
-         * @method _persistEndpoint
-         * @param {Object} endpoint the endpoint configuration.
+         * @method _persistEndpointConfig
+         * @param {Object} config the endpoint configuration.
+         * @param {Function} callback callback function to async write operation.
+         * @throws {Error} An error when the operation can not be performed (e.g. no write permissions).
          */
-        _persistEndpoint: function _persistEndpoint(endpoint) {
-            var fileName = path.join(this.options.exportDir, endpoint.id + '.json');
-            endpoint = _.clone(endpoint);
-            var strategy = endpoint.resolutionStrategy;
+        _persistEndpointConfig: function _persistEndpointConfig(config, callback) {
+            var fileName = path.join(this.options.exportDir, config.id + '.json');
+            config = _.clone(config);
+            var strategy = config.resolutionStrategy;
             if (strategy) {
-                endpoint.resolutionStrategy = strategy.id;
+                config.resolutionStrategy = strategy.id;
             }
-            fs.outputJson(fileName, endpoint,
-                function (err) {
-                    if (err) {
-                        logger.error('Endpoint \'' + endpoint.id +
-                        '\' configuration failed to be written at ' + fileName +
-                        '\n' + err);
-                    } else {
-                        logger.info('Endpoint \'' + endpoint.id +
-                        '\' configuration written at ' + fileName);
-                    }
-                });
+            this._writeEndpointConfigToFile(fileName, config, callback);
         },
 
         /**
@@ -640,16 +544,52 @@ watcher = stampit().state({
          * @private
          * @method _deleteEndpoint
          * @param {String} id the endpoint id.
+         * @param {Function} callback the callback(err) of the async process.
          */
-        _deleteEndpoint: function _deleteEndpoint(id) {
+        _deleteEndpoint: function _deleteEndpoint(id, callback) {
             var fileName = path.join(this.options.exportDir, id + '.json');
-            fs.remove(fileName, function (err) {
-                if (err) {
-                    logger.error('Unable to remove endpoint \'' + id +
-                    '\' from storage: ' + fileName + '\n' + err);
+            fs.exists(fileName, function (exists) {
+                if (exists) {
+                    fs.remove(fileName, function (err) {
+                        if (!err) {
+                            logger.info('Endpoint \'' + id + '\' removed from storage: ' + fileName);
+                        }
+                        callback(err);
+                    });
                 } else {
-                    logger.info('Endpoint \'' + id +
-                    '\' removed from storage: ' + fileName);
+                    logger.debug('Endpoint \'' + id + '\' is not persisted at local store.');
+                    callback(null);
+                }
+            });
+        },
+
+        /**
+         * Updates the endpoint of the specified id from the persistence storage
+         * (at the moment, the filesystem is used).
+         *
+         * @private
+         * @method _updateEndpointConfig
+         * @param {String} id the endpoint id.
+         * @param {Object} properties updated properties.
+         * @param {Function} callback the callback(err, properties) of the async process.
+         */
+        _updateEndpointConfig: function _updateEndpointConfig(id, properties, callback) {
+            var _self = this;
+            var fileName = path.join(this.options.exportDir, id + '.json');
+            fs.exists(fileName, function (exists) {
+                if (exists) {
+                    fs.readJson(fileName, function (err, config) {
+                        if (!err) {
+                            _.extend(config, properties);
+                            _self._writeEndpointConfigToFile(fileName, config, callback);
+                        } else {
+                            logger.warn('Unable to update endpoint persistence state, invalid json file: ' + fileName);
+                            callback(err, properties);
+                        }
+                    });
+                } else {
+                    logger.debug('Endpoint \'' + id + '\' not found at local store, not permanent changes.');
+                    callback(null, properties);
                 }
             });
         },
@@ -662,16 +602,9 @@ watcher = stampit().state({
          * @return {Array} the persistent endpoints.
          */
         _getStoredEndpoints: function _getStoredEndpoints() {
-            var storage = path.normalize(this.options.exportDir);
-            fs.ensureDirSync(storage, function (err) {
-                if (err) {
-                    logger.debug('Unable to create endpoints storage directory: ' +
-                    storage + '\n' + err);
-                } else {
-                    logger.debug('Ensuring existence of endpoints storage directory: ' +
-                    storage);
-                }
-            });
+            var storage = this.options.exportDir;
+            fs.ensureDirSync(storage);
+            logger.debug('Ensuring existence of endpoints storage directory: ' + storage);
             var storedEnpoints = [];
             fs.readdirSync(storage).forEach(function (file) {
                 var entry = path.join(storage, file);
@@ -694,6 +627,7 @@ watcher = stampit().state({
          *
          * @method getEndpoint
          * @param {String} id the endpoint id.
+         * @return {Object} the endpoint.
          */
         getEndpoint: function getEndpoint(id) {
             return this._registry[id];
@@ -714,31 +648,36 @@ watcher = stampit().state({
          * For the configuration see at {{#crossLinkModule "watcher"}}{{/crossLinkModule}}
          *
          * @method addEndpoint
-         * @param {Object} endpoint the endpoint configuration (see at
+         * @param {Object} config the endpoint configuration (see at
          * __{{#crossLink "WatcherFactory/create:method"}}{{/crossLink}}__).
          * @param {Boolean} store used to indicate whether or not to store the endpoint.
-         * @return {Array} the validation errors, empty if no error exists.
-         * @throws {Error} validation errors.
+         * @param {Function} callback the callback(err, endpoint) of the async process.
          */
-        addEndpoint: function addEndpoint(endpoint, store) {
-            var registry = this._registry;
-            var validationErrors = validator.validateServiceEndpoint(endpoint, _.keys(registry),
-                this.options.resolutionStrategies);
-            if (_.isEmpty(validationErrors)) {
-                var record = this._registerEndpoint(endpoint);
-                if (store) {
-                    this._persistEndpoint(endpoint);
-                }
-                if (record.active) {
+        addEndpoint: function addEndpoint(config, store, callback) {
+            callback = callback || _.noop;
+            var endpoint, registry = this._registry;
+            var errors = validator.validateEndpointConfig(
+                config, _.keys(registry), this.options.resolutionStrategies);
+            if (_.isEmpty(errors)) {
+                endpoint = this._registerEndpoint(config);
+                if (endpoint.active) {
                     this._restartIfPassive();
                 }
+                if (store) {
+                    this._persistEndpointConfig(config, function (err) {
+                        if (err) {
+                            err = {message: err};
+                        }
+                        callback(err, endpoint);
+                    });
+                } else {
+                    callback(null, endpoint);
+                }
             } else {
-                var error = '';
-                _.each(validationErrors, function (ve) {
-                    error += (ve + '\n');
-                });
-                //logger.error('Unable to register service endpoint: ' + id + ', ' + error);
-                throw new Error(error);
+                callback({
+                    message: 'validation errors',
+                    errors: errors
+                }, config);
             }
         },
 
@@ -747,11 +686,22 @@ watcher = stampit().state({
          *
          * @method removeEndpoint
          * @param {String} id the endpoint id.
+         * @param {Function} callback the callback(err, id) of the async process.
          */
-        removeEndpoint: function removeEndpoint(id) {
-            delete this._registry[id];
-            this._deleteEndpoint(id);
-            logger.debug('Endpoint has been removed: ' + id);
+        removeEndpoint: function removeEndpoint(id, callback) {
+            callback = callback || _.noop;
+            var endpoint = this.getEndpoint(id);
+            if (endpoint) {
+                delete this._registry[id];
+                this._deleteEndpoint(id, function (err) {
+                    if (err) {
+                        err = {message: err};
+                    }
+                    callback(err, id);
+                });
+            }
+            logger.debug('Endpoint \'' + id + '\' has been removed!');
+            return endpoint;
         },
 
         /**
@@ -760,22 +710,32 @@ watcher = stampit().state({
          * @method setEndpointActivationState
          * @param {String} id the endpoint id.
          * @param {Boolean} active true or false to activate or deactivate the specific endpoint respectively.
+         * @return {Object} the endpoint or undefined if the endpoint does not exist.
+         * @param {Function} callback the callback(err, endpoint) of the async process.
          */
-        setEndpointActivationState: function setEndpointActivationState(id, active) {
-            var record = this._registry[id];
-            if (record) {
+        setEndpointActivationState: function setEndpointActivationState(id, active, callback) {
+            callback = callback || _.noop;
+            var endpoint = this._registry[id];
+            if (endpoint) {
                 var now = moment().utc();
-                record.active = active;
-                record.status = undetermined;
-                record.timestamp = now;
-                record.since = now;
+                endpoint.active = active;
+                endpoint.status = undetermined;
+                endpoint.timestamp = now;
+                endpoint.since = now;
                 logger.debug('Endpoint ' + id + ' activation state set to: ' + active);
                 if (active) {
                     this._restartIfPassive();
                 }
+                this._updateEndpointConfig(id, {active: active}, function (err, config) {
+                    if (err) {
+                        err = {message: err};
+                    }
+                    callback(err, endpoint);
+                });
             } else {
                 logger.warn('Unable to set the activation state, endpoint \'' + id + '\' does not exist.');
             }
+            return endpoint;
         },
 
         /**
@@ -784,15 +744,24 @@ watcher = stampit().state({
          * @method notifyOnErroneousStatus
          * @param {String} id the endpoint id.
          * @param {Boolean} notify true or false to enable or disable the notification respectively.
+         * @param {Function} callback the callback(err, endpoint) of the async process.
          */
-        notifyOnErroneousStatus: function notifyOnErroneousStatus(id, notify) {
-            var record = this._registry[id];
-            if (record) {
-                record.notify = notify;
+        notifyOnErroneousStatus: function notifyOnErroneousStatus(id, notify, callback) {
+            callback = callback || _.noop;
+            var endpoint = this._registry[id];
+            if (endpoint) {
+                endpoint.notify = notify;
                 logger.debug('Endpoint \'' + id + '\' notification state set to: ' + notify);
+                this._updateEndpointConfig(id, {notify: notify}, function (err, config) {
+                    if (err) {
+                        err = {message: err};
+                    }
+                    callback(err, endpoint);
+                });
             } else {
                 logger.warn('Unable to set the notification state, endpoint \'' + id + '\' does not exist.');
             }
+            return endpoint;
         },
 
         /**
@@ -816,7 +785,7 @@ watcher = stampit().state({
             var _self = this;
             var options = _self.options, registry = _self._registry;
 
-            var serverValErrors = validator.validateServer(options);
+            var serverValErrors = validator.validateServerConfig(options);
             if (_.isEmpty(serverValErrors)) {
 
                 _self.server = httpServerFactory.create({
@@ -828,14 +797,15 @@ watcher = stampit().state({
                             req.id = id;
                             next();
                         });
-                        app.get('/endpoint/:id', routes.endpoint(_self));
-                        app.post('/endpoint/add', routes.addEndpoint(_self));
-                        app.post('/endpoint/remove', routes.removeEndpoint(_self));
-                        app.post('/endpoint/activation', routes.endpointActivation(_self));
-                        app.post('/endpoint/notification', routes.endpointNotification(_self));
                         app.get('/endpoints', routes.endpoints(_self));
+                        app.get('/endpoints/:id', routes.endpoint(_self));
+                        app.post('/endpoints/:id', routes.addEndpoint(_self));
+                        app.delete('/endpoints/:id', routes.removeEndpoint(_self));
+                        app.post('/endpoints/:id/activate', routes.endpointActivate(_self));
+                        app.delete('/endpoints/:id/activate', routes.endpointDeactivate(_self));
+                        app.post('/endpoints/:id/notify', routes.endpointEnableNotification(_self));
+                        app.delete('/endpoints/:id/notify', routes.endpointDisableNotification(_self));
                         app.get('/resolution-strategies', routes.resolutionStrategies(_self));
-
                         app.get('/console', function (req, res) {
                             res.render('console');
                         });
@@ -853,11 +823,11 @@ watcher = stampit().state({
                 var endpoints = options.endpoints.concat(storedEnpoints);
                 // Register service endpoint
                 _.each(endpoints, function (endpoint) {
-                    try {
-                        _self.addEndpoint(endpoint);
-                    } catch (e) {
-                        logger.error('Endpoint \'' + endpoint.id + '\' registration failed: ' + e.message);
-                    }
+                    _self.addEndpoint(endpoint, false, function (err, endpoint) {
+                        if (err) {
+                            logger.error('Endpoint \'' + endpoint.id + '\' registration failed: ' + err.message);
+                        }
+                    });
                 });
                 logger.info('Properties are successfully loaded: ' + JSON.stringify(options));
             } else {
@@ -931,7 +901,7 @@ watcherFactory = {
      * Creates a Watcher instance.
      * @static
      * @method create
-     * @param {Object} options the Watcher configuration.
+     * @param {Object} [options] the Watcher configuration.
      * Properties in _[]_ are optional. when not set, the default values are used - those in parentheses.
      * * Embedded http server configuration and service communication interval
      *  * [__host__] ('localhost'), the http server host name.
@@ -989,6 +959,7 @@ watcherFactory = {
         options = options || {};
         _.defaults(options, _options);
         options.nfOpts.sender = options.nfOpts.sender || 'admin@watcherjs.com';
+        options.exportDir = path.normalize(options.exportDir);
         return watcher.create({
             options: options,
             emitter: new events.EventEmitter()

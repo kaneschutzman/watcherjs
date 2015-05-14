@@ -69,7 +69,8 @@ module.exports = function (grunt) {
         handlebars: {
             compile: {
                 options: {
-                    namespace: 'JST'
+                    namespace: 'JST',
+                    amd: true
                 },
                 files: {
                     'src/public/js/templates/templates.js': ['src/views/*.hbs']
@@ -96,6 +97,7 @@ module.exports = function (grunt) {
                 url: '<%= pkg.homepage %>',
                 options: {
                     paths: ['./src/'],
+                    exclude: 'public,views',
                     outdir: './doc/api/'
                     //themedir: './node_modules/yuidoc-bootstrap-theme',
                     //helpers : ['./node_modules/yuidoc-bootstrap-theme/helpers/helpers.js']

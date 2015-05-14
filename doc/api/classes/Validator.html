@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="watcher.js" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 1.0.0</em>
+            <em>API Docs for: 2.0.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -56,6 +56,7 @@
                                 <li><a href="../classes/SocketConnectorFactory.html">SocketConnectorFactory</a></li>
                                 <li><a href="../classes/StatusResolver.html">StatusResolver</a></li>
                                 <li><a href="../classes/StatusResolverFactory.html">StatusResolverFactory</a></li>
+                                <li><a href="../classes/TransactionalExecutor.html">TransactionalExecutor</a></li>
                                 <li><a href="../classes/Validator.html">Validator</a></li>
                                 <li><a href="../classes/Watcher.html">Watcher</a></li>
                                 <li><a href="../classes/WatcherFactory.html">WatcherFactory</a></li>
@@ -140,11 +141,11 @@
 
                     <ul class="index-list methods">
                             <li class="index-item method">
-                                <a href="#method_validateServer">validateServer</a>
+                                <a href="#method_validateEndpointConfig">validateEndpointConfig</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_validateServiceEndpoint">validateServiceEndpoint</a>
+                                <a href="#method_validateServerConfig">validateServerConfig</a>
 
                             </li>
                     </ul>
@@ -157,13 +158,107 @@
             <div id="methods" class="api-class-tabpanel">
                 <h2 class="off-left">Methods</h2>
 
-<div id="method_validateServer" class="method item">
-    <h3 class="name"><code>validateServer</code></h3>
+<div id="method_validateEndpointConfig" class="method item">
+    <h3 class="name"><code>validateEndpointConfig</code></h3>
 
         <div class="args">
             <span class="paren">(</span><ul class="args-list inline commas">
                 <li class="arg">
-                        <code>options</code>
+                        <code>config</code>
+                </li>
+                <li class="arg">
+                        <code>ids</code>
+                </li>
+                <li class="arg">
+                        <code>resolutionStrategies</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Array</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_validator.js.html#l134"><code>src&#x2F;validator.js:134</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Validates the service communication endpoint.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">config</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                        <p>the endpoint configuration.</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">ids</code>
+                        <span class="type">Array</span>
+
+
+                    <div class="param-description">
+                        <p>the endpoints ids.</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">resolutionStrategies</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                        <p>the registered resolution strategies.</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Array</span>:
+                    <p>the validation errors, empty if no error exists.</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_validateServerConfig" class="method item">
+    <h3 class="name"><code>validateServerConfig</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>config</code>
                 </li>
             </ul><span class="paren">)</span>
         </div>
@@ -195,94 +290,12 @@
 
             <ul class="params-list">
                 <li class="param">
-                        <code class="param-name">options</code>
+                        <code class="param-name">config</code>
                         <span class="type">Object</span>
 
 
                     <div class="param-description">
-                        <p>the server options.</p>
-
-                    </div>
-
-                </li>
-            </ul>
-        </div>
-
-
-
-</div>
-<div id="method_validateServiceEndpoint" class="method item">
-    <h3 class="name"><code>validateServiceEndpoint</code></h3>
-
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-                <li class="arg">
-                        <code>endpoint</code>
-                </li>
-                <li class="arg">
-                        <code>ids</code>
-                </li>
-                <li class="arg">
-                        <code>resolutionStrategies</code>
-                </li>
-            </ul><span class="paren">)</span>
-        </div>
-
-
-
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/src_validator.js.html#l134"><code>src&#x2F;validator.js:134</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Validates the service communication endpoint.</p>
-
-    </div>
-
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-                <li class="param">
-                        <code class="param-name">endpoint</code>
-                        <span class="type">Object</span>
-
-
-                    <div class="param-description">
-                        <p>the service communication endpoint configuration.</p>
-
-                    </div>
-
-                </li>
-                <li class="param">
-                        <code class="param-name">ids</code>
-                        <span class="type">Array</span>
-
-
-                    <div class="param-description">
-                        <p>the endpoints ids.</p>
-
-                    </div>
-
-                </li>
-                <li class="param">
-                        <code class="param-name">resolutionStrategies</code>
-                        <span class="type">Object</span>
-
-
-                    <div class="param-description">
-                        <p>the registered resolution strategies.</p>
+                        <p>the server configuration.</p>
 
                     </div>
 
