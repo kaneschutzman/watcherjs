@@ -57,9 +57,9 @@ The entire application API is exposed as REST API. For the REST API implementati
 the [express](http://expressjs.com) web framework is used. It is worth mentioning that the user can define
 __route extension points__ in order to build custom responses for the status requests.
 
-Detailed information about the http interface and examples can be found at:
-[watcher](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/modules/watcher.html),
-[WatcherHttp](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/classes/WatcherHttp.html) and
+Detailed information about the REST interface and examples can be found at:
+[watcher-http](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/modules/watcher-http.html) and
+[watcher](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/modules/watcher.html) and
 [watcher-full.js](examples/watcher-full.js)
 
 ----
