@@ -30,10 +30,10 @@ describe('watcher', function () {
             var options = {
                 endpoints: [
                     {
-                        id: 'dummy',
+                        id: 'console',
                         type: 'http',
-                        timeout: 100,
-                        url: 'http://11.222.333.444:3333/?get-status'
+                        timeout: 2000,
+                        url: 'http://localhost:7777/console'
                     }
                 ]
             };
@@ -47,12 +47,12 @@ describe('watcher', function () {
             });
         });
 
-        it('a valid status request, with undetermined service status', function (done) {
-            http.get('http://localhost:7777/endpoints/dummy', function (res) {
+        it('a valid status request, with up service status', function (done) {
+            http.get('http://localhost:7777/endpoints/console', function (res) {
                 assert.equal(200, res.statusCode);
                 res.on('data', function (chunk) {
                     var service = JSON.parse(s(chunk).value());
-                    assert.equal(service.status, 'undetermined');
+                    assert.equal(service.status, 'up');
                     done();
                 });
             });
