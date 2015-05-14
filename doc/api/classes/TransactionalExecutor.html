@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>src/validator.js - watcher.js</title>
+    <title>TransactionalExecutor - watcher.js</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -106,207 +106,145 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-<h1 class="file-heading">File: src/validator.js</h1>
+<h1>TransactionalExecutor Class</h1>
+<div class="box meta">
 
-<div class="file">
-    <pre class="code prettyprint linenums">
-/**
- * Created by jpsoroulas.
- */
 
-/**
- * Validates the __{{#crossLink &quot;Watcher&quot;}}{{/crossLink}}__ configuration.
- *
- * ###Exported objects
- * __{{#crossLink &quot;Validator&quot;}}{{/crossLink}}__
- *
- * @module validator
- */
-&#x27;use strict&#x27;;
-var _ = require(&#x27;underscore&#x27;);
-var s = require(&#x27;underscore.string&#x27;);
-var Validate = require(&#x27;validate-arguments&#x27;);
+        <div class="foundat">
+            Defined in: <a href="../files/src_utils.js.html#l259"><code>src&#x2F;utils.js:259</code></a>
+        </div>
 
-var logger = require(&#x27;./logger&#x27;);
-var constants = require(&#x27;./constants&#x27;);
-var socketConnectorType = constants.connectorType.socket;
-var httpConnectorType = constants.connectorType.http;
+            Module: <a href="../modules/utils.html">utils</a>
 
-var serverValidationSpec = {
-    port: &#x27;natural&#x27;,
-    host: &#x27;string&#x27;,
-    interval: &#x27;natural&#x27;,
-    routeExts: {
-        //isa: {
-        //    route: {
-        //        isa: &#x27;function&#x27;
-        //    },
-        //    path: {
-        //        isa: &#x27;string&#x27;
-        //    }
-        //},
-        isa: &#x27;Array&#x27;,
-        optional: true
-    },
-    nfOpts: {
-        sender: {
-            isa: &#x27;string&#x27;,
-            optional: true
-        },
-        recipients: {
-            isa: &#x27;Array&#x27;,
-            optional: true
-        },
-        isa: &#x27;Object&#x27;,
-        optional: true
-    },
-    resolutionStrategies: {
-        isa: &#x27;Array&#x27;,
-        optional: true
-    }
-};
+</div>
 
-var endpointValidationSpec = {
-    id: &#x27;string&#x27;,
-    type: &#x27;string&#x27;,
-    desc: {
-        isa: &#x27;string&#x27;,
-        optional: true
-    },
-    host: {
-        isa: &#x27;string&#x27;,
-        optional: true
-    },
-    port: {
-        isa: &#x27;natural&#x27;,
-        optional: true
-    },
-    url: {
-        isa: &#x27;string&#x27;,
-        optional: true
-    },
-    timeout: {
-        isa: &#x27;natural&#x27;,
-        optional: true
-    },
-    active: {
-        isa: &#x27;boolean&#x27;,
-        optional: true
-    },
-    notify: {
-        isa: &#x27;boolean&#x27;,
-        optional: true
-    },
-    resolutionStrategy: {
-        isa: &#x27;object&#x27;,
-        optional: true
-    }
-};
 
-/**
- * Exported module object
- */
-/**
- * The validator
- *
- * @class Validator
- * @static
- */
-module.exports = {
-    /**
-     * Validates the watcher&#x27;s http embedded server options.
-     *
-     * @method validateServerConfig
-     * @param {Object} config the server configuration.
-     */
-    validateServerConfig: function validateServerConfig(config) {
-        var validationErrors = [];
-        var resolutionStrategies = config.resolutionStrategies || [];
-        var ids = _.pluck(resolutionStrategies, &#x27;id&#x27;);
-        if (_.size(_.uniq(ids)) !== _.size(ids)) {
-            validationErrors.push(&#x27;duplicate resolution strategies ids&#x27;);
-        }
-        var strategyInterface = [&#x27;resolveOnConnection&#x27;, &#x27;resolveOnConversation&#x27;, &#x27;resolveNow&#x27;, &#x27;reset&#x27;];
-        _.each(resolutionStrategies, function (strategy) {
-            _.each(strategyInterface, function (fun) {
-                var impl = strategy.implementation;
-                if (!_.isFunction(impl[fun])) {
-                    validationErrors.push(&#x27;strategy, \&#x27;&#x27; + impl +
-                    &#x27;\&#x27;, function implementation missing \&#x27;&#x27; + fun + &#x27;\&#x27;&#x27;);
-                }
-            });
-        });
-        var valResult = Validate.named(config, serverValidationSpec);
-        if (!valResult.isValid()) {
-            validationErrors.push(valResult.errorString());
-        }
-        return validationErrors;
-    },
+<div class="box intro">
+    <p>Enables functions transactional execution</p>
 
-    /**
-     * Validates the service communication endpoint.
-     *
-     * @method validateEndpointConfig
-     * @param {Object} config the endpoint configuration.
-     * @param {Array} ids the endpoints ids.
-     * @param {Object} resolutionStrategies the registered resolution strategies.
-     * @return {Array} the validation errors, empty if no error exists.
-     */
-    validateEndpointConfig: function validateEndpointConfig(config, ids, resolutionStrategies) {
-        var type = config.type, validationErrors = [], specsValResult;
+</div>
 
-        _.each(config, function (val, key, obj) {
-            if (s.isBlank(val)) {
-                obj[key] = void 0;
-            }
-        });
 
-        ids.push(config.id);
-        if (_.size(_.uniq(ids)) !== _.size(ids)) {
-            validationErrors.push(&#x27;duplicate endpoint ids&#x27;);
-        }
+<div id="classdocs" class="tabview">
+    <ul class="api-class-tabs">
+        <li class="api-class-tab index"><a href="#index">Index</a></li>
 
-        var strategy = config.resolutionStrategy;
-        if (strategy &amp;&amp; !_.isFunction(strategy)) {
-            strategy = _.find(resolutionStrategies, function (entry) {
-                return strategy === entry.id;
-            });
-            if (strategy) {
-                var id = strategy.id;
-                config.resolutionStrategy = strategy.implementation;
-                config.resolutionStrategy.id = id;
-            } else {
-                validationErrors.push(&#x27;Unable to apply a no existing strategy \&#x27;&#x27; + strategy +
-                &#x27;\&#x27; to the endpoint \&#x27;&#x27; + config.id + &#x27;\&#x27; &#x27;);
-            }
-        }
+            <li class="api-class-tab methods"><a href="#methods">Methods</a></li>
+    </ul>
 
-        switch (type) {
-            case socketConnectorType:
-                if (!_.isUndefined(config.port)) {
-                    config.port = parseInt(config.port);
-                }
-                specsValResult = Validate.named(config, endpointValidationSpec);
-                break;
-            case httpConnectorType:
-                var url = config.url;
-                if (url) {
-                    if (!(s.startsWith(url, &#x27;http&#x27;) || s.startsWith(url, &#x27;https&#x27;))) {
-                        validationErrors.push(&#x27;Only http/https protocol supported.&#x27;);
-                    }
-                }
-                specsValResult = Validate.named(config, endpointValidationSpec);
-                break;
-            default:
-                validationErrors.push(&#x27;Can not prepare options for type: &#x27; + type);
-        }
-        if (!specsValResult.isValid()) {
-            validationErrors.push(specsValResult.errorString());
-        }
-        return validationErrors;
-    }
-};
-    </pre>
+    <div>
+        <div id="index" class="api-class-tabpanel index">
+            <h2 class="off-left">Item Index</h2>
+
+                <div class="index-section methods">
+                    <h3>Methods</h3>
+
+                    <ul class="index-list methods">
+                            <li class="index-item method">
+                                <a href="#method_execute">execute</a>
+
+                                    <span class="flag static">static</span>
+                            </li>
+                    </ul>
+                </div>
+
+
+
+        </div>
+
+            <div id="methods" class="api-class-tabpanel">
+                <h2 class="off-left">Methods</h2>
+
+<div id="method_execute" class="method item">
+    <h3 class="name"><code>execute</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>ops</code>
+                </li>
+                <li class="arg">
+                        <code class="optional">[onCompletedCallback]</code>
+                </li>
+                <li class="arg">
+                        <code class="optional">[type]</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+        <span class="flag static">static</span>
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_utils.js.html#l265"><code>src&#x2F;utils.js:265</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Executes the provided operations transactional.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">ops</code>
+                        <span class="type">Array</span>
+
+
+                    <div class="param-description">
+                        <p>the array of functions for execution.</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name optional">[onCompletedCallback]</code>
+                        <span class="type">Function</span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+
+
+                    <div class="param-description">
+                        <p>on transaction complete callback.</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name optional">[type]</code>
+                        <span class="type">String</span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+
+
+                    <div class="param-description">
+                        <p>the async type model, &#39;series&#39; or &#39;waterfall&#39;.</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+            </div>
+
+
+
+    </div>
 </div>
                     </div>
                 </div>

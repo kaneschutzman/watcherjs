@@ -42,7 +42,7 @@ describe('watcher', function () {
 
         it('a status request with wrong endpoint id, should return 404', function (done) {
             http.get('http://localhost:7777/endpoints/no-exist', function (res) {
-                assert.equal(404, res.statusCode);
+                assert.equal(422, res.statusCode);
                 done();
             });
         });
@@ -52,7 +52,7 @@ describe('watcher', function () {
                 assert.equal(200, res.statusCode);
                 res.on('data', function (chunk) {
                     var service = JSON.parse(s(chunk).value());
-                    assert.equal(service.status, 'unreachable');
+                    assert.equal(service.status, 'undetermined');
                     done();
                 });
             });

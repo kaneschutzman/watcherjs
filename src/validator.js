@@ -104,12 +104,12 @@ module.exports = {
     /**
      * Validates the watcher's http embedded server options.
      *
-     * @method validateServer
-     * @param {Object} options the server options.
+     * @method validateServerConfig
+     * @param {Object} config the server configuration.
      */
-    validateServer: function validateServer(options) {
+    validateServerConfig: function validateServerConfig(config) {
         var validationErrors = [];
-        var resolutionStrategies = options.resolutionStrategies || [];
+        var resolutionStrategies = config.resolutionStrategies || [];
         var ids = _.pluck(resolutionStrategies, 'id');
         if (_.size(_.uniq(ids)) !== _.size(ids)) {
             validationErrors.push('duplicate resolution strategies ids');
@@ -124,7 +124,7 @@ module.exports = {
                 }
             });
         });
-        var valResult = Validate.named(options, serverValidationSpec);
+        var valResult = Validate.named(config, serverValidationSpec);
         if (!valResult.isValid()) {
             validationErrors.push(valResult.errorString());
         }
@@ -134,56 +134,56 @@ module.exports = {
     /**
      * Validates the service communication endpoint.
      *
-     * @method validateServiceEndpoint
-     * @param {Object} endpoint the service communication endpoint configuration.
+     * @method validateEndpointConfig
+     * @param {Object} config the endpoint configuration.
      * @param {Array} ids the endpoints ids.
      * @param {Object} resolutionStrategies the registered resolution strategies.
      * @return {Array} the validation errors, empty if no error exists.
      */
-    validateServiceEndpoint: function validateServiceEndpoint(endpoint, ids, resolutionStrategies) {
-        var type = endpoint.type, validationErrors = [], specsValResult;
+    validateEndpointConfig: function validateEndpointConfig(config, ids, resolutionStrategies) {
+        var type = config.type, validationErrors = [], specsValResult;
 
-        _.each(endpoint, function (val, key, obj) {
+        _.each(config, function (val, key, obj) {
             if (s.isBlank(val)) {
                 obj[key] = void 0;
             }
         });
 
-        ids.push(endpoint.id);
+        ids.push(config.id);
         if (_.size(_.uniq(ids)) !== _.size(ids)) {
             validationErrors.push('duplicate endpoint ids');
         }
 
-        var strategy = endpoint.resolutionStrategy;
+        var strategy = config.resolutionStrategy;
         if (strategy && !_.isFunction(strategy)) {
             strategy = _.find(resolutionStrategies, function (entry) {
                 return strategy === entry.id;
             });
             if (strategy) {
                 var id = strategy.id;
-                endpoint.resolutionStrategy = strategy.implementation;
-                endpoint.resolutionStrategy.id = id;
+                config.resolutionStrategy = strategy.implementation;
+                config.resolutionStrategy.id = id;
             } else {
                 validationErrors.push('Unable to apply a no existing strategy \'' + strategy +
-                '\' to the endpoint \'' + endpoint.id + '\' ');
+                '\' to the endpoint \'' + config.id + '\' ');
             }
         }
 
         switch (type) {
             case socketConnectorType:
-                if (!_.isUndefined(endpoint.port)) {
-                    endpoint.port = parseInt(endpoint.port);
+                if (!_.isUndefined(config.port)) {
+                    config.port = parseInt(config.port);
                 }
-                specsValResult = Validate.named(endpoint, endpointValidationSpec);
+                specsValResult = Validate.named(config, endpointValidationSpec);
                 break;
             case httpConnectorType:
-                var url = endpoint.url;
+                var url = config.url;
                 if (url) {
                     if (!(s.startsWith(url, 'http') || s.startsWith(url, 'https'))) {
                         validationErrors.push('Only http/https protocol supported.');
                     }
                 }
-                specsValResult = Validate.named(endpoint, endpointValidationSpec);
+                specsValResult = Validate.named(config, endpointValidationSpec);
                 break;
             default:
                 validationErrors.push('Can not prepare options for type: ' + type);

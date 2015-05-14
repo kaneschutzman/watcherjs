@@ -56,6 +56,7 @@
                                 <li><a href="../classes/SocketConnectorFactory.html">SocketConnectorFactory</a></li>
                                 <li><a href="../classes/StatusResolver.html">StatusResolver</a></li>
                                 <li><a href="../classes/StatusResolverFactory.html">StatusResolverFactory</a></li>
+                                <li><a href="../classes/TransactionalExecutor.html">TransactionalExecutor</a></li>
                                 <li><a href="../classes/Validator.html">Validator</a></li>
                                 <li><a href="../classes/Watcher.html">Watcher</a></li>
                                 <li><a href="../classes/WatcherFactory.html">WatcherFactory</a></li>
@@ -161,11 +162,11 @@ var httpServer = stampit().methods({
 
         app.locals.pretty = true;
         app.use(function (err, req, res, next) {
-            var message = err.message || &#x27;Undefined Error!&#x27;;
-            var errors = err.errors || [message];
+            var message = err.message || &#x27;Unknown Error!&#x27;;
+            //var errors = err.errors || [message];
             res.status(err.status || 500).json({
                 message: message,
-                errors: errors
+                errors: err.errors
             });
         });
     },

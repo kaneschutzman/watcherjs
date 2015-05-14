@@ -1,3 +1,5 @@
+define(['handlebars'], function(Handlebars) {
+
 this["JST"] = this["JST"] || {};
 
 this["JST"]["src/views/endpoint-form.hbs"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
@@ -119,3 +121,7 @@ this["JST"]["src/views/endpoints.hbs"] = Handlebars.template({"compiler":[6,">= 
     + alias3(((helper = (helper = helpers.errRatio || (depth0 != null ? depth0.errRatio : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"errRatio","hash":{},"data":data}) : helper)))
     + "%</div>\n            </td>\n        </tr>\n    </tfoot>\n</table>";
 },"useData":true});
+
+return this["JST"];
+
+});

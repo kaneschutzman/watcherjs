@@ -52,8 +52,8 @@ Detailed documentation and examples can be found at:
 [watcher](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/modules/watcher.html),
 [watcher-full.js](examples/watcher-full.js) and [watcher-minimal.js](examples/watcher-minimal.js)
 
-### _[REST interface](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/modules/watcher.html)_
-The entire application API is exposed as REST services. For the application's REST interface implementation
+### _[REST API](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/modules/watcher-http.html)_
+The entire application API is exposed as REST API. For the REST API implementation
 the [express](http://expressjs.com) web framework is used. It is worth mentioning that the user can define
 __route extension points__ in order to build custom responses for the status requests.
 
@@ -65,7 +65,7 @@ Detailed information about the http interface and examples can be found at:
 ----
 
 ## Watcher web console
-On top of the application's REST interface, a simple but handy web GUI is implemented, the _watcher web console_.
+On top of the application's REST API, a simple but handy web GUI is implemented, the _watcher web console_.
 The console enables the user to dynamically add/remove/modify and monitor endpoints visually.
 It can be accessed at http://localhost:`<port>`/console, where `<port>` the http-server port defined at
 application startup (7777, if default configuration is used). The refresh data interval is set to 30 sec.

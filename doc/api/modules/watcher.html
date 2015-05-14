@@ -56,6 +56,7 @@
                                 <li><a href="../classes/SocketConnectorFactory.html">SocketConnectorFactory</a></li>
                                 <li><a href="../classes/StatusResolver.html">StatusResolver</a></li>
                                 <li><a href="../classes/StatusResolverFactory.html">StatusResolverFactory</a></li>
+                                <li><a href="../classes/TransactionalExecutor.html">TransactionalExecutor</a></li>
                                 <li><a href="../classes/Validator.html">Validator</a></li>
                                 <li><a href="../classes/Watcher.html">Watcher</a></li>
                                 <li><a href="../classes/WatcherFactory.html">WatcherFactory</a></li>
@@ -110,7 +111,7 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/src_watcher.js.html#l940"><code>src&#x2F;watcher.js:940</code></a>
+            Defined in: <a href="../files/src_watcher.js.html#l894"><code>src&#x2F;watcher.js:894</code></a>
         </div>
 
 </div>
@@ -127,132 +128,10 @@ to the service endpoints (or simply endpoints), to find out their status (the <e
 is used interchangeably, but there is a conceptual difference between them which will be discussed shortly).
 On the service status resolution, the status is stored internally and is made available either programmatically or
 via http requests (aka the _status requests</em>).
-Actually, <strong>the entire application API is also exposed as REST services</strong>, which, on top of this, a simple but handy
-<strong>web gui</strong> is implemented. For the REST services implementation the <a href="http://expressjs.com">express</a> web framework is used.
-At the following paragraphs the REST interface is described with references to the respective application API.</p>
-<ul>
-<li>A <em>status request</em> for a specific endpoint<ul>
-<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints/<code>&lt;id&gt;</code></strong> (request method: GET),</li>
-<li>parameters:<ul>
-<li><strong>id</strong> the endpoint id, it should be one of those defined at endpoints configuration data,</li>
-</ul>
-</li>
-<li>API reference: <strong><a href="../classes/Watcher.html#method_getEndpoint" class="crosslink">getEndpoint</a></strong>.</li>
-</ul>
-</li>
-</ul>
-<p>The response is a JSON message like the following example:</p>
-<pre class="code prettyprint"><code>// For a socket communication type
-{
-     "id": "endpoint-id",            // endpoint id
-     "desc": "an endpoint",          // endpoint description
-     "status": "up",                 // endpoint status
-     "timestamp": 1429860936846,     // the timestamp of the current status
-     "since": 1429860926846,         // the timestamp since the last change of status
-     "type": "socket",               // connector type
-     "host": "localhost",            // endpoint host (applied for &#39;socket&#39; connector)
-     "port": 7777,                   // endpoint port (applied for &#39;socket&#39; connector)
-     "active": true,                 // whether or not the endpoint is active
-     "notify": false                 // whether or not the notification is enabled
-}
-</code></pre><ul>
-<li>A status request for all registered endpoints.<ul>
-<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints</strong> (request method: GET).
-In this case the response JSON message is an array with the information for all endpoints.</li>
-<li>API reference: <strong><a href="../classes/Watcher.html#method_getEndpoints" class="crosslink">getEndpoints</a></strong>.</li>
-</ul>
-</li>
-</ul>
-<pre class="code prettyprint"><code>// For a socket and http communication types
-[
-     {
-         "id": "endpoint-1",
-         "desc": "endpoint 1",
-         "status": "down"
-         "timestamp": 1429860936846,
-         "since": 1429860926846,
-         "type": "socket",
-         "host": "localhost",
-         "port": 7777,
-         "active": true,
-         "notify": true
-     },
-     {
-         "id": "endpoint-2",                     // endpoint id
-         "desc": "endpoint 2",                   // endpoint description
-         "status": "up"                          // endpoint status
-         "timestamp": 1429860936846,             // the timestamp of the current status
-         "since": 1429860926846,                 // the timestamp since the last change of status
-         "type": "http",                         // connector type
-         "url": "http://11.222.333.555:3333/",   // endpoint url (applied for &#39;http(s) connector&#39;)
-         "active": true,                         // whether or not the endpoint is active
-         "notify": false                         // whether or not the notification is enabled
-     }
-]
-</code></pre><ul>
-<li>Add new endpoint.<ul>
-<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints</strong> (request method POST)</li>
-<li>parameters (parameters in <em>[]</em> are optional. when not set, the default values are used - those in parentheses.):<ul>
-<li><strong>id</strong> : the endpoint id,</li>
-<li><strong>desc</strong> : the endpoint description,</li>
-<li><strong>type</strong> : the endpoint type (&#39;socket&#39; or &#39;http&#39;),</li>
-<li>[<strong>host</strong>] (localhost): the endpoint host (applied for &#39;socket&#39; communication type),</li>
-<li>[<strong>port</strong>] (9999): the endpoint port (applied for &#39;socket&#39; communication type),</li>
-<li>[<strong>url</strong>] : the endpoint port (applied for &#39;http&#39; communication type),</li>
-<li>[<strong>active</strong>] (true): true/false whether or not to activate the endpoint,</li>
-<li>[<strong>notify</strong>] (false): true/false whether or not to enable email notification on erroneous service status</li>
-</ul>
-</li>
-<li>API reference: <strong><a href="../classes/Watcher.html#method_addEndpoint" class="crosslink">addEndpoint</a></strong>.</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li>Remove an endpoint<ul>
-<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints/<code>&lt;id&gt;</code></strong> (request method: DELETE),</li>
-<li>parameters:<ul>
-<li><strong>id</strong> : the endpoint id</li>
-</ul>
-</li>
-<li>API reference: <strong><a href="../classes/Watcher.html#method_removeEndpoint" class="crosslink">removeEndpoint</a></strong>.</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li>Activate/deactivate an endpoint<ul>
-<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints/<code>&lt;id&gt;</code>/activate</strong> (request method POST),</li>
-<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints/<code>&lt;id&gt;</code>/activate</strong> (request method DELETE),</li>
-<li>parameters:<ul>
-<li><strong>id</strong> : the endpoint id,</li>
-</ul>
-</li>
-<li>API reference: <strong><a href="../classes/Watcher.html#method_setEndpointActivationState" class="crosslink">setEndpointActivationState</a></strong>.</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li>Enable/disable notification for an endpoint<ul>
-<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints/<code>&lt;id&gt;</code>/notify</strong> (request method POST),</li>
-<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/endpoints/<code>&lt;id&gt;</code>/notify</strong> (request method DELETE),</li>
-<li>parameters:<ul>
-<li><strong>id</strong> : the endpoint id,</li>
-</ul>
-</li>
-<li>API reference: <strong><a href="../classes/Watcher.html#method_notifyOnErroneousStatus" class="crosslink">notifyOnErroneousStatus</a></strong>.</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li>Get the ids of the unbound resolution strategies<ul>
-<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/resolution-strategies</strong> (request method GET),</li>
-<li>API reference: <strong><a href="../classes/Watcher.html#method_getResolutionStrategies" class="crosslink">getResolutionStrategies</a></strong>.</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>/console</strong>, a web graphical user interface for the monitored services. The <em>console</em> exposes
-the <em>watcher.js</em> API through a simple user-friendly gui.</li>
-</ul>
+Actually, <strong>the entire application API is also exposed as REST API</strong>, which, on top of this, a simple but handy
+<strong>web gui</strong> is implemented. For the REST API implementation the <a href="http://expressjs.com">express</a> web framework is used.
+The REST interface description with references to the respective application API can be found at
+<strong><a href="../modules/watcher-http.html">watcher-http</a></strong>.</p>
 <h3 id="configuration">Configuration</h3>
 <p>The application configuration requires two kinds of data, as shown below. The one that refers to the
 express framework that implements the application http interface, and the other that refers to the service
@@ -351,9 +230,9 @@ var options = {
          route: function service(registry) {
              return function (req, res, next) {
                  var id = req.query.id;
-                 var record = registry[id];
-                 if (record) {
-                     res.send(&#39;Service status: &#39; + record.status);
+                 var endpoint = registry[id];
+                 if (endpoint) {
+                     res.send(&#39;Service status: &#39; + endpoint.status);
                  } else {
                      res.send(&#39;Unknown service: &#39; + id);
                  }
@@ -414,9 +293,9 @@ watcherFactory.create(options).start();
 
 After starting the watcher the following status requests could be made in order to
 retrieve the status for the services with id &#39;service-1&#39;, &#39;service-2&#39; and &#39;service-3&#39; respectively
-http://localhost:7777/endpoint/service-1
-http://localhost:7777/endpoint/service-2
-http://localhost:7777/endpoint/service-3
+http://localhost:7777/endpoints/service-1
+http://localhost:7777/endpoints/service-2
+http://localhost:7777/endpoints/service-3
 Whereas the request http://localhost:7777/custom-route?id=service-1
 is the user defined route which returns: &#39;Service status: &lt;status&gt;&#39; where status
 the status of the &#39;service-1&#39;.
@@ -455,8 +334,8 @@ watcherFactory.create(options).start();
 
 After starting the watcher the following status requests could be made in order to
 retrieve the status for &#39;proxied-service-1&#39; and &#39;proxied-service-2&#39; respectively
-http://localhost:7777/endpoint/endpoint-1
-http://localhost:7777/endpoint/endpoint-2
+http://localhost:7777/endpoints/endpoint-1
+http://localhost:7777/endpoints/endpoint-2
 </code></pre>
 <p><strong>Add and remove endpoints dynamically</strong></p>
 <pre class="code prettyprint"><code class="lang-javascript">// Here is an example for dynamically adding and removing endpoints
@@ -484,20 +363,21 @@ setTimeout(function() {
          type: &#39;http&#39;,
          timeout: 3000,
          url: &#39;http://11.222.333.555:3333/?get-status&#39;
+     }, false, function() {
+           if (!_.isEmpty(errors)) {
+              throw new Error(&#39;validation error...&#39;);
+          }
      });
-     if (!_.isEmpty(errors)) {
-         throw new Error(&#39;validation error...&#39;);
-     }
 }, 6000);
 
 // Deactivate the endpoint &#39;service-2&#39;
 setTimeout(function () {
-     watcher.deactivateEndpoint(&#39;service-2&#39;);
+     watcher.setEndpointActivationState(&#39;service-2&#39;, false);
 }, 12000);
 
 // Activate the endpoint &#39;service-2&#39;
 setTimeout(function () {
-       watcher.activateEndpoint(&#39;service-2&#39;);
+       watcher.setEndpointActivationState(&#39;service-2&#39;, true);
   }, 30000);
 
 // Remove the endpoint &#39;service-2&#39;

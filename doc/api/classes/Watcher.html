@@ -56,6 +56,7 @@
                                 <li><a href="../classes/SocketConnectorFactory.html">SocketConnectorFactory</a></li>
                                 <li><a href="../classes/StatusResolver.html">StatusResolver</a></li>
                                 <li><a href="../classes/StatusResolverFactory.html">StatusResolverFactory</a></li>
+                                <li><a href="../classes/TransactionalExecutor.html">TransactionalExecutor</a></li>
                                 <li><a href="../classes/Validator.html">Validator</a></li>
                                 <li><a href="../classes/Watcher.html">Watcher</a></li>
                                 <li><a href="../classes/WatcherFactory.html">WatcherFactory</a></li>
@@ -110,7 +111,7 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/src_watcher.js.html#l439"><code>src&#x2F;watcher.js:439</code></a>
+            Defined in: <a href="../files/src_watcher.js.html#l340"><code>src&#x2F;watcher.js:340</code></a>
         </div>
 
             Module: <a href="../modules/watcher.html">watcher</a>
@@ -155,7 +156,7 @@ An application overview and detailed configuration instructions and examples can
 
                             </li>
                             <li class="index-item method private">
-                                <a href="#method__persistEndpoint">_persistEndpoint</a>
+                                <a href="#method__persistEndpointConfig">_persistEndpointConfig</a>
 
                             </li>
                             <li class="index-item method private">
@@ -168,6 +169,10 @@ An application overview and detailed configuration instructions and examples can
                             </li>
                             <li class="index-item method private">
                                 <a href="#method__setup">_setup</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method__updateEndpointConfig">_updateEndpointConfig</a>
 
                             </li>
                             <li class="index-item method">
@@ -238,6 +243,9 @@ An application overview and detailed configuration instructions and examples can
                 <li class="arg">
                         <code>id</code>
                 </li>
+                <li class="arg">
+                        <code>callback</code>
+                </li>
             </ul><span class="paren">)</span>
         </div>
 
@@ -252,7 +260,7 @@ An application overview and detailed configuration instructions and examples can
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l636"><code>src&#x2F;watcher.js:636</code></a>
+        <a href="../files/src_watcher.js.html#l540"><code>src&#x2F;watcher.js:540</code></a>
         </p>
 
 
@@ -276,6 +284,17 @@ An application overview and detailed configuration instructions and examples can
 
                     <div class="param-description">
                         <p>the endpoint id.</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">callback</code>
+                        <span class="type">Function</span>
+
+
+                    <div class="param-description">
+                        <p>the callback(err) of the async process.</p>
 
                     </div>
 
@@ -305,7 +324,7 @@ An application overview and detailed configuration instructions and examples can
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l661"><code>src&#x2F;watcher.js:661</code></a>
+        <a href="../files/src_watcher.js.html#l597"><code>src&#x2F;watcher.js:597</code></a>
         </p>
 
 
@@ -346,7 +365,7 @@ An application overview and detailed configuration instructions and examples can
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l500"><code>src&#x2F;watcher.js:500</code></a>
+        <a href="../files/src_watcher.js.html#l402"><code>src&#x2F;watcher.js:402</code></a>
         </p>
 
 
@@ -362,13 +381,16 @@ An application overview and detailed configuration instructions and examples can
 
 
 </div>
-<div id="method__persistEndpoint" class="method item private">
-    <h3 class="name"><code>_persistEndpoint</code></h3>
+<div id="method__persistEndpointConfig" class="method item private">
+    <h3 class="name"><code>_persistEndpointConfig</code></h3>
 
         <div class="args">
             <span class="paren">(</span><ul class="args-list inline commas">
                 <li class="arg">
-                        <code>endpoint</code>
+                        <code>config</code>
+                </li>
+                <li class="arg">
+                        <code>callback</code>
                 </li>
             </ul><span class="paren">)</span>
         </div>
@@ -384,7 +406,7 @@ An application overview and detailed configuration instructions and examples can
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l608"><code>src&#x2F;watcher.js:608</code></a>
+        <a href="../files/src_watcher.js.html#l520"><code>src&#x2F;watcher.js:520</code></a>
         </p>
 
 
@@ -402,7 +424,7 @@ An application overview and detailed configuration instructions and examples can
 
             <ul class="params-list">
                 <li class="param">
-                        <code class="param-name">endpoint</code>
+                        <code class="param-name">config</code>
                         <span class="type">Object</span>
 
 
@@ -412,10 +434,30 @@ An application overview and detailed configuration instructions and examples can
                     </div>
 
                 </li>
+                <li class="param">
+                        <code class="param-name">callback</code>
+                        <span class="type">Function</span>
+
+
+                    <div class="param-description">
+                        <p>callback function to async write operation.</p>
+
+                    </div>
+
+                </li>
             </ul>
         </div>
 
 
+        <div class="throws">
+            <h4>Throws:</h4>
+
+            <div class="throws-description">
+                        <span class="type">Error</span>:
+                    <p>An error when the operation can not be performed (e.g. no write permissions).</p>
+
+            </div>
+        </div>
 
 </div>
 <div id="method__registerEndpoint" class="method item private">
@@ -424,11 +466,14 @@ An application overview and detailed configuration instructions and examples can
         <div class="args">
             <span class="paren">(</span><ul class="args-list inline commas">
                 <li class="arg">
-                        <code>endpoint</code>
+                        <code>config</code>
                 </li>
             </ul><span class="paren">)</span>
         </div>
 
+        <span class="returns-inline">
+            <span class="type"></span>
+        </span>
 
 
         <span class="flag private">private</span>
@@ -440,7 +485,7 @@ An application overview and detailed configuration instructions and examples can
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l468"><code>src&#x2F;watcher.js:468</code></a>
+        <a href="../files/src_watcher.js.html#l369"><code>src&#x2F;watcher.js:369</code></a>
         </p>
 
 
@@ -457,12 +502,12 @@ An application overview and detailed configuration instructions and examples can
 
             <ul class="params-list">
                 <li class="param">
-                        <code class="param-name">endpoint</code>
+                        <code class="param-name">config</code>
                         <span class="type">Object</span>
 
 
                     <div class="param-description">
-                        <p>the endpoint.</p>
+                        <p>the endpoint configuration.</p>
 
                     </div>
 
@@ -470,6 +515,14 @@ An application overview and detailed configuration instructions and examples can
             </ul>
         </div>
 
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                    <p>the endpoint.</p>
+
+            </div>
+        </div>
 
 
 </div>
@@ -489,7 +542,7 @@ An application overview and detailed configuration instructions and examples can
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l595"><code>src&#x2F;watcher.js:595</code></a>
+        <a href="../files/src_watcher.js.html#l507"><code>src&#x2F;watcher.js:507</code></a>
         </p>
 
 
@@ -521,7 +574,7 @@ An application overview and detailed configuration instructions and examples can
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l823"><code>src&#x2F;watcher.js:823</code></a>
+        <a href="../files/src_watcher.js.html#l777"><code>src&#x2F;watcher.js:777</code></a>
         </p>
 
 
@@ -537,23 +590,107 @@ An application overview and detailed configuration instructions and examples can
 
 
 </div>
+<div id="method__updateEndpointConfig" class="method item private">
+    <h3 class="name"><code>_updateEndpointConfig</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>id</code>
+                </li>
+                <li class="arg">
+                        <code>properties</code>
+                </li>
+                <li class="arg">
+                        <code>callback</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_watcher.js.html#l566"><code>src&#x2F;watcher.js:566</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Updates the endpoint of the specified id from the persistence storage
+(at the moment, the filesystem is used).</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">id</code>
+                        <span class="type">String</span>
+
+
+                    <div class="param-description">
+                        <p>the endpoint id.</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">properties</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                        <p>updated properties.</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">callback</code>
+                        <span class="type">Function</span>
+
+
+                    <div class="param-description">
+                        <p>the callback(err, properties) of the async process.</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
 <div id="method_addEndpoint" class="method item">
     <h3 class="name"><code>addEndpoint</code></h3>
 
         <div class="args">
             <span class="paren">(</span><ul class="args-list inline commas">
                 <li class="arg">
-                        <code>endpoint</code>
+                        <code>config</code>
                 </li>
                 <li class="arg">
                         <code>store</code>
                 </li>
+                <li class="arg">
+                        <code>callback</code>
+                </li>
             </ul><span class="paren">)</span>
         </div>
 
-        <span class="returns-inline">
-            <span class="type">Object</span>
-        </span>
 
 
 
@@ -564,7 +701,7 @@ An application overview and detailed configuration instructions and examples can
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l717"><code>src&#x2F;watcher.js:717</code></a>
+        <a href="../files/src_watcher.js.html#l646"><code>src&#x2F;watcher.js:646</code></a>
         </p>
 
 
@@ -582,7 +719,7 @@ For the configuration see at <a href="../modules/watcher.html">watcher</a></p>
 
             <ul class="params-list">
                 <li class="param">
-                        <code class="param-name">endpoint</code>
+                        <code class="param-name">config</code>
                         <span class="type">Object</span>
 
 
@@ -604,19 +741,20 @@ For the configuration see at <a href="../modules/watcher.html">watcher</a></p>
                     </div>
 
                 </li>
+                <li class="param">
+                        <code class="param-name">callback</code>
+                        <span class="type">Function</span>
+
+
+                    <div class="param-description">
+                        <p>the callback(err, endpoint) of the async process.</p>
+
+                    </div>
+
+                </li>
             </ul>
         </div>
 
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                        <span class="type">Object</span>:
-                    <p>an object that holds the registered endpoint (if succeeded) and the array with the validation errors,
-empty if no error exists.</p>
-
-            </div>
-        </div>
 
 
 </div>
@@ -644,7 +782,7 @@ empty if no error exists.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l926"><code>src&#x2F;watcher.js:926</code></a>
+        <a href="../files/src_watcher.js.html#l880"><code>src&#x2F;watcher.js:880</code></a>
         </p>
 
 
@@ -712,7 +850,7 @@ empty if no error exists.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l696"><code>src&#x2F;watcher.js:696</code></a>
+        <a href="../files/src_watcher.js.html#l625"><code>src&#x2F;watcher.js:625</code></a>
         </p>
 
 
@@ -772,7 +910,7 @@ empty if no error exists.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l707"><code>src&#x2F;watcher.js:707</code></a>
+        <a href="../files/src_watcher.js.html#l636"><code>src&#x2F;watcher.js:636</code></a>
         </p>
 
 
@@ -815,7 +953,7 @@ empty if no error exists.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l813"><code>src&#x2F;watcher.js:813</code></a>
+        <a href="../files/src_watcher.js.html#l767"><code>src&#x2F;watcher.js:767</code></a>
         </p>
 
 
@@ -851,12 +989,12 @@ empty if no error exists.</p>
                 <li class="arg">
                         <code>notify</code>
                 </li>
+                <li class="arg">
+                        <code>callback</code>
+                </li>
             </ul><span class="paren">)</span>
         </div>
 
-        <span class="returns-inline">
-            <span class="type">Object</span>
-        </span>
 
 
 
@@ -867,7 +1005,7 @@ empty if no error exists.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l794"><code>src&#x2F;watcher.js:794</code></a>
+        <a href="../files/src_watcher.js.html#l741"><code>src&#x2F;watcher.js:741</code></a>
         </p>
 
 
@@ -905,18 +1043,20 @@ empty if no error exists.</p>
                     </div>
 
                 </li>
+                <li class="param">
+                        <code class="param-name">callback</code>
+                        <span class="type">Function</span>
+
+
+                    <div class="param-description">
+                        <p>the callback(err, endpoint) of the async process.</p>
+
+                    </div>
+
+                </li>
             </ul>
         </div>
 
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                        <span class="type">Object</span>:
-                    <p>the endpoint.</p>
-
-            </div>
-        </div>
 
 
 </div>
@@ -928,12 +1068,12 @@ empty if no error exists.</p>
                 <li class="arg">
                         <code>id</code>
                 </li>
+                <li class="arg">
+                        <code>callback</code>
+                </li>
             </ul><span class="paren">)</span>
         </div>
 
-        <span class="returns-inline">
-            <span class="type">Object</span>
-        </span>
 
 
 
@@ -944,7 +1084,7 @@ empty if no error exists.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l751"><code>src&#x2F;watcher.js:751</code></a>
+        <a href="../files/src_watcher.js.html#l684"><code>src&#x2F;watcher.js:684</code></a>
         </p>
 
 
@@ -971,18 +1111,20 @@ empty if no error exists.</p>
                     </div>
 
                 </li>
+                <li class="param">
+                        <code class="param-name">callback</code>
+                        <span class="type">Function</span>
+
+
+                    <div class="param-description">
+                        <p>the callback(err, id) of the async process.</p>
+
+                    </div>
+
+                </li>
             </ul>
         </div>
 
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                        <span class="type">Object</span>:
-                    <p>the removed endpoint.</p>
-
-            </div>
-        </div>
 
 
 </div>
@@ -996,6 +1138,9 @@ empty if no error exists.</p>
                 </li>
                 <li class="arg">
                         <code>active</code>
+                </li>
+                <li class="arg">
+                        <code>callback</code>
                 </li>
             </ul><span class="paren">)</span>
         </div>
@@ -1013,7 +1158,7 @@ empty if no error exists.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l768"><code>src&#x2F;watcher.js:768</code></a>
+        <a href="../files/src_watcher.js.html#l707"><code>src&#x2F;watcher.js:707</code></a>
         </p>
 
 
@@ -1051,6 +1196,17 @@ empty if no error exists.</p>
                     </div>
 
                 </li>
+                <li class="param">
+                        <code class="param-name">callback</code>
+                        <span class="type">Function</span>
+
+
+                    <div class="param-description">
+                        <p>the callback(err, endpoint) of the async process.</p>
+
+                    </div>
+
+                </li>
             </ul>
         </div>
 
@@ -1059,7 +1215,7 @@ empty if no error exists.</p>
 
             <div class="returns-description">
                         <span class="type">Object</span>:
-                    <p>the endpoint.</p>
+                    <p>the endpoint or undefined if the endpoint does not exist.</p>
 
             </div>
         </div>
@@ -1081,7 +1237,7 @@ empty if no error exists.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l890"><code>src&#x2F;watcher.js:890</code></a>
+        <a href="../files/src_watcher.js.html#l844"><code>src&#x2F;watcher.js:844</code></a>
         </p>
 
 
@@ -1112,7 +1268,7 @@ empty if no error exists.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l914"><code>src&#x2F;watcher.js:914</code></a>
+        <a href="../files/src_watcher.js.html#l868"><code>src&#x2F;watcher.js:868</code></a>
         </p>
 
 
@@ -1145,7 +1301,7 @@ empty if no error exists.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_watcher.js.html#l455"><code>src&#x2F;watcher.js:455</code></a>
+                            <a href="../files/src_watcher.js.html#l356"><code>src&#x2F;watcher.js:356</code></a>
                             </p>
                     
                     

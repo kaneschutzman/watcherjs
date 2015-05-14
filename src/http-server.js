@@ -50,11 +50,11 @@ var httpServer = stampit().methods({
 
         app.locals.pretty = true;
         app.use(function (err, req, res, next) {
-            var message = err.message || 'Undefined Error!';
-            var errors = err.errors || [message];
+            var message = err.message || 'Unknown Error!';
+            //var errors = err.errors || [message];
             res.status(err.status || 500).json({
                 message: message,
-                errors: errors
+                errors: err.errors
             });
         });
     },
