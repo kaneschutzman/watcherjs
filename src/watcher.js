@@ -294,6 +294,8 @@ var events = require('events');
 var path = require('path');
 var stampit = require('stampit');
 var _ = require('underscore');
+var async = require('async');
+var asyncTimeout = require('async-timeout');
 var moment = require('moment');
 var nodemailer = require('nodemailer');
 var directTransport = require('nodemailer-direct-transport');
@@ -301,7 +303,6 @@ var directTransport = require('nodemailer-direct-transport');
 //var query = require('connect-query');
 //var fs = require('fs');
 //var connect = require('connect');
-//var async = require('async');
 //var s = require('underscore.string');
 
 var logger = require('./logger');
@@ -309,6 +310,7 @@ var validator = require('./validator');
 var constants = require('./constants');
 var connectors = require('./connectors');
 var httpServerFactory = require('./http-server');
+var db = require('./database');
 //var utils = require('./utils');
 
 var up = constants.serviceStatus.up;
@@ -451,9 +453,20 @@ watcher = stampit().state({
 
         _onStatusResolve: function _onStatusResolve(endpoint, status) {
             if (!this._stopped) {
-                endpoint.timestamp = moment.utc();
+                var now = moment.utc();
+                endpoint.timestamp = now;
                 if (status !== endpoint.status) {
                     endpoint.since = endpoint.timestamp;
+                    //store to database
+                    db.history.insert({
+                        endpoint: endpoint.id,
+                        timestamp: now.valueOf(),
+                        status: status
+                    }, function (err, docs) {
+                        if (err) {
+                            logger.warn('Unable to update the persistent state of \'' + endpoint.id + '\', ' + err);
+                        }
+                    });
                 }
                 endpoint.previousStatus = endpoint.status;
                 endpoint.status = status;
@@ -871,9 +884,35 @@ watcher = stampit().state({
          * @method stop
          */
         stop: _.once(function stop() {
-            logger.debug('Shutting down Watcher app...');
-            this._stopped = true;
-            this.server.stop();
+            logger.info('Shutting down Watcher app...');
+            var _self = this;
+            _self._stopped = true;
+            async.parallel([
+                function (callback) {
+                    //insert new entries with 'undetermined'
+                    var entries = [];
+                    var now = moment.utc();
+                    _.each(_self.getEndpoints(), function (endpoint) {
+                        if (undetermined !== endpoint.status) {
+                            entries.push({
+                                endpoint: endpoint.id,
+                                timestamp: now.valueOf(),
+                                status: undetermined
+                            });
+                        }
+                    });
+                    db.history.insert(entries, function (err, docs) {
+                        callback(err);
+                        db.close();
+                    });
+                },
+                asyncTimeout(function (callback) {
+                    _self.server.stop();
+                }, 2000, 'Give 2 secs to shutdown http server')
+            ], function (errors, results) {
+                logger.info('Shutdown details: ' + errors);
+                process.exit();
+            });
             //process.kill(process.pid, 'SIGHUP');
         }),
 

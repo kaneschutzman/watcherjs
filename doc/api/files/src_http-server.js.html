@@ -39,6 +39,7 @@
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
                                 <li><a href="../classes/AbstractConnector.html">AbstractConnector</a></li>
+                                <li><a href="../classes/Db.html">Db</a></li>
                                 <li><a href="../classes/Dictionary.html">Dictionary</a></li>
                                 <li><a href="../classes/DictionaryFactory.html">DictionaryFactory</a></li>
                                 <li><a href="../classes/EventDispatcher.html">EventDispatcher</a></li>
@@ -66,6 +67,7 @@
                             <ul id="api-modules" class="apis modules">
                                 <li><a href="../modules/connectors.html">connectors</a></li>
                                 <li><a href="../modules/constants.html">constants</a></li>
+                                <li><a href="../modules/database.html">database</a></li>
                                 <li><a href="../modules/httpServer.html">httpServer</a></li>
                                 <li><a href="../modules/logger.html">logger</a></li>
                                 <li><a href="../modules/resolvers.html">resolvers</a></li>
@@ -181,14 +183,7 @@ var httpServer = stampit().methods({
     },
 
     stop: function stop() {
-        this._server.close(function () {
-            logger.debug(&#x27;Embedded http server has been shutdown gracefully.&#x27;);
-            process.exit();
-        });
-        setTimeout(function () {
-            logger.debug(&#x27;Unable to stop embedded http server, forcing shutdown ...&#x27;);
-            process.exit();
-        }, 2000);
+        this._server.close();
     }
 });
 

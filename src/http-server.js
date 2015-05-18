@@ -69,14 +69,7 @@ var httpServer = stampit().methods({
     },
 
     stop: function stop() {
-        this._server.close(function () {
-            logger.debug('Embedded http server has been shutdown gracefully.');
-            process.exit();
-        });
-        setTimeout(function () {
-            logger.debug('Unable to stop embedded http server, forcing shutdown ...');
-            process.exit();
-        }, 2000);
+        this._server.close();
     }
 });
 

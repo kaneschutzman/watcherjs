@@ -4,9 +4,20 @@
 'use strict';
 var http = require('http');
 var s = require('underscore.string');
+var _ = require('underscore');
 var assert = require('chai').assert;
+var proxyquire = require('proxyquire');
 
-var app = require('../src/watcher');
+var stubs = {
+    './database': {
+        history: {
+            insert: _.noop
+        },
+        '@global': true
+    }
+};
+
+var app = proxyquire('../src/watcher', stubs);
 
 describe('watcher', function () {
     describe('#test start watcher', function () {

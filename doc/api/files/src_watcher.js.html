@@ -39,6 +39,7 @@
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
                                 <li><a href="../classes/AbstractConnector.html">AbstractConnector</a></li>
+                                <li><a href="../classes/Db.html">Db</a></li>
                                 <li><a href="../classes/Dictionary.html">Dictionary</a></li>
                                 <li><a href="../classes/DictionaryFactory.html">DictionaryFactory</a></li>
                                 <li><a href="../classes/EventDispatcher.html">EventDispatcher</a></li>
@@ -66,6 +67,7 @@
                             <ul id="api-modules" class="apis modules">
                                 <li><a href="../modules/connectors.html">connectors</a></li>
                                 <li><a href="../modules/constants.html">constants</a></li>
+                                <li><a href="../modules/database.html">database</a></li>
                                 <li><a href="../modules/httpServer.html">httpServer</a></li>
                                 <li><a href="../modules/logger.html">logger</a></li>
                                 <li><a href="../modules/resolvers.html">resolvers</a></li>
@@ -406,6 +408,8 @@ var events = require(&#x27;events&#x27;);
 var path = require(&#x27;path&#x27;);
 var stampit = require(&#x27;stampit&#x27;);
 var _ = require(&#x27;underscore&#x27;);
+var async = require(&#x27;async&#x27;);
+var asyncTimeout = require(&#x27;async-timeout&#x27;);
 var moment = require(&#x27;moment&#x27;);
 var nodemailer = require(&#x27;nodemailer&#x27;);
 var directTransport = require(&#x27;nodemailer-direct-transport&#x27;);
@@ -413,7 +417,6 @@ var directTransport = require(&#x27;nodemailer-direct-transport&#x27;);
 //var query = require(&#x27;connect-query&#x27;);
 //var fs = require(&#x27;fs&#x27;);
 //var connect = require(&#x27;connect&#x27;);
-//var async = require(&#x27;async&#x27;);
 //var s = require(&#x27;underscore.string&#x27;);
 
 var logger = require(&#x27;./logger&#x27;);
@@ -421,6 +424,7 @@ var validator = require(&#x27;./validator&#x27;);
 var constants = require(&#x27;./constants&#x27;);
 var connectors = require(&#x27;./connectors&#x27;);
 var httpServerFactory = require(&#x27;./http-server&#x27;);
+var db = require(&#x27;./database&#x27;);
 //var utils = require(&#x27;./utils&#x27;);
 
 var up = constants.serviceStatus.up;
@@ -563,9 +567,20 @@ watcher = stampit().state({
 
         _onStatusResolve: function _onStatusResolve(endpoint, status) {
             if (!this._stopped) {
-                endpoint.timestamp = moment.utc();
+                var now = moment.utc();
+                endpoint.timestamp = now;
                 if (status !== endpoint.status) {
                     endpoint.since = endpoint.timestamp;
+                    //store to database
+                    db.history.insert({
+                        endpoint: endpoint.id,
+                        timestamp: now.valueOf(),
+                        status: status
+                    }, function (err, docs) {
+                        if (err) {
+                            logger.warn(&#x27;Unable to update the persistent state of \&#x27;&#x27; + endpoint.id + &#x27;\&#x27;, &#x27; + err);
+                        }
+                    });
                 }
                 endpoint.previousStatus = endpoint.status;
                 endpoint.status = status;
@@ -983,9 +998,35 @@ watcher = stampit().state({
          * @method stop
          */
         stop: _.once(function stop() {
-            logger.debug(&#x27;Shutting down Watcher app...&#x27;);
-            this._stopped = true;
-            this.server.stop();
+            logger.info(&#x27;Shutting down Watcher app...&#x27;);
+            var _self = this;
+            _self._stopped = true;
+            async.parallel([
+                function (callback) {
+                    //insert new entries with &#x27;undetermined&#x27;
+                    var entries = [];
+                    var now = moment.utc();
+                    _.each(_self.getEndpoints(), function (endpoint) {
+                        if (undetermined !== endpoint.status) {
+                            entries.push({
+                                endpoint: endpoint.id,
+                                timestamp: now.valueOf(),
+                                status: undetermined
+                            });
+                        }
+                    });
+                    db.history.insert(entries, function (err, docs) {
+                        callback(err);
+                        db.close();
+                    });
+                },
+                asyncTimeout(function (callback) {
+                    _self.server.stop();
+                }, 2000, &#x27;Give 2 secs to shutdown http server&#x27;)
+            ], function (errors, results) {
+                logger.info(&#x27;Shutdown details: &#x27; + errors);
+                process.exit();
+            });
             //process.kill(process.pid, &#x27;SIGHUP&#x27;);
         }),
 

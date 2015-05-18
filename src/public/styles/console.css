@@ -165,3 +165,8 @@ body {
     cursor: pointer;
     content: url("../images/delete.png");
 }
+
+.action-history {
+    cursor: pointer;
+    content: url("../images/history.png");
+}

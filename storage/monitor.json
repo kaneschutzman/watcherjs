@@ -3,6 +3,6 @@
   "desc": "monitor",
   "type": "http",
   "url": "http://localhost:7777/console",
-  "active": false,
+  "active": true,
   "notify": true
 }

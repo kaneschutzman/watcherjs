@@ -2,6 +2,7 @@ YUI.add("yuidoc-meta", function(Y) {
    Y.YUIDoc = { meta: {
     "classes": [
         "AbstractConnector",
+        "Db",
         "Dictionary",
         "DictionaryFactory",
         "EventDispatcher",
@@ -28,6 +29,7 @@ YUI.add("yuidoc-meta", function(Y) {
     "modules": [
         "connectors",
         "constants",
+        "database",
         "httpServer",
         "logger",
         "resolvers",
@@ -46,6 +48,11 @@ YUI.add("yuidoc-meta", function(Y) {
             "displayName": "constants",
             "name": "constants",
             "description": "Holds application's constants"
+        },
+        {
+            "displayName": "database",
+            "name": "database",
+            "description": "Exports the mongodb database objected used to store the endpoint status history.\n\n###Exported objects\n__{{#crossLink \"Db\"}}{{/crossLink}}__"
         },
         {
             "displayName": "httpServer",

@@ -101,7 +101,7 @@ this["JST"]["src/views/endpoint.hbs"] = Handlebars.template({"1":function(depth0
     + ((stack1 = (helpers.ifEquals || (depth0 && depth0.ifEquals) || alias1).call(depth0,(depth0 != null ? depth0.active : depth0),false,{"name":"ifEquals","hash":{},"fn":this.program(11, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
     + ((stack1 = (helpers.ifEquals || (depth0 && depth0.ifEquals) || alias1).call(depth0,(depth0 != null ? depth0.notify : depth0),true,{"name":"ifEquals","hash":{},"fn":this.program(13, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
     + ((stack1 = (helpers.ifEquals || (depth0 && depth0.ifEquals) || alias1).call(depth0,(depth0 != null ? depth0.notify : depth0),false,{"name":"ifEquals","hash":{},"fn":this.program(15, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
-    + "    <div title=\"Delete endpoint\">\n        <img class=\"action-delete\">\n    </div>\n</td>";
+    + "    <div title=\"Delete endpoint\">\n        <img class=\"action-delete\">\n    </div>\n    <div title=\"History\">\n        <img class=\"action-history\">\n    </div>\n</td>";
 },"useData":true});
 
 this["JST"]["src/views/endpoints.hbs"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
