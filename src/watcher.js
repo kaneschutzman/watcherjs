@@ -55,6 +55,8 @@
  *  }
  *  ```
  *  * [__exportDir__] (_<`project directory`>/storage/_), the storage directory of dynamically created endpoints.
+ *  * [__dbConnectionURL__] (_'mongodb://localhost:27017/'_), the connection url of history persistent storage
+ *  (currently, the mongoDB is used)
  *
  *
  * * Endpoint
@@ -310,7 +312,7 @@ var validator = require('./validator');
 var constants = require('./constants');
 var connectors = require('./connectors');
 var httpServerFactory = require('./http-server');
-var db = require('./database');
+var dbConnFactory = require('./database');
 //var utils = require('./utils');
 
 var up = constants.serviceStatus.up;
@@ -456,17 +458,9 @@ watcher = stampit().state({
                 var now = moment.utc();
                 endpoint.timestamp = now;
                 if (status !== endpoint.status) {
-                    endpoint.since = endpoint.timestamp;
+                    endpoint.since = now;
                     //store to database
-                    db.history.insert({
-                        endpoint: endpoint.id,
-                        timestamp: now.valueOf(),
-                        status: status
-                    }, function (err, docs) {
-                        if (err) {
-                            logger.warn('Unable to update the persistent state of \'' + endpoint.id + '\', ' + err);
-                        }
-                    });
+                    this._storeStatusToHistory(endpoint, status);
                 }
                 endpoint.previousStatus = endpoint.status;
                 endpoint.status = status;
@@ -480,6 +474,22 @@ watcher = stampit().state({
                     setTimeout(_.bind(this._pollEndpoints, this), this.options.interval).unref();
                 }
             }
+        },
+
+        _storeStatusToHistory: function (endpoint, status) {
+            var now = moment.utc();
+            this.db.history.insert({
+                endpointId: endpoint.id,
+                timestamp: now.valueOf(),
+                statusTransition: {
+                    from: endpoint.status,
+                    to: status
+                }
+            }, function (err, docs) {
+                if (err) {
+                    logger.warn('Unable to update the persistent state of \'' + endpoint.id + '\', ' + err);
+                }
+            });
         },
 
         _pollEndpoints: function _pollEndpoints() {
@@ -731,6 +741,9 @@ watcher = stampit().state({
             var endpoint = this._registry[id];
             if (endpoint) {
                 var now = moment().utc();
+                if(undetermined !== endpoint.status) {
+                    this._storeStatusToHistory(endpoint, undetermined);
+                }
                 endpoint.active = active;
                 endpoint.status = undetermined;
                 endpoint.timestamp = now;
@@ -788,6 +801,45 @@ watcher = stampit().state({
         },
 
         /**
+         * Returns the endpoint/s history status.
+         *
+         * @method getHistory
+         * @param {Object} qOpts the query options.
+         * @param {Function} callback the callback(err, recs) of the async process.
+         * @example __Query options details__.
+         * ```
+         * //Specify the "endpointId" to return the history of the specific endpoint,
+         * //otherwise the history of all endpoints is returned
+         * //Specify both 'from' and 'to' properties to return the history status for
+         * //the specific time period, otherwise the complete history is returned.
+         *
+         * {
+         *     endpointId:  <endpoint id>
+         *     from:        <from time>     //defined in mills
+         *     to:          <to time>       //defined in mills
+         * }
+         * ```
+         */
+        getHistory: function getHistory(qOpts, callback) {
+            var query = {};
+            var endpointId = qOpts.endpointId;
+            var from = qOpts.from;
+            var to = qOpts.to;
+            if (from && to) {
+                query.timestamp = {$gte: parseFloat(from), $lte: parseFloat(to)};
+            }
+            if (endpointId) {
+                query.endpointId = endpointId;
+            }
+            this.db.history.find({$query: query, $orderby: {timestamp: 1}}, function (err, recs) {
+                if (err) {
+                    logger.error('Unable to get history, err: ' + err + ', query: ' + query);
+                }
+                callback(err, recs);
+            });
+        },
+
+        /**
          * Setup the Watcher.
          *
          * @private
@@ -819,6 +871,10 @@ watcher = stampit().state({
                         app.post('/endpoints/:id/notify', routes.endpointEnableNotification(_self));
                         app.delete('/endpoints/:id/notify', routes.endpointDisableNotification(_self));
                         app.get('/resolution-strategies', routes.resolutionStrategies(_self));
+                        app.get('/history/endpoints', routes.history(_self));
+                        app.get('/history/endpoints/:id', routes.history(_self));
+                        app.get('/history/endpoints/:from/:to', routes.history(_self));
+                        app.get('/history/endpoints/:id/:from/:to', routes.history(_self));
                         app.get('/console', function (req, res) {
                             res.render('console');
                         });
@@ -874,7 +930,7 @@ watcher = stampit().state({
                 host + '/' + port + '/' + interval + ')');
                 setTimeout(_.bind(_self._pollEndpoints, _self), 0).unref();
             });
-
+            _self.db = dbConnFactory.create(_self.options.dbConnectionURL);
             return _self;
         }),
 
@@ -887,7 +943,7 @@ watcher = stampit().state({
             logger.info('Shutting down Watcher app...');
             var _self = this;
             _self._stopped = true;
-            async.parallel([
+            async.series([
                 function (callback) {
                     //insert new entries with 'undetermined'
                     var entries = [];
@@ -895,15 +951,18 @@ watcher = stampit().state({
                     _.each(_self.getEndpoints(), function (endpoint) {
                         if (undetermined !== endpoint.status) {
                             entries.push({
-                                endpoint: endpoint.id,
+                                endpointId: endpoint.id,
                                 timestamp: now.valueOf(),
-                                status: undetermined
+                                statusTransition: {
+                                    from: endpoint.status,
+                                    to: undetermined
+                                }
                             });
                         }
                     });
-                    db.history.insert(entries, function (err, docs) {
+                    _self.db.history.insert(entries, function (err, docs) {
                         callback(err);
-                        db.close();
+                        _self.db.close();
                     });
                 },
                 asyncTimeout(function (callback) {
@@ -941,6 +1000,7 @@ watcherFactory = {
      * @static
      * @method create
      * @param {Object} [options] the Watcher configuration.
+     * @example __Options configuration details__.
      * Properties in _[]_ are optional. when not set, the default values are used - those in parentheses.
      * * Embedded http server configuration and service communication interval
      *  * [__host__] ('localhost'), the http server host name.
@@ -966,6 +1026,10 @@ watcherFactory = {
      *  }
      *  ```
      *  * [__exportDir__] (_<`project directory`>/storage/_), the storage directory of dynamically created endpoints.
+     *  * [__dbConnectionURL__] (_'mongodb://localhost:27017/'_), the connection url of history persistent storage
+     *  (currently, the mongoDB is used)
+     *
+     *
      * * Endpoint
      *  * __id__, the unique endpoint id.
      *  * __type__, the endpoint type.
@@ -993,6 +1057,7 @@ watcherFactory = {
             resolutionStrategies: [],
             nfOpts: {},
             exportDir: __dirname + '/../storage',
+            dbConnectionURL: 'mongodb://localhost:27017/',
             endpoints: []
         };
         options = options || {};

@@ -170,3 +170,34 @@ body {
     cursor: pointer;
     content: url("../images/history.png");
 }
+
+#history-controls > div {
+    display: inline-block;
+    font-weight: bold;
+    font-size: 105%;
+}
+
+.history-time-range {
+    margin-top: 5px;
+}
+
+#history-time {
+    color: #006dcc;
+}
+
+.history-nav {
+    width: 30%;
+    float: right;
+}
+
+#history-time-step {
+    width: 55%;
+    font-weight: bold;
+}
+
+.history-nav button {
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #ffffff;
+    background: #006dcc;
+}

@@ -39,7 +39,7 @@
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
                                 <li><a href="../classes/AbstractConnector.html">AbstractConnector</a></li>
-                                <li><a href="../classes/Db.html">Db</a></li>
+                                <li><a href="../classes/DBConnectionFactory.html">DBConnectionFactory</a></li>
                                 <li><a href="../classes/Dictionary.html">Dictionary</a></li>
                                 <li><a href="../classes/DictionaryFactory.html">DictionaryFactory</a></li>
                                 <li><a href="../classes/EventDispatcher.html">EventDispatcher</a></li>
@@ -119,21 +119,34 @@
  * Exports the mongodb database objected used to store the endpoint status history.
  *
  * ###Exported objects
- * __{{#crossLink &quot;Db&quot;}}{{/crossLink}}__
+ * __{{#crossLink &quot;DBConnectionFactory&quot;}}{{/crossLink}}__
  *
  * @module database
  */
 &#x27;use strict&#x27;;
 var mongojs = require(&#x27;mongojs&#x27;);
-var db = mongojs(&#x27;watcherjs&#x27;, [&#x27;history&#x27;]);
 
 /**
- * The mongodb database object, used to store the endpoint status history.
+ * Creates mongodb database object, used to store the endpoint status history.
  *
- * @class Db
+ * @class DBConnectionFactory
  * @static
  */
-module.exports = db;
+module.exports = {
+    /**
+     * Creates a mongoDB database connection.
+     * @static
+     * @method create
+     * @param {String} [connectionURL] the mongoDB connection url. If empty the default connection url
+     * &#x27;mongodb://localhost:27017/&#x27; is used.
+     *
+     * @return the mongoDB connection.
+     */
+    create: function create(connectionURL) {
+        connectionURL = connectionURL || &#x27;mongodb://localhost:27017/&#x27;;
+        return mongojs(connectionURL + &#x27;watcherjs&#x27;, [&#x27;history&#x27;]);
+    }
+};
 
     </pre>
 </div>

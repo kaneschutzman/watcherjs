@@ -10,8 +10,12 @@ var proxyquire = require('proxyquire');
 
 var stubs = {
     './database': {
-        history: {
-            insert: _.noop
+        create: function create() {
+            return {
+                history: {
+                    insert: _.noop
+                }
+            };
         },
         '@global': true
     }

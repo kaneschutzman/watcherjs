@@ -4,5 +4,5 @@
   "type": "http",
   "url": "http://localhost:7777/console",
   "active": true,
-  "notify": true
+  "notify": false
 }

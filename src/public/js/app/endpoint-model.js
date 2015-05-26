@@ -40,6 +40,21 @@ define(['backbone', 'jquery', 'moment', 'moment-duration-format'], function (Bac
                 return this._doChangeEndpointState(settings, notify, model, 'op:notify:failed');
             },
 
+            doHistory: function (queryOptions, callback) {
+                var _self = this;
+                var endpointId = _self.id;
+                console.log('get history for endpoint ' + endpointId);
+                $.ajax({
+                    url: '/history/endpoints/' + endpointId + '/' + queryOptions.from + '/' + queryOptions.to,
+                    success: function (response, status, jqXHR) {
+                        callback(void 0, _self, response)
+                    },
+                    error: function (jqXHR, status, error) {
+                        callback(error);
+                    }
+                });
+            },
+
             _doChangeEndpointState: function (settings, enable, model) {
                 var _settings = {
                     error: function (jqXHR, status, error) {

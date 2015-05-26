@@ -24,6 +24,10 @@ this["JST"]["src/views/endpoint-form.hbs"] = Handlebars.template({"1":function(d
     + "            </select>\n        </div>\n\n        <div class=\"form-entry\">\n            <input id=\"activation-state\" type=\"checkbox\"/>\n            <label id=\"activation-state-label\" for=\"activation-state\">Inactive</label>\n        </div>\n        <div class=\"form-entry\">\n            <input id=\"notification\" type=\"checkbox\"/>\n            <label id=\"notification-label\" for=\"notification\">Notification disabled</label>\n        </div>\n    </form>\n\n<!--</script> -->";
 },"useData":true});
 
+this["JST"]["src/views/endpoint-history.hbs"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+    return "<div id=\"history-panel\">\n    <div id=\"history-controls\">\n        <div class=\"history-time-range\">Time range: <span id=\"history-time\"></span></div>\n        <div class=\"history-nav\">\n            <select id=\"history-time-step\">\n                <option value=\"1\" selected=\"selected\">1 day</option>\n                <option value=\"7\">1 week</option>\n                <option value=\"30\">1 month</option>\n            </select>\n            <button id=\"history-control-rw\">&lt;&lt;</button>\n            <button id=\"history-control-ff\">&gt;&gt;</button>\n        </div>\n    </div>\n    <div id=\"history-chart-container\">\n    </div>\n</div>";
+},"useData":true});
+
 this["JST"]["src/views/endpoint-info.hbs"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
     var helper, alias1=helpers.helperMissing, alias2="function", alias3=this.escapeExpression;
 
