@@ -194,10 +194,10 @@
  *  __Response on success:__
  *
  * ```
- * An array with the unbound resolution strategies, e.g.:
+ * An array with the unbound resolution strategies:
  * [
- *  "on-connection",
- *  "always-down"
+ *  "<strategy id>"     //the strategy id, e.g.: "on-connection",
+ *  "<strategy id>"     //the strategy id, e.g.: "always-down",
  * ]
  * ```
  *
@@ -205,6 +205,50 @@
  * ```
  * Generic error message with http status 500
  *```
+ *
+ * #### Get history status.
+ * ----
+ * * __http://`<host>`:`<port>`//history/endpoints__ (request method GET)
+ * __complete history for all endpoints__
+ * * __http://`<host>`:`<port>`//history/endpoints/`<id>`__ (request method GET)
+ * __complete history for specific endpoint__
+ * * __http://`<host>`:`<port>`//history/endpoints/`<from>`/`<to>`__ (request method GET)
+ * __history for specific time period for all endpoints__
+ * * __http://`<host>`:`<port>`//history/endpoints/`<id>`/`<from>`/`<to>`__ (request method GET)
+ * __history for specific time period and specific endpoint__
+ * * API reference: __{{#crossLink "Watcher/getHistory:method"}}{{/crossLink}}__.
+ *
+ *
+ *  __Response on success:__
+ *
+ * ```
+ * An array with the history status entries:
+ * [
+ *  {
+ *      "endpointId": "<endpoint id>",      //endpoint id
+ *      "timestamp": "<timestamp>",         //timestamp,
+ *      "statusTransition": {
+ *          "from": "<previous status>",    //current endpoint status
+ *          "to": "<current status>"        //previous endpoint status
+ *      }
+ *  },
+ *  {
+ *      "endpointId": "<endpoint id>",
+ *      "timestamp": <timestamp>
+ *      "statusTransition": {
+ *          "from": "<previous status>",
+ *          "to": "<current status>"
+ *      }
+ *  }
+ * ]
+ * ```
+ *
+ * __Response on error:__
+ * ```
+ * Generic error message with http status 500
+ *```
+
+
  *
  * @module watcher-http
  */
@@ -304,7 +348,7 @@ module.exports = {
         var _self = this;
         return function (req, res, next) {
             var id = req.params.id;
-            watcher.removeEndpoint(id, function(err, id) {
+            watcher.removeEndpoint(id, function (err, id) {
                 if (!err) {
                     res.json({id: id});
                 } else {
@@ -345,7 +389,7 @@ module.exports = {
     _changeEndpointActivationState: function _changeEndpointActivationState(watcher, req, res, active, next) {
         var _self = this;
         var id = req.params.id;
-        watcher.setEndpointActivationState(id, active, function(err, endpoint) {
+        watcher.setEndpointActivationState(id, active, function (err, endpoint) {
             if (!err) {
                 res.json({
                     id: endpoint.id,
@@ -396,7 +440,7 @@ module.exports = {
     _changeEndpointNotificationState: function _changeEndpointNotificationState(watcher, req, res, notify, next) {
         var _self = this;
         var id = req.params.id;
-        watcher.notifyOnErroneousStatus(id, notify, function(err, endpoint) {
+        watcher.notifyOnErroneousStatus(id, notify, function (err, endpoint) {
             if (!err) {
                 res.json({
                     id: endpoint.id,
@@ -418,6 +462,34 @@ module.exports = {
     resolutionStrategies: function resolutionStrategies(watcher) {
         return function (req, res, next) {
             res.json(_.pluck(watcher.getResolutionStrategies(), 'id'));
+        };
+    },
+
+    /**
+     * callback for the HTTP request:
+     * * _http://`<host>`:`<port>`//history/endpoints_ (request method GET)
+     * * _http://`<host>`:`<port>`//history/endpoints/`<id>`_ (request method GET)
+     * * _http://`<host>`:`<port>`//history/endpoints/`<from>`/`<to>`_ (request method GET)
+     * * _http://`<host>`:`<port>`//history/endpoints/`<id>`/`<from>`/`<to>`_ (request method GET)
+     * @method history
+     * @param {Object} watcher the __{{#crossLink "Watcher"}}{{/crossLink}}__.
+     * @return the express route function.
+     * */
+    history: function history(watcher) {
+        return function (req, res, next) {
+            watcher.getHistory({
+                endpointId: req.params.id,
+                from: req.params.from,
+                to: req.params.to
+            }, function (err, recs) {
+                if (!err) {
+                    res.json(_.map(recs, function(rec) {
+                        return _.omit(rec, '_id');
+                    }));
+                } else {
+                    next(err);
+                }
+            });
         };
     }
 

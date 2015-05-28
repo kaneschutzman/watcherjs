@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="watcher.js" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 2.0.0</em>
+            <em>API Docs for: 2.5.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -39,6 +39,7 @@
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
                                 <li><a href="../classes/AbstractConnector.html">AbstractConnector</a></li>
+                                <li><a href="../classes/DBConnectionFactory.html">DBConnectionFactory</a></li>
                                 <li><a href="../classes/Dictionary.html">Dictionary</a></li>
                                 <li><a href="../classes/DictionaryFactory.html">DictionaryFactory</a></li>
                                 <li><a href="../classes/EventDispatcher.html">EventDispatcher</a></li>
@@ -66,6 +67,7 @@
                             <ul id="api-modules" class="apis modules">
                                 <li><a href="../modules/connectors.html">connectors</a></li>
                                 <li><a href="../modules/constants.html">constants</a></li>
+                                <li><a href="../modules/database.html">database</a></li>
                                 <li><a href="../modules/httpServer.html">httpServer</a></li>
                                 <li><a href="../modules/logger.html">logger</a></li>
                                 <li><a href="../modules/resolvers.html">resolvers</a></li>
@@ -111,7 +113,7 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/src_watcher.js.html#l894"><code>src&#x2F;watcher.js:894</code></a>
+            Defined in: <a href="../files/src_watcher.js.html#l996"><code>src&#x2F;watcher.js:996</code></a>
         </div>
 
             Module: <a href="../modules/watcher.html">watcher</a>
@@ -161,44 +163,7 @@
         <div class="args">
             <span class="paren">(</span><ul class="args-list inline commas">
                 <li class="arg">
-                        <code>[options] the Watcher configuration.
-Properties in _[]_ are optional. when not set, the default values are used - those in parentheses.
-* Embedded http server configuration and service communication interval
- * [__host__] (&#x27;localhost&#x27;), the http server host name.
- * [__port__] (7777), the http server port.
- * [__interval__] (10000 ms), the service communication interval, at ms.
- * [__routeExts__], an array of user defined route extensions for building custom responses for the status requests.
- * [__resolutionStrategies__], an array of _unbound resolution strategy descriptors_.
- The descriptor is an object as follows:
- &#x60;&#x60;&#x60;
- {
-     id: &lt;the resolution strategy id&gt;, (should be unique)
-     desc: &lt;the resolution strategy description&gt;
-     implementation: &lt;the implementation of resolution strategy&gt; (see at resolvers to see the interface)
- }
- &#x60;&#x60;&#x60;
- * [__nfOpts__], the notification options. Holds the information of the sender and the email addresses
- to receive email when erroneous service status occurs. The default sender is _admin@watcherjs.com_
- (if needed, configure your email account to not filter this sender as a spam). The object structure is:
- &#x60;&#x60;&#x60;
- {
-     sender: &lt;the sender&gt;, // default value: admin@watcherjs.com
-     recipients: [&lt;recipient1&gt;, &lt;recipient1&gt;, ...] // the array of recipients email
- }
- &#x60;&#x60;&#x60;
- * [__exportDir__] (_&lt;&#x60;project directory&#x60;&gt;/storage/_), the storage directory of dynamically created endpoints.
-* Endpoint
- * __id__, the unique endpoint id.
- * __type__, the endpoint type.
- * [__host__] (localhost), the endpoint hostname, applied for __{{#crossLink &quot;SocketConnector&quot;}}{{/crossLink}}__.
- * [__port__] (9999), the endpoint port, applied for __{{#crossLink &quot;SocketConnector&quot;}}{{/crossLink}}__.
- * [__url__] (http://localhost:8080), the endpoint url, applied for __{{#crossLink &quot;HttpConnector&quot;}}{{/crossLink}}__.
- * [__timeout__](5000), the applied connector&#x27;s connection timeout.
- * [__resolutionStrategy__] (__{{#crossLink &quot;OnConnectionResolution&quot;}}{{/crossLink}}__) the applied resolution
- strategy, either as an implementation of a resolution strategy or as a reference id of an unbound strategy.
- * [__active__] (true), whether or not the endpoint should be activated (enables or suspends
- the communication between the respective connector and the endpoint).
- * [__notify__]</code>
+                        <code class="optional">[options]</code>
                 </li>
             </ul><span class="paren">)</span>
         </div>
@@ -217,7 +182,7 @@ Properties in _[]_ are optional. when not set, the default values are used - tho
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_watcher.js.html#l900"><code>src&#x2F;watcher.js:900</code></a>
+        <a href="../files/src_watcher.js.html#l1002"><code>src&#x2F;watcher.js:1002</code></a>
         </p>
 
 
@@ -234,51 +199,13 @@ Properties in _[]_ are optional. when not set, the default values are used - tho
 
             <ul class="params-list">
                 <li class="param">
-                        <code class="param-name">[options] the Watcher configuration.
-Properties in _[]_ are optional. when not set, the default values are used - those in parentheses.
-* Embedded http server configuration and service communication interval
- * [__host__] (&#x27;localhost&#x27;), the http server host name.
- * [__port__] (7777), the http server port.
- * [__interval__] (10000 ms), the service communication interval, at ms.
- * [__routeExts__], an array of user defined route extensions for building custom responses for the status requests.
- * [__resolutionStrategies__], an array of _unbound resolution strategy descriptors_.
- The descriptor is an object as follows:
- &#x60;&#x60;&#x60;
- {
-     id: &lt;the resolution strategy id&gt;, (should be unique)
-     desc: &lt;the resolution strategy description&gt;
-     implementation: &lt;the implementation of resolution strategy&gt; (see at resolvers to see the interface)
- }
- &#x60;&#x60;&#x60;
- * [__nfOpts__], the notification options. Holds the information of the sender and the email addresses
- to receive email when erroneous service status occurs. The default sender is _admin@watcherjs.com_
- (if needed, configure your email account to not filter this sender as a spam). The object structure is:
- &#x60;&#x60;&#x60;
- {
-     sender: &lt;the sender&gt;, // default value: admin@watcherjs.com
-     recipients: [&lt;recipient1&gt;, &lt;recipient1&gt;, ...] // the array of recipients email
- }
- &#x60;&#x60;&#x60;
- * [__exportDir__] (_&lt;&#x60;project directory&#x60;&gt;/storage/_), the storage directory of dynamically created endpoints.
-* Endpoint
- * __id__, the unique endpoint id.
- * __type__, the endpoint type.
- * [__host__] (localhost), the endpoint hostname, applied for __{{#crossLink &quot;SocketConnector&quot;}}{{/crossLink}}__.
- * [__port__] (9999), the endpoint port, applied for __{{#crossLink &quot;SocketConnector&quot;}}{{/crossLink}}__.
- * [__url__] (http://localhost:8080), the endpoint url, applied for __{{#crossLink &quot;HttpConnector&quot;}}{{/crossLink}}__.
- * [__timeout__](5000), the applied connector&#x27;s connection timeout.
- * [__resolutionStrategy__] (__{{#crossLink &quot;OnConnectionResolution&quot;}}{{/crossLink}}__) the applied resolution
- strategy, either as an implementation of a resolution strategy or as a reference id of an unbound strategy.
- * [__active__] (true), whether or not the endpoint should be activated (enables or suspends
- the communication between the respective connector and the endpoint).
- * [__notify__]</code>
+                        <code class="param-name optional">[options]</code>
                         <span class="type">Object</span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
 
 
                     <div class="param-description">
-                        <p>(false), used to indicate whether or not to receive email notifications for
- erroneous service status.</p>
-<p>More details at <strong><a href="../modules/watcher.html">watcher</a></strong>.</p>
+                        <p>the Watcher configuration.</p>
 
                     </div>
 
@@ -297,6 +224,59 @@ Properties in _[]_ are optional. when not set, the default values are used - tho
         </div>
 
 
+        <div class="example">
+            <h4>Example:</h4>
+
+            <div class="example-content">
+                <p> <strong>Options configuration details</strong>.
+Properties in <em>[]</em> are optional. when not set, the default values are used - those in parentheses.</p>
+<ul>
+<li>Embedded http server configuration and service communication interval<ul>
+<li>[<strong>host</strong>] (&#39;localhost&#39;), the http server host name.</li>
+<li>[<strong>port</strong>] (7777), the http server port.</li>
+<li>[<strong>interval</strong>] (10000 ms), the service communication interval, at ms.</li>
+<li>[<strong>routeExts</strong>], an array of user defined route extensions for building custom responses for the status requests.</li>
+<li>[<strong>resolutionStrategies</strong>], an array of <em>unbound resolution strategy descriptors</em>.
+The descriptor is an object as follows:<pre class="code prettyprint"><code>{
+ id: &lt;the resolution strategy id&gt;, (should be unique)
+ desc: &lt;the resolution strategy description&gt;
+ implementation: &lt;the implementation of resolution strategy&gt; (see at resolvers to see the interface)
+}
+</code></pre></li>
+<li>[<strong>nfOpts</strong>], the notification options. Holds the information of the sender and the email addresses
+to receive email when erroneous service status occurs. The default sender is <em>admin@watcherjs.com</em>
+(if needed, configure your email account to not filter this sender as a spam). The object structure is:<pre class="code prettyprint"><code>{
+ sender: &lt;the sender&gt;, // default value: admin@watcherjs.com
+ recipients: [&lt;recipient1&gt;, &lt;recipient1&gt;, ...] // the array of recipients email
+}
+</code></pre></li>
+<li>[<strong>exportDir</strong>] (<em>&lt;<code>project directory</code>&gt;/storage/</em>), the storage directory of dynamically created endpoints.</li>
+<li>[<strong>dbConnectionURL</strong>] (<em>&#39;mongodb://localhost:27017/&#39;</em>), the connection url of history persistent storage
+(currently, the mongoDB is used)</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>Endpoint<ul>
+<li><strong>id</strong>, the unique endpoint id.</li>
+<li><strong>type</strong>, the endpoint type.</li>
+<li>[<strong>host</strong>] (localhost), the endpoint hostname, applied for <strong><a href="../classes/SocketConnector.html" class="crosslink">SocketConnector</a></strong>.</li>
+<li>[<strong>port</strong>] (9999), the endpoint port, applied for <strong><a href="../classes/SocketConnector.html" class="crosslink">SocketConnector</a></strong>.</li>
+<li>[<strong>url</strong>] (<a href="http://localhost:8080">http://localhost:8080</a>), the endpoint url, applied for <strong><a href="../classes/HttpConnector.html" class="crosslink">HttpConnector</a></strong>.</li>
+<li><a href="5000"><strong>timeout</strong></a>, the applied connector&#39;s connection timeout.</li>
+<li>[<strong>resolutionStrategy</strong>] (<strong><a href="../classes/OnConnectionResolution.html" class="crosslink">OnConnectionResolution</a></strong>) the applied resolution
+strategy, either as an implementation of a resolution strategy or as a reference id of an unbound strategy.</li>
+<li>[<strong>active</strong>] (true), whether or not the endpoint should be activated (enables or suspends
+the communication between the respective connector and the endpoint).</li>
+<li>[<strong>notify</strong>] (false), used to indicate whether or not to receive email notifications for
+erroneous service status.</li>
+</ul>
+</li>
+</ul>
+<p>More details at <strong><a href="../modules/watcher.html">watcher</a></strong>.</p>
+
+            </div>
+        </div>
 </div>
             </div>
 

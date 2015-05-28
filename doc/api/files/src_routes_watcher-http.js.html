@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="watcher.js" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 2.0.0</em>
+            <em>API Docs for: 2.5.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -39,6 +39,7 @@
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
                                 <li><a href="../classes/AbstractConnector.html">AbstractConnector</a></li>
+                                <li><a href="../classes/DBConnectionFactory.html">DBConnectionFactory</a></li>
                                 <li><a href="../classes/Dictionary.html">Dictionary</a></li>
                                 <li><a href="../classes/DictionaryFactory.html">DictionaryFactory</a></li>
                                 <li><a href="../classes/EventDispatcher.html">EventDispatcher</a></li>
@@ -66,6 +67,7 @@
                             <ul id="api-modules" class="apis modules">
                                 <li><a href="../modules/connectors.html">connectors</a></li>
                                 <li><a href="../modules/constants.html">constants</a></li>
+                                <li><a href="../modules/database.html">database</a></li>
                                 <li><a href="../modules/httpServer.html">httpServer</a></li>
                                 <li><a href="../modules/logger.html">logger</a></li>
                                 <li><a href="../modules/resolvers.html">resolvers</a></li>
@@ -306,10 +308,10 @@
  *  __Response on success:__
  *
  * &#x60;&#x60;&#x60;
- * An array with the unbound resolution strategies, e.g.:
+ * An array with the unbound resolution strategies:
  * [
- *  &quot;on-connection&quot;,
- *  &quot;always-down&quot;
+ *  &quot;&lt;strategy id&gt;&quot;     //the strategy id, e.g.: &quot;on-connection&quot;,
+ *  &quot;&lt;strategy id&gt;&quot;     //the strategy id, e.g.: &quot;always-down&quot;,
  * ]
  * &#x60;&#x60;&#x60;
  *
@@ -317,6 +319,50 @@
  * &#x60;&#x60;&#x60;
  * Generic error message with http status 500
  *&#x60;&#x60;&#x60;
+ *
+ * #### Get history status.
+ * ----
+ * * __http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;//history/endpoints__ (request method GET)
+ * __complete history for all endpoints__
+ * * __http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;//history/endpoints/&#x60;&lt;id&gt;&#x60;__ (request method GET)
+ * __complete history for specific endpoint__
+ * * __http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;//history/endpoints/&#x60;&lt;from&gt;&#x60;/&#x60;&lt;to&gt;&#x60;__ (request method GET)
+ * __history for specific time period for all endpoints__
+ * * __http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;//history/endpoints/&#x60;&lt;id&gt;&#x60;/&#x60;&lt;from&gt;&#x60;/&#x60;&lt;to&gt;&#x60;__ (request method GET)
+ * __history for specific time period and specific endpoint__
+ * * API reference: __{{#crossLink &quot;Watcher/getHistory:method&quot;}}{{/crossLink}}__.
+ *
+ *
+ *  __Response on success:__
+ *
+ * &#x60;&#x60;&#x60;
+ * An array with the history status entries:
+ * [
+ *  {
+ *      &quot;endpointId&quot;: &quot;&lt;endpoint id&gt;&quot;,      //endpoint id
+ *      &quot;timestamp&quot;: &quot;&lt;timestamp&gt;&quot;,         //timestamp,
+ *      &quot;statusTransition&quot;: {
+ *          &quot;from&quot;: &quot;&lt;previous status&gt;&quot;,    //current endpoint status
+ *          &quot;to&quot;: &quot;&lt;current status&gt;&quot;        //previous endpoint status
+ *      }
+ *  },
+ *  {
+ *      &quot;endpointId&quot;: &quot;&lt;endpoint id&gt;&quot;,
+ *      &quot;timestamp&quot;: &lt;timestamp&gt;
+ *      &quot;statusTransition&quot;: {
+ *          &quot;from&quot;: &quot;&lt;previous status&gt;&quot;,
+ *          &quot;to&quot;: &quot;&lt;current status&gt;&quot;
+ *      }
+ *  }
+ * ]
+ * &#x60;&#x60;&#x60;
+ *
+ * __Response on error:__
+ * &#x60;&#x60;&#x60;
+ * Generic error message with http status 500
+ *&#x60;&#x60;&#x60;
+
+
  *
  * @module watcher-http
  */
@@ -416,7 +462,7 @@ module.exports = {
         var _self = this;
         return function (req, res, next) {
             var id = req.params.id;
-            watcher.removeEndpoint(id, function(err, id) {
+            watcher.removeEndpoint(id, function (err, id) {
                 if (!err) {
                     res.json({id: id});
                 } else {
@@ -457,7 +503,7 @@ module.exports = {
     _changeEndpointActivationState: function _changeEndpointActivationState(watcher, req, res, active, next) {
         var _self = this;
         var id = req.params.id;
-        watcher.setEndpointActivationState(id, active, function(err, endpoint) {
+        watcher.setEndpointActivationState(id, active, function (err, endpoint) {
             if (!err) {
                 res.json({
                     id: endpoint.id,
@@ -508,7 +554,7 @@ module.exports = {
     _changeEndpointNotificationState: function _changeEndpointNotificationState(watcher, req, res, notify, next) {
         var _self = this;
         var id = req.params.id;
-        watcher.notifyOnErroneousStatus(id, notify, function(err, endpoint) {
+        watcher.notifyOnErroneousStatus(id, notify, function (err, endpoint) {
             if (!err) {
                 res.json({
                     id: endpoint.id,
@@ -530,6 +576,34 @@ module.exports = {
     resolutionStrategies: function resolutionStrategies(watcher) {
         return function (req, res, next) {
             res.json(_.pluck(watcher.getResolutionStrategies(), &#x27;id&#x27;));
+        };
+    },
+
+    /**
+     * callback for the HTTP request:
+     * * _http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;//history/endpoints_ (request method GET)
+     * * _http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;//history/endpoints/&#x60;&lt;id&gt;&#x60;_ (request method GET)
+     * * _http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;//history/endpoints/&#x60;&lt;from&gt;&#x60;/&#x60;&lt;to&gt;&#x60;_ (request method GET)
+     * * _http://&#x60;&lt;host&gt;&#x60;:&#x60;&lt;port&gt;&#x60;//history/endpoints/&#x60;&lt;id&gt;&#x60;/&#x60;&lt;from&gt;&#x60;/&#x60;&lt;to&gt;&#x60;_ (request method GET)
+     * @method history
+     * @param {Object} watcher the __{{#crossLink &quot;Watcher&quot;}}{{/crossLink}}__.
+     * @return the express route function.
+     * */
+    history: function history(watcher) {
+        return function (req, res, next) {
+            watcher.getHistory({
+                endpointId: req.params.id,
+                from: req.params.from,
+                to: req.params.to
+            }, function (err, recs) {
+                if (!err) {
+                    res.json(_.map(recs, function(rec) {
+                        return _.omit(rec, &#x27;_id&#x27;);
+                    }));
+                } else {
+                    next(err);
+                }
+            });
         };
     }
 

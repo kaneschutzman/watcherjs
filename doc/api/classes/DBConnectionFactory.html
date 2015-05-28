@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>src/logger.js - watcher.js</title>
+    <title>DBConnectionFactory - watcher.js</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -108,53 +108,128 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-<h1 class="file-heading">File: src/logger.js</h1>
+<h1>DBConnectionFactory Class</h1>
+<div class="box meta">
 
-<div class="file">
-    <pre class="code prettyprint linenums">
-/**
- * Created by jpsoroulas.
- */
-/**
- * Exports a winston logger.
- *
- * ###Exported objects
- * __{{#crossLink &quot;Logger&quot;}}{{/crossLink}}__
- *
- * ###API Usage samples
- * See at [winston](https://github.com/winstonjs/winston)
- *
- * @module logger
- */
-&#x27;use strict&#x27;;
-var winston = require(&#x27;winston&#x27;), logger;
 
-winston.setLevels(winston.config.npm.levels);
-winston.addColors(winston.config.npm.colors);
+        <div class="foundat">
+            Defined in: <a href="../files/src_database.js.html#l15"><code>src&#x2F;database.js:15</code></a>
+        </div>
 
-logger = new ( winston.Logger )({
-    transports: [
-        new winston.transports.Console({
-            level: &#x27;debug&#x27;, // Only write logs of debug level or higher
-            colorize: true
-        })
-    ]
-});
-/**
- * Exported module object
- */
-/**
- * The winston logger
- *
- * @class Logger
- * @static
- */
-module.exports = logger;
+            Module: <a href="../modules/database.html">database</a>
 
+</div>
+
+
+<div class="box intro">
+    <p>Creates mongodb database object, used to store the endpoint status history.</p>
+
+</div>
+
+
+<div id="classdocs" class="tabview">
+    <ul class="api-class-tabs">
+        <li class="api-class-tab index"><a href="#index">Index</a></li>
+
+            <li class="api-class-tab methods"><a href="#methods">Methods</a></li>
+    </ul>
+
+    <div>
+        <div id="index" class="api-class-tabpanel index">
+            <h2 class="off-left">Item Index</h2>
+
+                <div class="index-section methods">
+                    <h3>Methods</h3>
+
+                    <ul class="index-list methods">
+                            <li class="index-item method">
+                                <a href="#method_create">create</a>
+
+                                    <span class="flag static">static</span>
+                            </li>
+                    </ul>
+                </div>
 
 
 
-    </pre>
+        </div>
+
+            <div id="methods" class="api-class-tabpanel">
+                <h2 class="off-left">Methods</h2>
+
+<div id="method_create" class="method item">
+    <h3 class="name"><code>create</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code class="optional">[connectionURL]</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type"></span>
+        </span>
+
+
+
+
+        <span class="flag static">static</span>
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_database.js.html#l22"><code>src&#x2F;database.js:22</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Creates a mongoDB database connection.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name optional">[connectionURL]</code>
+                        <span class="type">String</span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+
+
+                    <div class="param-description">
+                        <p>the mongoDB connection url. If empty the default connection url
+&#39;mongodb://localhost:27017/&#39; is used.</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                    <p>the mongoDB connection.</p>
+
+            </div>
+        </div>
+
+
+</div>
+            </div>
+
+
+
+    </div>
 </div>
                     </div>
                 </div>

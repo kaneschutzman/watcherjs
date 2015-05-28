@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="watcher.js" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 2.0.0</em>
+            <em>API Docs for: 2.5.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -39,6 +39,7 @@
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
                                 <li><a href="../classes/AbstractConnector.html">AbstractConnector</a></li>
+                                <li><a href="../classes/DBConnectionFactory.html">DBConnectionFactory</a></li>
                                 <li><a href="../classes/Dictionary.html">Dictionary</a></li>
                                 <li><a href="../classes/DictionaryFactory.html">DictionaryFactory</a></li>
                                 <li><a href="../classes/EventDispatcher.html">EventDispatcher</a></li>
@@ -66,6 +67,7 @@
                             <ul id="api-modules" class="apis modules">
                                 <li><a href="../modules/connectors.html">connectors</a></li>
                                 <li><a href="../modules/constants.html">constants</a></li>
+                                <li><a href="../modules/database.html">database</a></li>
                                 <li><a href="../modules/httpServer.html">httpServer</a></li>
                                 <li><a href="../modules/logger.html">logger</a></li>
                                 <li><a href="../modules/resolvers.html">resolvers</a></li>
@@ -111,7 +113,7 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/src_watcher.js.html#l894"><code>src&#x2F;watcher.js:894</code></a>
+            Defined in: <a href="../files/src_watcher.js.html#l996"><code>src&#x2F;watcher.js:996</code></a>
         </div>
 
 </div>
@@ -164,6 +166,8 @@ to receive email when erroneous service status occurs. The default sender is <em
 }
 </code></pre></li>
 <li>[<strong>exportDir</strong>] (<em>&lt;<code>project directory</code>&gt;/storage/</em>), the storage directory of dynamically created endpoints.</li>
+<li>[<strong>dbConnectionURL</strong>] (<em>&#39;mongodb://localhost:27017/&#39;</em>), the connection url of history persistent storage
+(currently, the mongoDB is used)</li>
 </ul>
 </li>
 </ul>

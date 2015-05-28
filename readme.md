@@ -1,4 +1,4 @@
-![watcher.js](src/public/images/logo.jpg)
+![watcher.js](doc/various/logo.jpg)
 
 __watcher.js__ is a node.js based application that can be used to monitor service status. It is not a competitor
 of [nagios](http://www.nagios.org/) or [zabbix](http://www.zabbix.com/) or any other advanced monitoring tool.
@@ -53,7 +53,7 @@ Detailed documentation and examples can be found at:
 [watcher-full.js](examples/watcher-full.js) and [watcher-minimal.js](examples/watcher-minimal.js)
 
 ### _[REST API](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/modules/watcher-http.html)_
-The entire application API is exposed as REST API. For the REST API implementation
+The entire application API is exposed as REST services. For the REST API implementation
 the [express](http://expressjs.com) web framework is used. It is worth mentioning that the user can define
 __route extension points__ in order to build custom responses for the status requests.
 
@@ -65,7 +65,7 @@ Detailed information about the REST interface and examples can be found at:
 ----
 
 ## Watcher web console
-On top of the application's REST API, a simple but handy web GUI is implemented, the _watcher web console_.
+On top of the application's REST services, a simple but handy web GUI is implemented, the _watcher web console_.
 The console enables the user to dynamically add/remove/modify and monitor endpoints visually.
 It can be accessed at http://localhost:`<port>`/console, where `<port>` the http-server port defined at
 application startup (7777, if default configuration is used). The refresh data interval is set to 30 sec.
@@ -75,9 +75,9 @@ The console illustrates the list of the monitored services along with their rela
 More specifically, the endpoint id (Id), the endpoint description (Description), the endpoint status (Status),
 the timestamp of the current status (Timestamp) and the period where the current status has lasted (Duration).
 At the column 'Actions' the user can activate/deactivate the endpoint (eye icon),
-enable/disable notification (mail icon) and delete the endpoint (cross icon). Note that the deletion
-causes the permanent endpoint information removal from the storage (currently, the dynamically added endpoints
-from the console are stored at the filesystem under the directory _storage_, see at
+enable/disable notification (mail icon), delete the endpoint (cross icon) and show the endpoint status history chart
+(the last icon). Note that the deletion causes the permanent endpoint information removal from the storage
+(the dynamically added endpoints from the console are stored at the filesystem under the directory _storage_, see at
 [watcher](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/modules/watcher.html))
 At the bottom of the page some statistical is presented.
 
@@ -86,7 +86,9 @@ should set depends on the connector type ('socket' or 'http(s)'). Note the 'Reso
 a unbound resolution strategy (if any) could be selected.
 
 ![Console](doc/various/console.jpg)
-![endpoint socket](doc/various/endpoint-socket.jpg)
+![Endpoint socket](doc/various/endpoint-socket.jpg)
+
+![Status history](doc/various/status-history.jpg)
 
 ----
 
@@ -96,7 +98,8 @@ The application features can be summarized as follows:
   * add/remove endpoint
   * activate/deactivate endpoint
   * enable/disable email notification on erroneous service status
-  * store endpoint configuration (currently at the file system)
+  * store endpoint configuration (at the file system for easy modification)
+  * Query endpoint(s) status history
   * define custom _status resolution strategy_ for specific endpoint
   * define pool of custom _unbound status resolution strategies_
   * define route extensions for building custom responses for the _status requests_
@@ -105,12 +108,14 @@ The application features can be summarized as follows:
 
 ## Release Notes
 
-Changelog: For change logs and release notes,
+Changelog: For changelogs and release notes,
 see the [changelog](https://github.com/jpsoroulas/watcherjs/blob/master/changelog.md) file.
 
 ## Installation
 
 * Install [nodejs](https://nodejs.org/)
+* Install or configure an existing installation of [mongoDB](http://www.mongodb.org/)
+(for configuration see at API documentation)
 * Download project and extract it at a desire location
 * Under the project root directory execute
 ```
@@ -119,7 +124,7 @@ $ npm install
 to download and install project dependencies
 
 ## Docs/Examples
-* [Application API](https://github.com/jpsoroulas/watcherjs/blob/master/doc/api)
+* [API documentation](https://github.com/jpsoroulas/watcherjs/blob/master/doc/api)
 * [Examples](examples/)
 
 ## Quick Start

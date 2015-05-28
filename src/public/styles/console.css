@@ -165,3 +165,44 @@ body {
     cursor: pointer;
     content: url("../images/delete.png");
 }
+
+.action-history {
+    cursor: pointer;
+    content: url("../images/history.png");
+}
+
+#history-controls > div {
+    display: inline-block;
+    font-weight: bold;
+    font-size: 105%;
+}
+
+.history-time-range {
+    margin-top: 5px;
+}
+
+#history-time {
+    color: #006dcc;
+}
+
+.history-nav {
+    width: 40%;
+    float: right;
+}
+
+.history-nav div,
+.history-nav select {
+    display: inline-block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+#history-time-step {
+    width: 50%;
+}
+
+.history-nav button {
+    margin-bottom: 5px;
+    color: #ffffff;
+    background: #006dcc;
+}

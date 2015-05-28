@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>src/logger.js - watcher.js</title>
+    <title>src/database.js - watcher.js</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -108,7 +108,7 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-<h1 class="file-heading">File: src/logger.js</h1>
+<h1 class="file-heading">File: src/database.js</h1>
 
 <div class="file">
     <pre class="code prettyprint linenums">
@@ -116,43 +116,37 @@
  * Created by jpsoroulas.
  */
 /**
- * Exports a winston logger.
+ * Exports the mongodb database objected used to store the endpoint status history.
  *
  * ###Exported objects
- * __{{#crossLink &quot;Logger&quot;}}{{/crossLink}}__
+ * __{{#crossLink &quot;DBConnectionFactory&quot;}}{{/crossLink}}__
  *
- * ###API Usage samples
- * See at [winston](https://github.com/winstonjs/winston)
- *
- * @module logger
+ * @module database
  */
 &#x27;use strict&#x27;;
-var winston = require(&#x27;winston&#x27;), logger;
+var mongojs = require(&#x27;mongojs&#x27;);
 
-winston.setLevels(winston.config.npm.levels);
-winston.addColors(winston.config.npm.colors);
-
-logger = new ( winston.Logger )({
-    transports: [
-        new winston.transports.Console({
-            level: &#x27;debug&#x27;, // Only write logs of debug level or higher
-            colorize: true
-        })
-    ]
-});
 /**
- * Exported module object
- */
-/**
- * The winston logger
+ * Creates mongodb database object, used to store the endpoint status history.
  *
- * @class Logger
+ * @class DBConnectionFactory
  * @static
  */
-module.exports = logger;
-
-
-
+module.exports = {
+    /**
+     * Creates a mongoDB database connection.
+     * @static
+     * @method create
+     * @param {String} [connectionURL] the mongoDB connection url. If empty the default connection url
+     * &#x27;mongodb://localhost:27017/&#x27; is used.
+     *
+     * @return the mongoDB connection.
+     */
+    create: function create(connectionURL) {
+        connectionURL = connectionURL || &#x27;mongodb://localhost:27017/&#x27;;
+        return mongojs(connectionURL + &#x27;watcherjs&#x27;, [&#x27;history&#x27;]);
+    }
+};
 
     </pre>
 </div>

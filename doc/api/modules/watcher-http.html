@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="watcher.js" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 2.0.0</em>
+            <em>API Docs for: 2.5.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -39,6 +39,7 @@
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
                                 <li><a href="../classes/AbstractConnector.html">AbstractConnector</a></li>
+                                <li><a href="../classes/DBConnectionFactory.html">DBConnectionFactory</a></li>
                                 <li><a href="../classes/Dictionary.html">Dictionary</a></li>
                                 <li><a href="../classes/DictionaryFactory.html">DictionaryFactory</a></li>
                                 <li><a href="../classes/EventDispatcher.html">EventDispatcher</a></li>
@@ -66,6 +67,7 @@
                             <ul id="api-modules" class="apis modules">
                                 <li><a href="../modules/connectors.html">connectors</a></li>
                                 <li><a href="../modules/constants.html">constants</a></li>
+                                <li><a href="../modules/database.html">database</a></li>
                                 <li><a href="../modules/httpServer.html">httpServer</a></li>
                                 <li><a href="../modules/logger.html">logger</a></li>
                                 <li><a href="../modules/resolvers.html">resolvers</a></li>
@@ -111,7 +113,7 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/src_routes_watcher-http.js.html#l227"><code>src&#x2F;routes&#x2F;watcher-http.js:227</code></a>
+            Defined in: <a href="../files/src_routes_watcher-http.js.html#l271"><code>src&#x2F;routes&#x2F;watcher-http.js:271</code></a>
         </div>
 
 </div>
@@ -272,10 +274,45 @@
 <li>API reference: <strong><a href="../classes/Watcher.html#method_getResolutionStrategies" class="crosslink">getResolutionStrategies</a></strong>.</li>
 </ul>
 <p> <strong>Response on success:</strong></p>
-<pre class="code prettyprint"><code>An array with the unbound resolution strategies, e.g.:
+<pre class="code prettyprint"><code>An array with the unbound resolution strategies:
 [
- "on-connection",
- "always-down"
+ "&lt;strategy id&gt;"     //the strategy id, e.g.: "on-connection",
+ "&lt;strategy id&gt;"     //the strategy id, e.g.: "always-down",
+]
+</code></pre><p><strong>Response on error:</strong></p>
+<pre class="code prettyprint"><code>Generic error message with http status 500
+</code></pre><h4 id="get-history-status-">Get history status.</h4>
+<hr>
+<ul>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>//history/endpoints</strong> (request method GET)
+<strong>complete history for all endpoints</strong></li>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>//history/endpoints/<code>&lt;id&gt;</code></strong> (request method GET)
+<strong>complete history for specific endpoint</strong></li>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>//history/endpoints/<code>&lt;from&gt;</code>/<code>&lt;to&gt;</code></strong> (request method GET)
+<strong>history for specific time period for all endpoints</strong></li>
+<li><strong>http://<code>&lt;host&gt;</code>:<code>&lt;port&gt;</code>//history/endpoints/<code>&lt;id&gt;</code>/<code>&lt;from&gt;</code>/<code>&lt;to&gt;</code></strong> (request method GET)
+<strong>history for specific time period and specific endpoint</strong></li>
+<li>API reference: <strong><a href="../classes/Watcher.html#method_getHistory" class="crosslink">getHistory</a></strong>.</li>
+</ul>
+<p> <strong>Response on success:</strong></p>
+<pre class="code prettyprint"><code>An array with the history status entries:
+[
+ {
+     "endpointId": "&lt;endpoint id&gt;",      //endpoint id
+     "timestamp": "&lt;timestamp&gt;",         //timestamp,
+     "statusTransition": {
+         "from": "&lt;previous status&gt;",    //current endpoint status
+         "to": "&lt;current status&gt;"        //previous endpoint status
+     }
+ },
+ {
+     "endpointId": "&lt;endpoint id&gt;",
+     "timestamp": &lt;timestamp&gt;
+     "statusTransition": {
+         "from": "&lt;previous status&gt;",
+         "to": "&lt;current status&gt;"
+     }
+ }
 ]
 </code></pre><p><strong>Response on error:</strong></p>
 <pre class="code prettyprint"><code>Generic error message with http status 500

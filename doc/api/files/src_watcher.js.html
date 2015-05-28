@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="watcher.js" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 2.0.0</em>
+            <em>API Docs for: 2.5.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -39,6 +39,7 @@
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
                                 <li><a href="../classes/AbstractConnector.html">AbstractConnector</a></li>
+                                <li><a href="../classes/DBConnectionFactory.html">DBConnectionFactory</a></li>
                                 <li><a href="../classes/Dictionary.html">Dictionary</a></li>
                                 <li><a href="../classes/DictionaryFactory.html">DictionaryFactory</a></li>
                                 <li><a href="../classes/EventDispatcher.html">EventDispatcher</a></li>
@@ -66,6 +67,7 @@
                             <ul id="api-modules" class="apis modules">
                                 <li><a href="../modules/connectors.html">connectors</a></li>
                                 <li><a href="../modules/constants.html">constants</a></li>
+                                <li><a href="../modules/database.html">database</a></li>
                                 <li><a href="../modules/httpServer.html">httpServer</a></li>
                                 <li><a href="../modules/logger.html">logger</a></li>
                                 <li><a href="../modules/resolvers.html">resolvers</a></li>
@@ -167,6 +169,8 @@
  *  }
  *  &#x60;&#x60;&#x60;
  *  * [__exportDir__] (_&lt;&#x60;project directory&#x60;&gt;/storage/_), the storage directory of dynamically created endpoints.
+ *  * [__dbConnectionURL__] (_&#x27;mongodb://localhost:27017/&#x27;_), the connection url of history persistent storage
+ *  (currently, the mongoDB is used)
  *
  *
  * * Endpoint
@@ -406,6 +410,8 @@ var events = require(&#x27;events&#x27;);
 var path = require(&#x27;path&#x27;);
 var stampit = require(&#x27;stampit&#x27;);
 var _ = require(&#x27;underscore&#x27;);
+var async = require(&#x27;async&#x27;);
+var asyncTimeout = require(&#x27;async-timeout&#x27;);
 var moment = require(&#x27;moment&#x27;);
 var nodemailer = require(&#x27;nodemailer&#x27;);
 var directTransport = require(&#x27;nodemailer-direct-transport&#x27;);
@@ -413,7 +419,6 @@ var directTransport = require(&#x27;nodemailer-direct-transport&#x27;);
 //var query = require(&#x27;connect-query&#x27;);
 //var fs = require(&#x27;fs&#x27;);
 //var connect = require(&#x27;connect&#x27;);
-//var async = require(&#x27;async&#x27;);
 //var s = require(&#x27;underscore.string&#x27;);
 
 var logger = require(&#x27;./logger&#x27;);
@@ -421,6 +426,7 @@ var validator = require(&#x27;./validator&#x27;);
 var constants = require(&#x27;./constants&#x27;);
 var connectors = require(&#x27;./connectors&#x27;);
 var httpServerFactory = require(&#x27;./http-server&#x27;);
+var dbConnFactory = require(&#x27;./database&#x27;);
 //var utils = require(&#x27;./utils&#x27;);
 
 var up = constants.serviceStatus.up;
@@ -563,9 +569,12 @@ watcher = stampit().state({
 
         _onStatusResolve: function _onStatusResolve(endpoint, status) {
             if (!this._stopped) {
-                endpoint.timestamp = moment.utc();
+                var now = moment.utc();
+                endpoint.timestamp = now;
                 if (status !== endpoint.status) {
-                    endpoint.since = endpoint.timestamp;
+                    endpoint.since = now;
+                    //store to database
+                    this._storeStatusToHistory(endpoint, status);
                 }
                 endpoint.previousStatus = endpoint.status;
                 endpoint.status = status;
@@ -579,6 +588,22 @@ watcher = stampit().state({
                     setTimeout(_.bind(this._pollEndpoints, this), this.options.interval).unref();
                 }
             }
+        },
+
+        _storeStatusToHistory: function (endpoint, status) {
+            var now = moment.utc();
+            this.db.history.insert({
+                endpointId: endpoint.id,
+                timestamp: now.valueOf(),
+                statusTransition: {
+                    from: endpoint.status,
+                    to: status
+                }
+            }, function (err, docs) {
+                if (err) {
+                    logger.warn(&#x27;Unable to update the persistent state of \&#x27;&#x27; + endpoint.id + &#x27;\&#x27;, &#x27; + err);
+                }
+            });
         },
 
         _pollEndpoints: function _pollEndpoints() {
@@ -631,7 +656,7 @@ watcher = stampit().state({
 
         /**
          * Stores endpoint at the persistence storage
-         * (at the moment, the filesystem is used).
+         * (the filesystem is used for easy modification).
          *
          * @private
          * @method _persistEndpointConfig
@@ -651,7 +676,7 @@ watcher = stampit().state({
 
         /**
          * Deletes the endpoint of the specified id from the persistence storage
-         * (at the moment, the filesystem is used).
+         * (the filesystem is used for easy modification).
          *
          * @private
          * @method _deleteEndpoint
@@ -677,7 +702,7 @@ watcher = stampit().state({
 
         /**
          * Updates the endpoint of the specified id from the persistence storage
-         * (at the moment, the filesystem is used).
+         * (the filesystem is used for easy modification).
          *
          * @private
          * @method _updateEndpointConfig
@@ -707,7 +732,7 @@ watcher = stampit().state({
         },
 
         /**
-         * Stores endpoint info at persistence storage (currently, at the filesystem).
+         * Stores endpoint info at persistence storage (at the filesystem for easy modification).
          *
          * @private
          * @method _getStoredEndpoints
@@ -830,6 +855,9 @@ watcher = stampit().state({
             var endpoint = this._registry[id];
             if (endpoint) {
                 var now = moment().utc();
+                if (undetermined !== endpoint.status) {
+                    this._storeStatusToHistory(endpoint, undetermined);
+                }
                 endpoint.active = active;
                 endpoint.status = undetermined;
                 endpoint.timestamp = now;
@@ -887,6 +915,45 @@ watcher = stampit().state({
         },
 
         /**
+         * Returns the endpoint/s history status.
+         *
+         * @method getHistory
+         * @param {Object} qOpts the query options.
+         * @param {Function} callback the callback(err, recs) of the async process.
+         * @example __Query options details__.
+         * &#x60;&#x60;&#x60;
+         * //Specify the &quot;endpointId&quot; to return the history of the specific endpoint,
+         * //otherwise the history of all endpoints is returned
+         * //Specify both &#x27;from&#x27; and &#x27;to&#x27; properties to return the history status for
+         * //the specific time period, otherwise the complete history is returned.
+         *
+         * {
+         *     endpointId:  &lt;endpoint id&gt;
+         *     from:        &lt;from time&gt;     //defined in mills
+         *     to:          &lt;to time&gt;       //defined in mills
+         * }
+         * &#x60;&#x60;&#x60;
+         */
+        getHistory: function getHistory(qOpts, callback) {
+            var query = {};
+            var endpointId = qOpts.endpointId;
+            var from = qOpts.from;
+            var to = qOpts.to;
+            if (from &amp;&amp; to) {
+                query.timestamp = {$gte: parseFloat(from), $lte: parseFloat(to)};
+            }
+            if (endpointId) {
+                query.endpointId = endpointId;
+            }
+            this.db.history.find({$query: query, $orderby: {timestamp: 1}}, function (err, recs) {
+                if (err) {
+                    logger.error(&#x27;Unable to get history, err: &#x27; + err + &#x27;, query: &#x27; + query);
+                }
+                callback(err, recs);
+            });
+        },
+
+        /**
          * Setup the Watcher.
          *
          * @private
@@ -918,6 +985,10 @@ watcher = stampit().state({
                         app.post(&#x27;/endpoints/:id/notify&#x27;, routes.endpointEnableNotification(_self));
                         app.delete(&#x27;/endpoints/:id/notify&#x27;, routes.endpointDisableNotification(_self));
                         app.get(&#x27;/resolution-strategies&#x27;, routes.resolutionStrategies(_self));
+                        app.get(&#x27;/history/endpoints&#x27;, routes.history(_self));
+                        app.get(&#x27;/history/endpoints/:id&#x27;, routes.history(_self));
+                        app.get(&#x27;/history/endpoints/:from/:to&#x27;, routes.history(_self));
+                        app.get(&#x27;/history/endpoints/:id/:from/:to&#x27;, routes.history(_self));
                         app.get(&#x27;/console&#x27;, function (req, res) {
                             res.render(&#x27;console&#x27;);
                         });
@@ -973,7 +1044,7 @@ watcher = stampit().state({
                 host + &#x27;/&#x27; + port + &#x27;/&#x27; + interval + &#x27;)&#x27;);
                 setTimeout(_.bind(_self._pollEndpoints, _self), 0).unref();
             });
-
+            _self.db = dbConnFactory.create(_self.options.dbConnectionURL);
             return _self;
         }),
 
@@ -983,9 +1054,42 @@ watcher = stampit().state({
          * @method stop
          */
         stop: _.once(function stop() {
-            logger.debug(&#x27;Shutting down Watcher app...&#x27;);
-            this._stopped = true;
-            this.server.stop();
+            logger.info(&#x27;Shutting down Watcher app...&#x27;);
+            var _self = this;
+            _self._stopped = true;
+            async.parallel([
+                function (callback) {
+                    //insert new entries with &#x27;undetermined&#x27;
+                    var entries = [];
+                    var now = moment.utc();
+                    _.each(_self.getEndpoints(), function (endpoint) {
+                        if (undetermined !== endpoint.status) {
+                            entries.push({
+                                endpointId: endpoint.id,
+                                timestamp: now.valueOf(),
+                                statusTransition: {
+                                    from: endpoint.status,
+                                    to: undetermined
+                                }
+                            });
+                        }
+                    });
+                    _self.db.history.insert(entries, function (err, docs) {
+                        callback(err);
+                        _self.db.close();
+                    });
+                },
+                asyncTimeout(function (callback) {
+                    _self.server.stop();
+                }, 2000, &#x27;Give 2 secs to shutdown http server&#x27;)
+            ], function (err, results) {
+                if (err) {
+                    logger.info(&#x27;Shutdown performed with errors: &#x27; + err);
+                } else {
+                    logger.info(&#x27;Shutdown successfully performed&#x27;);
+                }
+                process.exit();
+            });
             //process.kill(process.pid, &#x27;SIGHUP&#x27;);
         }),
 
@@ -1014,6 +1118,7 @@ watcherFactory = {
      * @static
      * @method create
      * @param {Object} [options] the Watcher configuration.
+     * @example __Options configuration details__.
      * Properties in _[]_ are optional. when not set, the default values are used - those in parentheses.
      * * Embedded http server configuration and service communication interval
      *  * [__host__] (&#x27;localhost&#x27;), the http server host name.
@@ -1039,6 +1144,10 @@ watcherFactory = {
      *  }
      *  &#x60;&#x60;&#x60;
      *  * [__exportDir__] (_&lt;&#x60;project directory&#x60;&gt;/storage/_), the storage directory of dynamically created endpoints.
+     *  * [__dbConnectionURL__] (_&#x27;mongodb://localhost:27017/&#x27;_), the connection url of history persistent storage
+     *  (currently, the mongoDB is used)
+     *
+     *
      * * Endpoint
      *  * __id__, the unique endpoint id.
      *  * __type__, the endpoint type.
@@ -1066,6 +1175,7 @@ watcherFactory = {
             resolutionStrategies: [],
             nfOpts: {},
             exportDir: __dirname + &#x27;/../storage&#x27;,
+            dbConnectionURL: &#x27;mongodb://localhost:27017/&#x27;,
             endpoints: []
         };
         options = options || {};

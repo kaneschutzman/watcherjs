@@ -1,16 +1,15 @@
 /**
  * Created by jpsoroulas.
  */
-define(['underscore', 'backbone', 'jquery',  'handlebars', 'templates', 'helper'], function (_, Backbone, $, Handlebars, JST, helper) {
+define(['underscore', 'backbone', 'jquery', 'handlebars', 'templates', 'helper'], function (_, Backbone, $, Handlebars, JST, helper) {
 
-    var endpointTemplate = JST['src/views/endpoint.hbs'];
     var endpointInfoTemplate = JST['src/views/endpoint-info.hbs'];
     var approveAction = helper.approveAction;
     var infoDialog = helper.infoDialog;
 
     return Backbone.View.extend({
         tagName: 'tr',
-        template: endpointTemplate,
+        template: JST['src/views/endpoint-row.hbs'],
         infoDialog: infoDialog(),
         events: {
             'click .action-activate-endpoint': 'activate',
@@ -18,15 +17,17 @@ define(['underscore', 'backbone', 'jquery',  'handlebars', 'templates', 'helper'
             'click .action-enable-notification': 'enableNotification',
             'click .action-disable-notification': 'disableNotification',
             'click .action-delete': 'erase',
+            'click .action-history': 'history',
             'click td:first-child': 'showInfo'
         },
 
-        initialize: function () {
+        initialize: function (options) {
             this.listenTo(this.model, 'change', this.render);
             this.listenTo(this.model, 'destroy', this.remove);
             this.listenTo(this.model, 'destroy', this._modelRemovedInfo);
             this.listenTo(this.model, 'change:active change:notify', this._attributeChangedInfo);
             this.listenTo(this.model, 'op:failed', this._operationFailedInfo);
+            this.endpointHistory = options.endpointHistory;
         },
 
         //getEndpointId: function () {
@@ -76,6 +77,11 @@ define(['underscore', 'backbone', 'jquery',  'handlebars', 'templates', 'helper'
                 }));
         },
 
+        history: function (event) {
+            console.log('click history');
+            this.endpointHistory.render(this.model);
+        },
+
         _attributeChangedInfo: function (model, value, options) {
             this.infoDialog.text('Property changed for \'' + model.id + '\'');
             this.infoDialog.dialog('open');
@@ -86,8 +92,8 @@ define(['underscore', 'backbone', 'jquery',  'handlebars', 'templates', 'helper'
             this.infoDialog.dialog('open');
         },
 
-        _operationFailedInfo: function (model, errors) {
-            this.infoDialog.html('Operation for \'' + model.id + '\' failed!</br>' + errors.message);
+        _operationFailedInfo: function (model, err) {
+            this.infoDialog.html('Operation for \'' + model.id + '\' failed!</br>' + err.message);
             this.infoDialog.dialog('open');
         },
 

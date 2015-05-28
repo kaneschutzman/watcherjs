@@ -12,7 +12,7 @@ html(lang='en')
             br
             p
                 button#add-endpoint.btn.btn-primary(type='button')
-                    |                 Add endpoint
+                    | Add endpoint
             br
             div#endpoints-table
 
@@ -25,5 +25,7 @@ html(lang='en')
             #confirm-dialog(title='Confirm your action').dialog-div
                 p.
                     Configmation message.
+
+            #endpoint-history-dialog.dialog-div(title='History')
 
         script(src='/js/lib/require.min.js', data-main='/js/require.config.js')

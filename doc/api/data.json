@@ -2,7 +2,7 @@
     "project": {
         "name": "watcher.js",
         "description": "app watcher",
-        "version": "2.0.0",
+        "version": "2.5.0",
         "url": ""
     },
     "files": {
@@ -40,6 +40,17 @@
             "classes": {
                 "ServiceStatus": 1,
                 "ResolverEvents": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/database.js": {
+            "name": "src/database.js",
+            "modules": {
+                "database": 1
+            },
+            "classes": {
+                "DBConnectionFactory": 1
             },
             "fors": {},
             "namespaces": {}
@@ -130,8 +141,8 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/routes/watcher-http.js",
-            "line": 227,
-            "description": "The application's REST API implementation.\n###REST API\nIn case of failure the server returns an object with the following structure:\n```\n{\n     message: message,   //generic error message\n     errors: errors      //array of specific errors\n}\n```\n\n#### Get information for a specific endpoint.\n----\n * __http://`<host>`:`<port>`/endpoints/`<id>`__ (request method: GET),\n * parameters:\n   * __id__ the endpoint id, it should be one of those defined at endpoints configuration data,\n * API reference: __{{#crossLink \"Watcher/getEndpoint:method\"}}{{/crossLink}}__.\n\n\n__Response on success:__\n\n```\n// For a socket communication type\n{\n     \"id\": \"endpoint-id\",            // endpoint id\n     \"desc\": \"an endpoint\",          // endpoint description\n     \"status\": \"up\",                 // endpoint status\n     \"timestamp\": 1429860936846,     // the timestamp of the current status\n     \"since\": 1429860926846,         // the timestamp since the last change of status\n     \"type\": \"socket\",               // connector type\n     \"host\": \"localhost\",            // endpoint host (applied for 'socket' connector)\n     \"port\": 7777,                   // endpoint port (applied for 'socket' connector)\n     \"active\": true,                 // whether or not the endpoint is active\n     \"notify\": false                 // whether or not the notification is enabled\n}\n```\n\n__Response on error:__\n```\nIf the endpoint does not exist an error message with http status 422 is send\n```\n\n#### Get information for all registered endpoints.\n----\n * __http://`<host>`:`<port>`/endpoints__ (request method: GET).\n * API reference: __{{#crossLink \"Watcher/getEndpoints:method\"}}{{/crossLink}}__.\n\n\n __Response on success:__\n\n```\nAn array with the information for all endpoints.\n// For a socket and http communication types\n[\n     {\n         \"id\": \"endpoint-1\",\n         \"desc\": \"endpoint 1\",\n         \"status\": \"down\"\n         \"timestamp\": 1429860936846,\n         \"since\": 1429860926846,\n         \"type\": \"socket\",\n         \"host\": \"localhost\",\n         \"port\": 7777,\n         \"active\": true,\n         \"notify\": true\n     },\n     {\n         \"id\": \"endpoint-2\",                     // endpoint id\n         \"desc\": \"endpoint 2\",                   // endpoint description\n         \"status\": \"up\"                          // endpoint status\n         \"timestamp\": 1429860936846,             // the timestamp of the current status\n         \"since\": 1429860926846,                 // the timestamp since the last change of status\n         \"type\": \"http\",                         // connector type\n         \"url\": \"http://11.222.333.555:3333/\",   // endpoint url (applied for 'http(s) connector')\n         \"active\": true,                         // whether or not the endpoint is active\n         \"notify\": false                         // whether or not the notification is enabled\n     }\n]\n```\n\n__Response on error:__\n```\nGeneric error message with http status 500\n```\n\n#### Add new endpoint.\n----\n * __http://`<host>`:`<port>`/endpoints__ (request method POST)\n * parameters (parameters in _[]_ are optional. when not set, the default values are used - those in parentheses.):\n   * __id__ : the endpoint id,\n   * __desc__ : the endpoint description,\n   * __type__ : the endpoint type ('socket' or 'http'),\n   * [__host__] (localhost): the endpoint host (applied for 'socket' communication type),\n   * [__port__] (9999): the endpoint port (applied for 'socket' communication type),\n   * [__url__] : the endpoint port (applied for 'http' communication type),\n   * [__active__] (true): true/false whether or not to activate the endpoint,\n   * [__notify__] (false): true/false whether or not to enable email notification on erroneous service status\n * API reference: __{{#crossLink \"Watcher/addEndpoint:method\"}}{{/crossLink}}__.\n\n\n __Response on success:__\n\n```\n{\n     \"id\":     \"<endpoint id>\"         //endpoint id\n     \"uri\":    \"<access endpoint uri>\" //endpoint uri, e.g. /endpoints/<endpoint id>\n     \"status\": \"<endpoint status>\"     //endpoint status (e.g. 'undetermined')\n}\n\n```\n\n__Response on error:__\n```\nValidation error messages with http status 422\n```\n\n#### Remove an endpoint.\n----\n * __http://`<host>`:`<port>`/endpoints/`<id>`__ (request method: DELETE),\n * parameters:\n   * __id__ : the endpoint id\n * API reference: __{{#crossLink \"Watcher/removeEndpoint:method\"}}{{/crossLink}}__.\n\n\n __Response on success:__\n\n```\n{\n     \"id\": \"<endpoint id>\"   //removed endpoint id\n}\n```\n\n__Response on error:__\n```\nIf the endpoint does not exist an error message with http status 422 is send\n```\n\n#### Activate/deactivate an endpoint.\n----\n * __http://`<host>`:`<port>`/endpoints/`<id>`/activate__ (request method POST),\n * __http://`<host>`:`<port>`/endpoints/`<id>`/activate__ (request method DELETE),\n * parameters:\n   * __id__ : the endpoint id,\n * API reference: __{{#crossLink \"Watcher/setEndpointActivationState:method\"}}{{/crossLink}}__.\n\n\n __Response on success:__\n\n```\n{\n     \"id\": \"<endpoint id>\"           //endpoint id\n     \"active\": \"<activation state>\"  //activation state\n     \"status\": \"<endpoint status>\"   //endpoint status\n}\n```\n\n__Response on error:__\n```\nIf the endpoint does not exist an error message with http status 422 is send\n```\n\n#### Enable/disable notification for an endpoint.\n----\n * __http://`<host>`:`<port>`/endpoints/`<id>`/notify__ (request method POST),\n * __http://`<host>`:`<port>`/endpoints/`<id>`/notify__ (request method DELETE),\n * parameters:\n   * __id__ : the endpoint id,\n * API reference: __{{#crossLink \"Watcher/notifyOnErroneousStatus:method\"}}{{/crossLink}}__.\n\n\n __Response on success:__\n\n```\n{\n     \"id\": \"<endpoint id>\"               //endpoint id\n     \"notify\": \"<notification state>\"    //activation state\n}\n```\n\n__Response on error:__\n```\nIf the endpoint does not exist an error message with http status 422 is send\n```\n\n#### Get the the unbound resolution strategies.\n----\n * __http://`<host>`:`<port>`/resolution-strategies__ (request method GET),\n * API reference: __{{#crossLink \"Watcher/getResolutionStrategies:method\"}}{{/crossLink}}__.\n\n\n __Response on success:__\n\n```\nAn array with the unbound resolution strategies, e.g.:\n[\n \"on-connection\",\n \"always-down\"\n]\n```\n\n__Response on error:__\n```\nGeneric error message with http status 500\n```"
+            "line": 271,
+            "description": "The application's REST API implementation.\n###REST API\nIn case of failure the server returns an object with the following structure:\n```\n{\n     message: message,   //generic error message\n     errors: errors      //array of specific errors\n}\n```\n\n#### Get information for a specific endpoint.\n----\n * __http://`<host>`:`<port>`/endpoints/`<id>`__ (request method: GET),\n * parameters:\n   * __id__ the endpoint id, it should be one of those defined at endpoints configuration data,\n * API reference: __{{#crossLink \"Watcher/getEndpoint:method\"}}{{/crossLink}}__.\n\n\n__Response on success:__\n\n```\n// For a socket communication type\n{\n     \"id\": \"endpoint-id\",            // endpoint id\n     \"desc\": \"an endpoint\",          // endpoint description\n     \"status\": \"up\",                 // endpoint status\n     \"timestamp\": 1429860936846,     // the timestamp of the current status\n     \"since\": 1429860926846,         // the timestamp since the last change of status\n     \"type\": \"socket\",               // connector type\n     \"host\": \"localhost\",            // endpoint host (applied for 'socket' connector)\n     \"port\": 7777,                   // endpoint port (applied for 'socket' connector)\n     \"active\": true,                 // whether or not the endpoint is active\n     \"notify\": false                 // whether or not the notification is enabled\n}\n```\n\n__Response on error:__\n```\nIf the endpoint does not exist an error message with http status 422 is send\n```\n\n#### Get information for all registered endpoints.\n----\n * __http://`<host>`:`<port>`/endpoints__ (request method: GET).\n * API reference: __{{#crossLink \"Watcher/getEndpoints:method\"}}{{/crossLink}}__.\n\n\n __Response on success:__\n\n```\nAn array with the information for all endpoints.\n// For a socket and http communication types\n[\n     {\n         \"id\": \"endpoint-1\",\n         \"desc\": \"endpoint 1\",\n         \"status\": \"down\"\n         \"timestamp\": 1429860936846,\n         \"since\": 1429860926846,\n         \"type\": \"socket\",\n         \"host\": \"localhost\",\n         \"port\": 7777,\n         \"active\": true,\n         \"notify\": true\n     },\n     {\n         \"id\": \"endpoint-2\",                     // endpoint id\n         \"desc\": \"endpoint 2\",                   // endpoint description\n         \"status\": \"up\"                          // endpoint status\n         \"timestamp\": 1429860936846,             // the timestamp of the current status\n         \"since\": 1429860926846,                 // the timestamp since the last change of status\n         \"type\": \"http\",                         // connector type\n         \"url\": \"http://11.222.333.555:3333/\",   // endpoint url (applied for 'http(s) connector')\n         \"active\": true,                         // whether or not the endpoint is active\n         \"notify\": false                         // whether or not the notification is enabled\n     }\n]\n```\n\n__Response on error:__\n```\nGeneric error message with http status 500\n```\n\n#### Add new endpoint.\n----\n * __http://`<host>`:`<port>`/endpoints__ (request method POST)\n * parameters (parameters in _[]_ are optional. when not set, the default values are used - those in parentheses.):\n   * __id__ : the endpoint id,\n   * __desc__ : the endpoint description,\n   * __type__ : the endpoint type ('socket' or 'http'),\n   * [__host__] (localhost): the endpoint host (applied for 'socket' communication type),\n   * [__port__] (9999): the endpoint port (applied for 'socket' communication type),\n   * [__url__] : the endpoint port (applied for 'http' communication type),\n   * [__active__] (true): true/false whether or not to activate the endpoint,\n   * [__notify__] (false): true/false whether or not to enable email notification on erroneous service status\n * API reference: __{{#crossLink \"Watcher/addEndpoint:method\"}}{{/crossLink}}__.\n\n\n __Response on success:__\n\n```\n{\n     \"id\":     \"<endpoint id>\"         //endpoint id\n     \"uri\":    \"<access endpoint uri>\" //endpoint uri, e.g. /endpoints/<endpoint id>\n     \"status\": \"<endpoint status>\"     //endpoint status (e.g. 'undetermined')\n}\n\n```\n\n__Response on error:__\n```\nValidation error messages with http status 422\n```\n\n#### Remove an endpoint.\n----\n * __http://`<host>`:`<port>`/endpoints/`<id>`__ (request method: DELETE),\n * parameters:\n   * __id__ : the endpoint id\n * API reference: __{{#crossLink \"Watcher/removeEndpoint:method\"}}{{/crossLink}}__.\n\n\n __Response on success:__\n\n```\n{\n     \"id\": \"<endpoint id>\"   //removed endpoint id\n}\n```\n\n__Response on error:__\n```\nIf the endpoint does not exist an error message with http status 422 is send\n```\n\n#### Activate/deactivate an endpoint.\n----\n * __http://`<host>`:`<port>`/endpoints/`<id>`/activate__ (request method POST),\n * __http://`<host>`:`<port>`/endpoints/`<id>`/activate__ (request method DELETE),\n * parameters:\n   * __id__ : the endpoint id,\n * API reference: __{{#crossLink \"Watcher/setEndpointActivationState:method\"}}{{/crossLink}}__.\n\n\n __Response on success:__\n\n```\n{\n     \"id\": \"<endpoint id>\"           //endpoint id\n     \"active\": \"<activation state>\"  //activation state\n     \"status\": \"<endpoint status>\"   //endpoint status\n}\n```\n\n__Response on error:__\n```\nIf the endpoint does not exist an error message with http status 422 is send\n```\n\n#### Enable/disable notification for an endpoint.\n----\n * __http://`<host>`:`<port>`/endpoints/`<id>`/notify__ (request method POST),\n * __http://`<host>`:`<port>`/endpoints/`<id>`/notify__ (request method DELETE),\n * parameters:\n   * __id__ : the endpoint id,\n * API reference: __{{#crossLink \"Watcher/notifyOnErroneousStatus:method\"}}{{/crossLink}}__.\n\n\n __Response on success:__\n\n```\n{\n     \"id\": \"<endpoint id>\"               //endpoint id\n     \"notify\": \"<notification state>\"    //activation state\n}\n```\n\n__Response on error:__\n```\nIf the endpoint does not exist an error message with http status 422 is send\n```\n\n#### Get the the unbound resolution strategies.\n----\n * __http://`<host>`:`<port>`/resolution-strategies__ (request method GET),\n * API reference: __{{#crossLink \"Watcher/getResolutionStrategies:method\"}}{{/crossLink}}__.\n\n\n __Response on success:__\n\n```\nAn array with the unbound resolution strategies:\n[\n \"<strategy id>\"     //the strategy id, e.g.: \"on-connection\",\n \"<strategy id>\"     //the strategy id, e.g.: \"always-down\",\n]\n```\n\n__Response on error:__\n```\nGeneric error message with http status 500\n```\n\n#### Get history status.\n----\n* __http://`<host>`:`<port>`//history/endpoints__ (request method GET)\n__complete history for all endpoints__\n* __http://`<host>`:`<port>`//history/endpoints/`<id>`__ (request method GET)\n__complete history for specific endpoint__\n* __http://`<host>`:`<port>`//history/endpoints/`<from>`/`<to>`__ (request method GET)\n__history for specific time period for all endpoints__\n* __http://`<host>`:`<port>`//history/endpoints/`<id>`/`<from>`/`<to>`__ (request method GET)\n__history for specific time period and specific endpoint__\n* API reference: __{{#crossLink \"Watcher/getHistory:method\"}}{{/crossLink}}__.\n\n\n __Response on success:__\n\n```\nAn array with the history status entries:\n[\n {\n     \"endpointId\": \"<endpoint id>\",      //endpoint id\n     \"timestamp\": \"<timestamp>\",         //timestamp,\n     \"statusTransition\": {\n         \"from\": \"<previous status>\",    //current endpoint status\n         \"to\": \"<current status>\"        //previous endpoint status\n     }\n },\n {\n     \"endpointId\": \"<endpoint id>\",\n     \"timestamp\": <timestamp>\n     \"statusTransition\": {\n         \"from\": \"<previous status>\",\n         \"to\": \"<current status>\"\n     }\n }\n]\n```\n\n__Response on error:__\n```\nGeneric error message with http status 500\n```"
         },
         "connectors": {
             "name": "connectors",
@@ -163,6 +174,19 @@
             "file": "src/constants.js",
             "line": 70,
             "description": "Holds application's constants"
+        },
+        "database": {
+            "name": "database",
+            "submodules": {},
+            "classes": {
+                "DBConnectionFactory": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/database.js",
+            "line": 15,
+            "description": "Exports the mongodb database objected used to store the endpoint status history.\n\n###Exported objects\n__{{#crossLink \"DBConnectionFactory\"}}{{/crossLink}}__"
         },
         "httpServer": {
             "name": "httpServer",
@@ -247,8 +271,8 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/watcher.js",
-            "line": 894,
-            "description": "###Overview\nThis is the main application module. It provides the factory method for creating an application,\nthe so called __watcher.js__, that can be used to monitor service status.\nThe application architecture is very simple. At regular intervals (_service communication interval_),\nservice specific defined messages, either as http requests or as raw data to sockets (depending on the\ncommunication type of the service endpoint), are send to the monitored services, or to be more precise are send\nto the service endpoints (or simply endpoints), to find out their status (the _service_ and  endpoint_ notation\nis used interchangeably, but there is a conceptual difference between them which will be discussed shortly).\nOn the service status resolution, the status is stored internally and is made available either programmatically or\nvia http requests (aka the _status requests_).\nActually, __the entire application API is also exposed as REST API__, which, on top of this, a simple but handy\n__web gui__ is implemented. For the REST API implementation the [express](http://expressjs.com) web framework is used.\nThe REST interface description with references to the respective application API can be found at\n__{{#crossLinkModule \"watcher-http\"}}{{/crossLinkModule}}__.\n\n\n###Configuration\nThe application configuration requires two kinds of data, as shown below. The one that refers to the\nexpress framework that implements the application http interface, and the other that refers to the service\nendpoints. Note that properties in _[]_ are optional. when not set, the default values are used - those in parentheses.\n\n\n* Embedded http server configuration and service communication interval\n * [__host__] ('localhost'), the http server host name.\n * [__port__] (7777), the http server port.\n * [__interval__] (10000 ms), the regular interval, at ms, that the application attempts to establish\n communication with the services to resolve their status (_service communication interval_).\n * [__routeExts__], an array of user defined route extensions for building custom responses for the status requests.\n A route extension should be a function that accepts the __{{#crossLink \"Watcher/_registry:property\"}}{{/crossLink}}__\n as parameter and return a function that conforms to [express route](http://expressjs.com/guide/routing.html) conventions\n (a function with parameters: _req_, _res_, _next_, as shown at the examples)\n * [__resolutionStrategies__], an array of objects (aka unbound resolution strategy descriptor), each of them holds the\n information for an _unbound resolution strategy_ (__{{#crossLinkModule \"resolvers\"}}{{/crossLinkModule}}__) to be registered\n at the system. These strategies are not bound to any endpoint, but they can be associated with them by setting the\n respective strategy id at the endpoint's _resolutionStrategy_ configuration property (see at endpoint configuration below).\n The descriptor is an object as follows:\n ```\n {\n     id: <the resolution strategy id>, (should be unique)\n     desc: <the resolution strategy description>\n     implementation: <the implementation of resolution strategy> (see at resolvers to see the interface)\n }\n ```\n * [__nfOpts__], the notification options. Holds the information of the sender and the email addresses\n to receive email when erroneous service status occurs. The default sender is _admin@watcherjs.com_\n (if needed, configure your email account to not filter this sender as a spam). The object structure is:\n ```\n {\n     sender: <the sender>, // default value: admin@watcherjs.com\n     recipients: [<recipient1>, <recipient1>, ...] // the array of recipients email\n }\n ```\n * [__exportDir__] (_<`project directory`>/storage/_), the storage directory of dynamically created endpoints.\n\n\n* Endpoint\n * __id__, the unique endpoint/service id. This _id_ is used for the service identification when a service request is made.\n * __type__, the endpoint type, the type determines whether the message\n exchange is performed via http requests or directly with the socket. It actually dictates the underline\n connector used for the specific service (see also at __{{#crossLinkModule \"connectors\"}}{{/crossLinkModule}}__).\n The permitted values are: __'socket'__ and __'http'__ for __{{#crossLink \"SocketConnector\"}}{{/crossLink}}__\n and __{{#crossLink \"HttpConnector\"}}{{/crossLink}}__ respectively.\n * [__desc__] (__id__), the endpoint description.\n * [__host__] (localhost), the endpoint hostname when a __{{#crossLink \"SocketConnector\"}}{{/crossLink}}__ is used.\n * [__port__] (9999), the endpoint port when a __{{#crossLink \"SocketConnector\"}}{{/crossLink}}__ is used.\n * [__url__] (http://localhost:8080), the endpoint url when __{{#crossLink \"HttpConnector\"}}{{/crossLink}}__ is used.\n * [__timeout__] (5000), the applied connector's connection timeout (see also at\n __{{#crossLink \"SocketConnectorFactory/create:method\"}}{{/crossLink}}__ and\n __{{#crossLink \"HttpConnectorFactory/create:method\"}}{{/crossLink}}__).\n * [__resolutionStrategy__] (__{{#crossLink \"OnConnectionResolution\"}}{{/crossLink}}__) the applied resolution strategy.\n This property can hold either an implementation of a resolution strategy or the id of the an unbound strategy.\n * [__active__] (true), used to indicate whether or not the endpoint should be activated\n (enables or suspends the communication between the respective connector and the endpoint).\n * [__notify__] (false), used to indicate whether or not to receive email notifications for erroneous service status.\n\n\nThe _endpoint_ notation is used to emphases that the _service_ can be proxied by another service (_the proxy_) which\nis that determines the status of the proxied service. In this case, the endpoint belongs to the proxy and not to the\nmonitored service.\n\n\n###Exported objects\n* __{{#crossLink \"WatcherFactory\"}}{{/crossLink}}__\n\n\n###API Usage samples\n__Service with route extension and resolution strategy registration__\n   ```javascript\n// Here is the configuration of three endpoints. Two of them are accessed via sockets and refer to the services\n// 'service-1' and 'service-2' hosted at '11.222.333.444' and '11.222.333.555' respectively, whereas the other is\n// accessed via http and refers to the service 'service-3' that is also hosted at '11.222.333.555' (note that we use\n// the notation _service_ since the _endpoint_ and the _service_ is the same component).\n// Fix the module paths\nvar watcher = require('watcher');\nvar constants = require('constants');\nvar resolvers = require('resolvers');\n\nvar down = constants.serviceStatus.down;\nvar watcherFactory = watcher.watcherFactory;\nvar onConnectionResolutionFactory = resolvers.onConnectionResolutionFactory;\n\nvar alwaysDownStrategy = {\n      reset: function reset() {},\n      resolveOnConnection: function resolveOnConnection(connection) {\n         //mark as down only for demonstration purposes\n          return down;\n      },\n      resolveOnConversation: function resolveOnConnection(connection) {},\n      resolveNow: function resolveOnConnection(connection) {}\n  };\n\nvar options = {\n    port: 7777,\n    interval: 15000,\n   routeExts: [{\n         path: '/custom-route',\n         route: function service(registry) {\n             return function (req, res, next) {\n                 var id = req.query.id;\n                 var endpoint = registry[id];\n                 if (endpoint) {\n                     res.send('Service status: ' + endpoint.status);\n                 } else {\n                     res.send('Unknown service: ' + id);\n                 }\n             };\n         }\n     }],\n    resolutionStrategies: [\n          {// Actually the default implementation, added for demonstration purposes\n              id: 'on-connection',\n              desc: 'resolution on connection',\n              implementation: onConnectionResolutionFactory.create()\n          },\n          {\n              id: 'always-down',\n              desc: 'always down',\n              implementation: alwaysDownStrategy\n          }\n      ],\n    nfOpts: {\n         recipients: ['foo@foo.com']\n     },\n    endpoints: [\n         {\n             id: 'service-1',\n             desc: 'service 1',\n             type: 'socket',\n             host: '11.222.333.444',\n             port: 1234,\n             // Apply an implementation of resolution strategy\n             resolutionStrategy: alwaysDownStrategy,\n             active: true,\n             notify: true\n         },\n         {\n             id: 'service-2',\n             desc: 'service 2',\n             type: 'socket',\n             host: '11.222.333.555',\n             port: 1234,\n             // Apply the unbound resolution strategy with id 'on-connection'\n             resolutionStrategy: 'on-connection',\n             active: true,\n             notify: true\n         },\n         {\n             id: 'service-3',\n             desc: 'service 3',\n             type: 'http',\n             timeout: 3000,\n             // The query string could be anything\n             url: 'http://11.222.333.555:3333/?get-status',\n             active: true,\n             notify: true\n         }\n     ]\n };\nwatcherFactory.create(options).start();\n\nAfter starting the watcher the following status requests could be made in order to\nretrieve the status for the services with id 'service-1', 'service-2' and 'service-3' respectively\nhttp://localhost:7777/endpoints/service-1\nhttp://localhost:7777/endpoints/service-2\nhttp://localhost:7777/endpoints/service-3\nWhereas the request http://localhost:7777/custom-route?id=service-1\nis the user defined route which returns: 'Service status: <status>' where status\nthe status of the 'service-1'.\n   ```\n__Proxied services__\n   ```javascript\n// Proxied services\n// Here is the case where a proxy controls the status of two service (e.g. _proxied-service-1_\n// and _proxied-service-2_). The proxy is hosted at '11.222.333.444' and can be accessed via http.\n// Two http endpoints at the proxy are created, the 'endpoint-1' and 'endpoint-2' each one of them\n// is connected with the respective monitored proxied services (note that we use the notation _endpoint_ since\n// the _endpoint_ is not the monitored _service_).\n\n// Fix the module paths\nvar watcherFactory = require('watcher').watcherFactory;\nvar options = {\n    port: 7777,\n    interval: 15000,\n    endpoints: [\n         {\n             id: 'endpoint-1',\n             type: 'http',\n             timeout: 3000,\n             // request to the proxied service 'proxied-service-1', the query string could be anything\n             url: 'http://11.222.333.444:3333/?get-status-for=proxied-service-1'\n         },\n         {\n             id: 'endpoint-2',\n             type: 'http',\n             timeout: 3000,\n             // request to the proxied service 'proxied-service-2', the query string could be anything\n             url: 'http://11.222.333.444:3333/?get-status-for=proxied-service-2'\n         }\n     ]\n };\nwatcherFactory.create(options).start();\n\nAfter starting the watcher the following status requests could be made in order to\nretrieve the status for 'proxied-service-1' and 'proxied-service-2' respectively\nhttp://localhost:7777/endpoints/endpoint-1\nhttp://localhost:7777/endpoints/endpoint-2\n   ```\n\n__Add and remove endpoints dynamically__\n   ```javascript\n// Here is an example for dynamically adding and removing endpoints\n\n// Fix the module paths\nvar watcherFactory = require('watcher').watcherFactory;\nvar options = {\n    port: 7777,\n    interval: 15000,\n    endpoints: [\n         {\n             id: 'service-1',\n             type: 'socket',\n             host: '11.222.333.444',\n             port: 1234\n         }\n     ]\n };\nvar watcher = watcherFactory.create(options).start();\n\n// Add the endpoint 'service-2'\nsetTimeout(function() {\n       watcher.addEndpoint({\n         id: 'service-2',\n         type: 'http',\n         timeout: 3000,\n         url: 'http://11.222.333.555:3333/?get-status'\n     }, false, function() {\n           if (!_.isEmpty(errors)) {\n              throw new Error('validation error...');\n          }\n     });\n}, 6000);\n\n// Deactivate the endpoint 'service-2'\nsetTimeout(function () {\n     watcher.setEndpointActivationState('service-2', false);\n}, 12000);\n\n// Activate the endpoint 'service-2'\nsetTimeout(function () {\n       watcher.setEndpointActivationState('service-2', true);\n  }, 30000);\n\n// Remove the endpoint 'service-2'\nsetTimeout(function() {\n      watcher.removeEndpoint('service-2');\n}, 60000);\n\n// Shutdown the application\nsetTimeout(function () {\n     watcher.stop();\n}, 120000);\n\n   ```"
+            "line": 996,
+            "description": "###Overview\nThis is the main application module. It provides the factory method for creating an application,\nthe so called __watcher.js__, that can be used to monitor service status.\nThe application architecture is very simple. At regular intervals (_service communication interval_),\nservice specific defined messages, either as http requests or as raw data to sockets (depending on the\ncommunication type of the service endpoint), are send to the monitored services, or to be more precise are send\nto the service endpoints (or simply endpoints), to find out their status (the _service_ and  endpoint_ notation\nis used interchangeably, but there is a conceptual difference between them which will be discussed shortly).\nOn the service status resolution, the status is stored internally and is made available either programmatically or\nvia http requests (aka the _status requests_).\nActually, __the entire application API is also exposed as REST API__, which, on top of this, a simple but handy\n__web gui__ is implemented. For the REST API implementation the [express](http://expressjs.com) web framework is used.\nThe REST interface description with references to the respective application API can be found at\n__{{#crossLinkModule \"watcher-http\"}}{{/crossLinkModule}}__.\n\n\n###Configuration\nThe application configuration requires two kinds of data, as shown below. The one that refers to the\nexpress framework that implements the application http interface, and the other that refers to the service\nendpoints. Note that properties in _[]_ are optional. when not set, the default values are used - those in parentheses.\n\n\n* Embedded http server configuration and service communication interval\n * [__host__] ('localhost'), the http server host name.\n * [__port__] (7777), the http server port.\n * [__interval__] (10000 ms), the regular interval, at ms, that the application attempts to establish\n communication with the services to resolve their status (_service communication interval_).\n * [__routeExts__], an array of user defined route extensions for building custom responses for the status requests.\n A route extension should be a function that accepts the __{{#crossLink \"Watcher/_registry:property\"}}{{/crossLink}}__\n as parameter and return a function that conforms to [express route](http://expressjs.com/guide/routing.html) conventions\n (a function with parameters: _req_, _res_, _next_, as shown at the examples)\n * [__resolutionStrategies__], an array of objects (aka unbound resolution strategy descriptor), each of them holds the\n information for an _unbound resolution strategy_ (__{{#crossLinkModule \"resolvers\"}}{{/crossLinkModule}}__) to be registered\n at the system. These strategies are not bound to any endpoint, but they can be associated with them by setting the\n respective strategy id at the endpoint's _resolutionStrategy_ configuration property (see at endpoint configuration below).\n The descriptor is an object as follows:\n ```\n {\n     id: <the resolution strategy id>, (should be unique)\n     desc: <the resolution strategy description>\n     implementation: <the implementation of resolution strategy> (see at resolvers to see the interface)\n }\n ```\n * [__nfOpts__], the notification options. Holds the information of the sender and the email addresses\n to receive email when erroneous service status occurs. The default sender is _admin@watcherjs.com_\n (if needed, configure your email account to not filter this sender as a spam). The object structure is:\n ```\n {\n     sender: <the sender>, // default value: admin@watcherjs.com\n     recipients: [<recipient1>, <recipient1>, ...] // the array of recipients email\n }\n ```\n * [__exportDir__] (_<`project directory`>/storage/_), the storage directory of dynamically created endpoints.\n * [__dbConnectionURL__] (_'mongodb://localhost:27017/'_), the connection url of history persistent storage\n (currently, the mongoDB is used)\n\n\n* Endpoint\n * __id__, the unique endpoint/service id. This _id_ is used for the service identification when a service request is made.\n * __type__, the endpoint type, the type determines whether the message\n exchange is performed via http requests or directly with the socket. It actually dictates the underline\n connector used for the specific service (see also at __{{#crossLinkModule \"connectors\"}}{{/crossLinkModule}}__).\n The permitted values are: __'socket'__ and __'http'__ for __{{#crossLink \"SocketConnector\"}}{{/crossLink}}__\n and __{{#crossLink \"HttpConnector\"}}{{/crossLink}}__ respectively.\n * [__desc__] (__id__), the endpoint description.\n * [__host__] (localhost), the endpoint hostname when a __{{#crossLink \"SocketConnector\"}}{{/crossLink}}__ is used.\n * [__port__] (9999), the endpoint port when a __{{#crossLink \"SocketConnector\"}}{{/crossLink}}__ is used.\n * [__url__] (http://localhost:8080), the endpoint url when __{{#crossLink \"HttpConnector\"}}{{/crossLink}}__ is used.\n * [__timeout__] (5000), the applied connector's connection timeout (see also at\n __{{#crossLink \"SocketConnectorFactory/create:method\"}}{{/crossLink}}__ and\n __{{#crossLink \"HttpConnectorFactory/create:method\"}}{{/crossLink}}__).\n * [__resolutionStrategy__] (__{{#crossLink \"OnConnectionResolution\"}}{{/crossLink}}__) the applied resolution strategy.\n This property can hold either an implementation of a resolution strategy or the id of the an unbound strategy.\n * [__active__] (true), used to indicate whether or not the endpoint should be activated\n (enables or suspends the communication between the respective connector and the endpoint).\n * [__notify__] (false), used to indicate whether or not to receive email notifications for erroneous service status.\n\n\nThe _endpoint_ notation is used to emphases that the _service_ can be proxied by another service (_the proxy_) which\nis that determines the status of the proxied service. In this case, the endpoint belongs to the proxy and not to the\nmonitored service.\n\n\n###Exported objects\n* __{{#crossLink \"WatcherFactory\"}}{{/crossLink}}__\n\n\n###API Usage samples\n__Service with route extension and resolution strategy registration__\n   ```javascript\n// Here is the configuration of three endpoints. Two of them are accessed via sockets and refer to the services\n// 'service-1' and 'service-2' hosted at '11.222.333.444' and '11.222.333.555' respectively, whereas the other is\n// accessed via http and refers to the service 'service-3' that is also hosted at '11.222.333.555' (note that we use\n// the notation _service_ since the _endpoint_ and the _service_ is the same component).\n// Fix the module paths\nvar watcher = require('watcher');\nvar constants = require('constants');\nvar resolvers = require('resolvers');\n\nvar down = constants.serviceStatus.down;\nvar watcherFactory = watcher.watcherFactory;\nvar onConnectionResolutionFactory = resolvers.onConnectionResolutionFactory;\n\nvar alwaysDownStrategy = {\n      reset: function reset() {},\n      resolveOnConnection: function resolveOnConnection(connection) {\n         //mark as down only for demonstration purposes\n          return down;\n      },\n      resolveOnConversation: function resolveOnConnection(connection) {},\n      resolveNow: function resolveOnConnection(connection) {}\n  };\n\nvar options = {\n    port: 7777,\n    interval: 15000,\n   routeExts: [{\n         path: '/custom-route',\n         route: function service(registry) {\n             return function (req, res, next) {\n                 var id = req.query.id;\n                 var endpoint = registry[id];\n                 if (endpoint) {\n                     res.send('Service status: ' + endpoint.status);\n                 } else {\n                     res.send('Unknown service: ' + id);\n                 }\n             };\n         }\n     }],\n    resolutionStrategies: [\n          {// Actually the default implementation, added for demonstration purposes\n              id: 'on-connection',\n              desc: 'resolution on connection',\n              implementation: onConnectionResolutionFactory.create()\n          },\n          {\n              id: 'always-down',\n              desc: 'always down',\n              implementation: alwaysDownStrategy\n          }\n      ],\n    nfOpts: {\n         recipients: ['foo@foo.com']\n     },\n    endpoints: [\n         {\n             id: 'service-1',\n             desc: 'service 1',\n             type: 'socket',\n             host: '11.222.333.444',\n             port: 1234,\n             // Apply an implementation of resolution strategy\n             resolutionStrategy: alwaysDownStrategy,\n             active: true,\n             notify: true\n         },\n         {\n             id: 'service-2',\n             desc: 'service 2',\n             type: 'socket',\n             host: '11.222.333.555',\n             port: 1234,\n             // Apply the unbound resolution strategy with id 'on-connection'\n             resolutionStrategy: 'on-connection',\n             active: true,\n             notify: true\n         },\n         {\n             id: 'service-3',\n             desc: 'service 3',\n             type: 'http',\n             timeout: 3000,\n             // The query string could be anything\n             url: 'http://11.222.333.555:3333/?get-status',\n             active: true,\n             notify: true\n         }\n     ]\n };\nwatcherFactory.create(options).start();\n\nAfter starting the watcher the following status requests could be made in order to\nretrieve the status for the services with id 'service-1', 'service-2' and 'service-3' respectively\nhttp://localhost:7777/endpoints/service-1\nhttp://localhost:7777/endpoints/service-2\nhttp://localhost:7777/endpoints/service-3\nWhereas the request http://localhost:7777/custom-route?id=service-1\nis the user defined route which returns: 'Service status: <status>' where status\nthe status of the 'service-1'.\n   ```\n__Proxied services__\n   ```javascript\n// Proxied services\n// Here is the case where a proxy controls the status of two service (e.g. _proxied-service-1_\n// and _proxied-service-2_). The proxy is hosted at '11.222.333.444' and can be accessed via http.\n// Two http endpoints at the proxy are created, the 'endpoint-1' and 'endpoint-2' each one of them\n// is connected with the respective monitored proxied services (note that we use the notation _endpoint_ since\n// the _endpoint_ is not the monitored _service_).\n\n// Fix the module paths\nvar watcherFactory = require('watcher').watcherFactory;\nvar options = {\n    port: 7777,\n    interval: 15000,\n    endpoints: [\n         {\n             id: 'endpoint-1',\n             type: 'http',\n             timeout: 3000,\n             // request to the proxied service 'proxied-service-1', the query string could be anything\n             url: 'http://11.222.333.444:3333/?get-status-for=proxied-service-1'\n         },\n         {\n             id: 'endpoint-2',\n             type: 'http',\n             timeout: 3000,\n             // request to the proxied service 'proxied-service-2', the query string could be anything\n             url: 'http://11.222.333.444:3333/?get-status-for=proxied-service-2'\n         }\n     ]\n };\nwatcherFactory.create(options).start();\n\nAfter starting the watcher the following status requests could be made in order to\nretrieve the status for 'proxied-service-1' and 'proxied-service-2' respectively\nhttp://localhost:7777/endpoints/endpoint-1\nhttp://localhost:7777/endpoints/endpoint-2\n   ```\n\n__Add and remove endpoints dynamically__\n   ```javascript\n// Here is an example for dynamically adding and removing endpoints\n\n// Fix the module paths\nvar watcherFactory = require('watcher').watcherFactory;\nvar options = {\n    port: 7777,\n    interval: 15000,\n    endpoints: [\n         {\n             id: 'service-1',\n             type: 'socket',\n             host: '11.222.333.444',\n             port: 1234\n         }\n     ]\n };\nvar watcher = watcherFactory.create(options).start();\n\n// Add the endpoint 'service-2'\nsetTimeout(function() {\n       watcher.addEndpoint({\n         id: 'service-2',\n         type: 'http',\n         timeout: 3000,\n         url: 'http://11.222.333.555:3333/?get-status'\n     }, false, function() {\n           if (!_.isEmpty(errors)) {\n              throw new Error('validation error...');\n          }\n     });\n}, 6000);\n\n// Deactivate the endpoint 'service-2'\nsetTimeout(function () {\n     watcher.setEndpointActivationState('service-2', false);\n}, 12000);\n\n// Activate the endpoint 'service-2'\nsetTimeout(function () {\n       watcher.setEndpointActivationState('service-2', true);\n  }, 30000);\n\n// Remove the endpoint 'service-2'\nsetTimeout(function() {\n      watcher.removeEndpoint('service-2');\n}, 60000);\n\n// Shutdown the application\nsetTimeout(function () {\n     watcher.stop();\n}, 120000);\n\n   ```"
         }
     },
     "classes": {
@@ -263,7 +287,7 @@
             "module": "watcher-http",
             "namespace": "",
             "file": "src/routes/watcher-http.js",
-            "line": 227,
+            "line": 271,
             "description": "The application's http interface implementation."
         },
         "AbstractConnector": {
@@ -368,6 +392,21 @@
             "file": "src/constants.js",
             "line": 70,
             "description": "__{{#crossLink \"StatusResolver\"}}{{/crossLink}}__ constants."
+        },
+        "DBConnectionFactory": {
+            "name": "DBConnectionFactory",
+            "shortname": "DBConnectionFactory",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "database",
+            "namespace": "",
+            "file": "src/database.js",
+            "line": 15,
+            "description": "Creates mongodb database object, used to store the endpoint status history.",
+            "static": 1
         },
         "Logger": {
             "name": "Logger",
@@ -575,7 +614,7 @@
             "module": "watcher",
             "namespace": "",
             "file": "src/watcher.js",
-            "line": 340,
+            "line": 344,
             "description": "The application that can be used to monitor your services status.\nAn application overview and detailed configuration instructions and examples can be found at\n__{{#crossLinkModule \"watcher\"}}{{/crossLinkModule}}__"
         },
         "WatcherFactory": {
@@ -589,7 +628,7 @@
             "module": "watcher",
             "namespace": "",
             "file": "src/watcher.js",
-            "line": 894,
+            "line": 996,
             "description": "Watcher factory.",
             "static": 1
         }
@@ -603,7 +642,7 @@
         },
         {
             "file": "src/routes/watcher-http.js",
-            "line": 234,
+            "line": 278,
             "description": "callback for the HTTP request:\n_http://`<host>`:`<port>`/endpoints_ (request method: GET)",
             "itemtype": "method",
             "name": "endpoints",
@@ -622,7 +661,7 @@
         },
         {
             "file": "src/routes/watcher-http.js",
-            "line": 249,
+            "line": 293,
             "description": "callback for the HTTP request:\n_http://`<host>`:`<port>`/endpoints/`<id>`_ (request method: GET)",
             "itemtype": "method",
             "name": "endpoint",
@@ -641,7 +680,7 @@
         },
         {
             "file": "src/routes/watcher-http.js",
-            "line": 269,
+            "line": 313,
             "description": "callback for the HTTP request:\n_http://`<host>`:`<port>`/endpoints_ (request method POST)",
             "itemtype": "method",
             "name": "addEndpoint",
@@ -660,7 +699,7 @@
         },
         {
             "file": "src/routes/watcher-http.js",
-            "line": 296,
+            "line": 340,
             "description": "callback for the HTTP request:\n_http://`<host>`:`<port>`/endpoints/`<id>`_ (request method DELETE)",
             "itemtype": "method",
             "name": "removeEndpoint",
@@ -679,7 +718,7 @@
         },
         {
             "file": "src/routes/watcher-http.js",
-            "line": 317,
+            "line": 361,
             "description": "callback for the HTTP request:\n_http://`<host>`:`<port>`/endpoints/`<id>`/activate_ (request method POST)",
             "itemtype": "method",
             "name": "endpointActivate",
@@ -698,7 +737,7 @@
         },
         {
             "file": "src/routes/watcher-http.js",
-            "line": 331,
+            "line": 375,
             "description": "callback for the HTTP request:\n_http://`<host>`:`<port>`/endpoint/`<id>`/activate_ (request method DELETE)",
             "itemtype": "method",
             "name": "endpointDeactivate",
@@ -717,7 +756,7 @@
         },
         {
             "file": "src/routes/watcher-http.js",
-            "line": 368,
+            "line": 412,
             "description": "callback for the HTTP request:\n_http://`<host>`:`<port>`/endpoints/`<id>`/notify_ (request method POST)",
             "itemtype": "method",
             "name": "endpointEnableNotification",
@@ -736,7 +775,7 @@
         },
         {
             "file": "src/routes/watcher-http.js",
-            "line": 382,
+            "line": 426,
             "description": "callback for the HTTP request:\n_http://`<host>`:`<port>`/endpoints/`<id>`/notify_ (request method DELETE)",
             "itemtype": "method",
             "name": "endpointEnableNotification",
@@ -755,10 +794,29 @@
         },
         {
             "file": "src/routes/watcher-http.js",
-            "line": 411,
+            "line": 455,
             "description": "callback for the HTTP request:\n_http://`<host>`:`<port>`/resolution-strategies_ (request method GET)",
             "itemtype": "method",
             "name": "resolutionStrategies",
+            "params": [
+                {
+                    "name": "watcher",
+                    "description": "the __{{#crossLink \"Watcher\"}}{{/crossLink}}__.",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "the express route function."
+            },
+            "class": "WatcherHttp",
+            "module": "watcher-http"
+        },
+        {
+            "file": "src/routes/watcher-http.js",
+            "line": 468,
+            "description": "callback for the HTTP request:\n* _http://`<host>`:`<port>`//history/endpoints_ (request method GET)\n* _http://`<host>`:`<port>`//history/endpoints/`<id>`_ (request method GET)\n* _http://`<host>`:`<port>`//history/endpoints/`<from>`/`<to>`_ (request method GET)\n* _http://`<host>`:`<port>`//history/endpoints/`<id>`/`<from>`/`<to>`_ (request method GET)",
+            "itemtype": "method",
+            "name": "history",
             "params": [
                 {
                     "name": "watcher",
@@ -986,11 +1044,39 @@
             "module": "constants"
         },
         {
+            "file": "src/database.js",
+            "line": 1,
+            "description": "Created by jpsoroulas.",
+            "class": "DBConnectionFactory",
+            "module": "constants"
+        },
+        {
+            "file": "src/database.js",
+            "line": 22,
+            "description": "Creates a mongoDB database connection.",
+            "static": 1,
+            "itemtype": "method",
+            "name": "create",
+            "params": [
+                {
+                    "name": "connectionURL",
+                    "description": "the mongoDB connection url. If empty the default connection url\n'mongodb://localhost:27017/' is used.",
+                    "type": "String",
+                    "optional": true
+                }
+            ],
+            "return": {
+                "description": "the mongoDB connection."
+            },
+            "class": "DBConnectionFactory",
+            "module": "database"
+        },
+        {
             "file": "src/http-server.js",
             "line": 1,
             "description": "Created by jpsoroulas.",
             "class": "Logger",
-            "module": "constants"
+            "module": "database"
         },
         {
             "file": "src/logger.js",
@@ -1575,7 +1661,7 @@
         },
         {
             "file": "src/watcher.js",
-            "line": 356,
+            "line": 360,
             "description": "Holds the registered endpoints.",
             "access": "private",
             "tagname": "",
@@ -1587,7 +1673,7 @@
         },
         {
             "file": "src/watcher.js",
-            "line": 369,
+            "line": 373,
             "description": "Registers an endpoint.",
             "access": "private",
             "tagname": "",
@@ -1608,7 +1694,7 @@
         },
         {
             "file": "src/watcher.js",
-            "line": 402,
+            "line": 406,
             "description": "Sends notification email if erroneous service status occurs.",
             "access": "private",
             "tagname": "",
@@ -1619,7 +1705,7 @@
         },
         {
             "file": "src/watcher.js",
-            "line": 507,
+            "line": 530,
             "description": "Activates the system again if it is passivated.",
             "access": "private",
             "tagname": "",
@@ -1630,8 +1716,8 @@
         },
         {
             "file": "src/watcher.js",
-            "line": 520,
-            "description": "Stores endpoint at the persistence storage\n(at the moment, the filesystem is used).",
+            "line": 543,
+            "description": "Stores endpoint at the persistence storage\n(the filesystem is used for easy modification).",
             "access": "private",
             "tagname": "",
             "itemtype": "method",
@@ -1657,8 +1743,8 @@
         },
         {
             "file": "src/watcher.js",
-            "line": 540,
-            "description": "Deletes the endpoint of the specified id from the persistence storage\n(at the moment, the filesystem is used).",
+            "line": 563,
+            "description": "Deletes the endpoint of the specified id from the persistence storage\n(the filesystem is used for easy modification).",
             "access": "private",
             "tagname": "",
             "itemtype": "method",
@@ -1680,8 +1766,8 @@
         },
         {
             "file": "src/watcher.js",
-            "line": 566,
-            "description": "Updates the endpoint of the specified id from the persistence storage\n(at the moment, the filesystem is used).",
+            "line": 589,
+            "description": "Updates the endpoint of the specified id from the persistence storage\n(the filesystem is used for easy modification).",
             "access": "private",
             "tagname": "",
             "itemtype": "method",
@@ -1708,8 +1794,8 @@
         },
         {
             "file": "src/watcher.js",
-            "line": 597,
-            "description": "Stores endpoint info at persistence storage (currently, at the filesystem).",
+            "line": 620,
+            "description": "Stores endpoint info at persistence storage (at the filesystem for easy modification).",
             "access": "private",
             "tagname": "",
             "itemtype": "method",
@@ -1723,7 +1809,7 @@
         },
         {
             "file": "src/watcher.js",
-            "line": 625,
+            "line": 648,
             "description": "Returns the endpoint with the specified id.",
             "itemtype": "method",
             "name": "getEndpoint",
@@ -1743,7 +1829,7 @@
         },
         {
             "file": "src/watcher.js",
-            "line": 636,
+            "line": 659,
             "description": "Returns the endpoints.",
             "itemtype": "method",
             "name": "getEndpoints",
@@ -1756,7 +1842,7 @@
         },
         {
             "file": "src/watcher.js",
-            "line": 646,
+            "line": 669,
             "description": "Adds an endpoint with the specified configuration.\nFor the configuration see at {{#crossLinkModule \"watcher\"}}{{/crossLinkModule}}",
             "itemtype": "method",
             "name": "addEndpoint",
@@ -1782,7 +1868,7 @@
         },
         {
             "file": "src/watcher.js",
-            "line": 684,
+            "line": 707,
             "description": "Removes the endpoint with the specified id.",
             "itemtype": "method",
             "name": "removeEndpoint",
@@ -1803,7 +1889,7 @@
         },
         {
             "file": "src/watcher.js",
-            "line": 707,
+            "line": 730,
             "description": "Activate/Deactivates the endpoint with the specified id.",
             "itemtype": "method",
             "name": "setEndpointActivationState",
@@ -1833,7 +1919,7 @@
         },
         {
             "file": "src/watcher.js",
-            "line": 741,
+            "line": 767,
             "description": "Enables/disables the notification on erroneous status for the endpoint with the specified id.",
             "itemtype": "method",
             "name": "notifyOnErroneousStatus",
@@ -1859,7 +1945,7 @@
         },
         {
             "file": "src/watcher.js",
-            "line": 767,
+            "line": 793,
             "description": "Returns the registered resolution strategies.",
             "itemtype": "method",
             "name": "getResolutionStrategies",
@@ -1872,7 +1958,31 @@
         },
         {
             "file": "src/watcher.js",
-            "line": 777,
+            "line": 803,
+            "description": "Returns the endpoint/s history status.",
+            "itemtype": "method",
+            "name": "getHistory",
+            "params": [
+                {
+                    "name": "qOpts",
+                    "description": "the query options.",
+                    "type": "Object"
+                },
+                {
+                    "name": "callback",
+                    "description": "the callback(err, recs) of the async process.",
+                    "type": "Function"
+                }
+            ],
+            "example": [
+                " __Query options details__.\n```\n//Specify the \"endpointId\" to return the history of the specific endpoint,\n//otherwise the history of all endpoints is returned\n//Specify both 'from' and 'to' properties to return the history status for\n//the specific time period, otherwise the complete history is returned.\n\n{\n    endpointId:  <endpoint id>\n    from:        <from time>     //defined in mills\n    to:          <to time>       //defined in mills\n}\n```"
+            ],
+            "class": "Watcher",
+            "module": "watcher"
+        },
+        {
+            "file": "src/watcher.js",
+            "line": 842,
             "description": "Setup the Watcher.",
             "access": "private",
             "tagname": "",
@@ -1883,7 +1993,7 @@
         },
         {
             "file": "src/watcher.js",
-            "line": 844,
+            "line": 913,
             "description": "Starts the Watcher.",
             "itemtype": "method",
             "name": "start",
@@ -1892,7 +2002,7 @@
         },
         {
             "file": "src/watcher.js",
-            "line": 868,
+            "line": 937,
             "description": "Stops the Watcher.",
             "itemtype": "method",
             "name": "stop",
@@ -1901,7 +2011,7 @@
         },
         {
             "file": "src/watcher.js",
-            "line": 880,
+            "line": 982,
             "description": "Add listener specific events of the Watcher.",
             "itemtype": "method",
             "name": "addListener",
@@ -1922,17 +2032,21 @@
         },
         {
             "file": "src/watcher.js",
-            "line": 900,
+            "line": 1002,
             "description": "Creates a Watcher instance.",
             "static": 1,
             "itemtype": "method",
             "name": "create",
             "params": [
                 {
-                    "name": "[options] the Watcher configuration.\nProperties in _[]_ are optional. when not set, the default values are used - those in parentheses.\n* Embedded http server configuration and service communication interval\n * [__host__] ('localhost'), the http server host name.\n * [__port__] (7777), the http server port.\n * [__interval__] (10000 ms), the service communication interval, at ms.\n * [__routeExts__], an array of user defined route extensions for building custom responses for the status requests.\n * [__resolutionStrategies__], an array of _unbound resolution strategy descriptors_.\n The descriptor is an object as follows:\n ```\n {\n     id: <the resolution strategy id>, (should be unique)\n     desc: <the resolution strategy description>\n     implementation: <the implementation of resolution strategy> (see at resolvers to see the interface)\n }\n ```\n * [__nfOpts__], the notification options. Holds the information of the sender and the email addresses\n to receive email when erroneous service status occurs. The default sender is _admin@watcherjs.com_\n (if needed, configure your email account to not filter this sender as a spam). The object structure is:\n ```\n {\n     sender: <the sender>, // default value: admin@watcherjs.com\n     recipients: [<recipient1>, <recipient1>, ...] // the array of recipients email\n }\n ```\n * [__exportDir__] (_<`project directory`>/storage/_), the storage directory of dynamically created endpoints.\n* Endpoint\n * __id__, the unique endpoint id.\n * __type__, the endpoint type.\n * [__host__] (localhost), the endpoint hostname, applied for __{{#crossLink \"SocketConnector\"}}{{/crossLink}}__.\n * [__port__] (9999), the endpoint port, applied for __{{#crossLink \"SocketConnector\"}}{{/crossLink}}__.\n * [__url__] (http://localhost:8080), the endpoint url, applied for __{{#crossLink \"HttpConnector\"}}{{/crossLink}}__.\n * [__timeout__](5000), the applied connector's connection timeout.\n * [__resolutionStrategy__] (__{{#crossLink \"OnConnectionResolution\"}}{{/crossLink}}__) the applied resolution\n strategy, either as an implementation of a resolution strategy or as a reference id of an unbound strategy.\n * [__active__] (true), whether or not the endpoint should be activated (enables or suspends\n the communication between the respective connector and the endpoint).\n * [__notify__]",
-                    "description": "(false), used to indicate whether or not to receive email notifications for\n erroneous service status.\n\nMore details at __{{#crossLinkModule \"watcher\"}}{{/crossLinkModule}}__.",
-                    "type": "Object"
+                    "name": "options",
+                    "description": "the Watcher configuration.",
+                    "type": "Object",
+                    "optional": true
                 }
+            ],
+            "example": [
+                " __Options configuration details__.\nProperties in _[]_ are optional. when not set, the default values are used - those in parentheses.\n* Embedded http server configuration and service communication interval\n * [__host__] ('localhost'), the http server host name.\n * [__port__] (7777), the http server port.\n * [__interval__] (10000 ms), the service communication interval, at ms.\n * [__routeExts__], an array of user defined route extensions for building custom responses for the status requests.\n * [__resolutionStrategies__], an array of _unbound resolution strategy descriptors_.\n The descriptor is an object as follows:\n ```\n {\n     id: <the resolution strategy id>, (should be unique)\n     desc: <the resolution strategy description>\n     implementation: <the implementation of resolution strategy> (see at resolvers to see the interface)\n }\n ```\n * [__nfOpts__], the notification options. Holds the information of the sender and the email addresses\n to receive email when erroneous service status occurs. The default sender is _admin@watcherjs.com_\n (if needed, configure your email account to not filter this sender as a spam). The object structure is:\n ```\n {\n     sender: <the sender>, // default value: admin@watcherjs.com\n     recipients: [<recipient1>, <recipient1>, ...] // the array of recipients email\n }\n ```\n * [__exportDir__] (_<`project directory`>/storage/_), the storage directory of dynamically created endpoints.\n * [__dbConnectionURL__] (_'mongodb://localhost:27017/'_), the connection url of history persistent storage\n (currently, the mongoDB is used)\n\n\n* Endpoint\n * __id__, the unique endpoint id.\n * __type__, the endpoint type.\n * [__host__] (localhost), the endpoint hostname, applied for __{{#crossLink \"SocketConnector\"}}{{/crossLink}}__.\n * [__port__] (9999), the endpoint port, applied for __{{#crossLink \"SocketConnector\"}}{{/crossLink}}__.\n * [__url__] (http://localhost:8080), the endpoint url, applied for __{{#crossLink \"HttpConnector\"}}{{/crossLink}}__.\n * [__timeout__](5000), the applied connector's connection timeout.\n * [__resolutionStrategy__] (__{{#crossLink \"OnConnectionResolution\"}}{{/crossLink}}__) the applied resolution\n strategy, either as an implementation of a resolution strategy or as a reference id of an unbound strategy.\n * [__active__] (true), whether or not the endpoint should be activated (enables or suspends\n the communication between the respective connector and the endpoint).\n * [__notify__] (false), used to indicate whether or not to receive email notifications for\n erroneous service status.\n\nMore details at __{{#crossLinkModule \"watcher\"}}{{/crossLinkModule}}__."
             ],
             "return": {
                 "description": "the Watcher instance.",
@@ -1943,7 +2057,7 @@
         },
         {
             "file": "src/watcher.js",
-            "line": 970,
+            "line": 1078,
             "description": "Exported module object",
             "class": "WatcherFactory",
             "module": "watcher"
@@ -1965,6 +2079,10 @@
         {
             "message": "Missing item type\nCreated by jpsoroulas.",
             "line": " src/constants.js:1"
+        },
+        {
+            "message": "Missing item type\nCreated by jpsoroulas.",
+            "line": " src/database.js:1"
         },
         {
             "message": "Missing item type\nCreated by jpsoroulas.",
@@ -2004,7 +2122,7 @@
         },
         {
             "message": "Missing item type\nExported module object",
-            "line": " src/watcher.js:970"
+            "line": " src/watcher.js:1078"
         }
     ]
 }
