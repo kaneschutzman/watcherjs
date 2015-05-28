@@ -6,7 +6,7 @@ define(['underscore', 'jquery', 'backbone', 'endpoint-view', 'endpoint-history',
     return Backbone.View.extend({
         el: '#endpoints-table',
         //tagName: 'div',
-        template: JST['src/views/endpoints.hbs'],
+        template: JST['src/views/endpoints-table.hbs'],
 
         initialize: function () {
             this.listenTo(this.collection, 'reset', this.render);

@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="watcher.js" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 2.0.0</em>
+            <em>API Docs for: 2.5.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -656,7 +656,7 @@ watcher = stampit().state({
 
         /**
          * Stores endpoint at the persistence storage
-         * (at the moment, the filesystem is used).
+         * (the filesystem is used for easy modification).
          *
          * @private
          * @method _persistEndpointConfig
@@ -676,7 +676,7 @@ watcher = stampit().state({
 
         /**
          * Deletes the endpoint of the specified id from the persistence storage
-         * (at the moment, the filesystem is used).
+         * (the filesystem is used for easy modification).
          *
          * @private
          * @method _deleteEndpoint
@@ -702,7 +702,7 @@ watcher = stampit().state({
 
         /**
          * Updates the endpoint of the specified id from the persistence storage
-         * (at the moment, the filesystem is used).
+         * (the filesystem is used for easy modification).
          *
          * @private
          * @method _updateEndpointConfig
@@ -732,7 +732,7 @@ watcher = stampit().state({
         },
 
         /**
-         * Stores endpoint info at persistence storage (currently, at the filesystem).
+         * Stores endpoint info at persistence storage (at the filesystem for easy modification).
          *
          * @private
          * @method _getStoredEndpoints
@@ -855,7 +855,7 @@ watcher = stampit().state({
             var endpoint = this._registry[id];
             if (endpoint) {
                 var now = moment().utc();
-                if(undetermined !== endpoint.status) {
+                if (undetermined !== endpoint.status) {
                     this._storeStatusToHistory(endpoint, undetermined);
                 }
                 endpoint.active = active;
@@ -1057,7 +1057,7 @@ watcher = stampit().state({
             logger.info(&#x27;Shutting down Watcher app...&#x27;);
             var _self = this;
             _self._stopped = true;
-            async.series([
+            async.parallel([
                 function (callback) {
                     //insert new entries with &#x27;undetermined&#x27;
                     var entries = [];
@@ -1082,8 +1082,12 @@ watcher = stampit().state({
                 asyncTimeout(function (callback) {
                     _self.server.stop();
                 }, 2000, &#x27;Give 2 secs to shutdown http server&#x27;)
-            ], function (errors, results) {
-                logger.info(&#x27;Shutdown details: &#x27; + errors);
+            ], function (err, results) {
+                if (err) {
+                    logger.info(&#x27;Shutdown performed with errors: &#x27; + err);
+                } else {
+                    logger.info(&#x27;Shutdown successfully performed&#x27;);
+                }
                 process.exit();
             });
             //process.kill(process.pid, &#x27;SIGHUP&#x27;);

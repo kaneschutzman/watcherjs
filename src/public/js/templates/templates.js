@@ -25,7 +25,7 @@ this["JST"]["src/views/endpoint-form.hbs"] = Handlebars.template({"1":function(d
 },"useData":true});
 
 this["JST"]["src/views/endpoint-history.hbs"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-    return "<div id=\"history-panel\">\n    <div id=\"history-controls\">\n        <div class=\"history-time-range\">Time range: <span id=\"history-time\"></span></div>\n        <div class=\"history-nav\">\n            <select id=\"history-time-step\">\n                <option value=\"1\" selected=\"selected\">1 day</option>\n                <option value=\"7\">1 week</option>\n                <option value=\"30\">1 month</option>\n            </select>\n            <button id=\"history-control-rw\">&lt;&lt;</button>\n            <button id=\"history-control-ff\">&gt;&gt;</button>\n        </div>\n    </div>\n    <div id=\"history-chart-container\">\n    </div>\n</div>";
+    return "<div id=\"history-panel\">\n    <div id=\"history-controls\">\n        <div class=\"history-time-range\">Time range: <span id=\"history-time\"></span></div>\n        <div class=\"history-nav\">\n            <div>Step</div>\n            <select id=\"history-time-step\">\n                <option value=\"1\" selected=\"selected\">1 day</option>\n                <option value=\"7\">1 week</option>\n                <option value=\"30\">1 month</option>\n            </select>\n            <div title=\"Move back\">\n                <button id=\"history-control-rw\">&#9664;</button>\n            </div>\n            <div title=\"Move forward\">\n                <button id=\"history-control-ff\">&#9654;</button>\n            </div>\n        </div>\n    </div>\n    <div id=\"history-chart-container\">\n    </div>\n</div>";
 },"useData":true});
 
 this["JST"]["src/views/endpoint-info.hbs"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
@@ -57,7 +57,7 @@ this["JST"]["src/views/endpoint-info.hbs"] = Handlebars.template({"1":function(d
     + "</td>\n        </tr>\n    </table>\n\n<!--</script>-->";
 },"useData":true});
 
-this["JST"]["src/views/endpoint.hbs"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
+this["JST"]["src/views/endpoint-row.hbs"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
     return "    <td title=\"Up\"><img class=\"status-up\"></td>\n";
 },"3":function(depth0,helpers,partials,data) {
     return "    <td title=\"Down\"><img class=\"status-down\"></td>\n";
@@ -108,7 +108,7 @@ this["JST"]["src/views/endpoint.hbs"] = Handlebars.template({"1":function(depth0
     + "    <div title=\"Delete endpoint\">\n        <img class=\"action-delete\">\n    </div>\n    <div title=\"History\">\n        <img class=\"action-history\">\n    </div>\n</td>";
 },"useData":true});
 
-this["JST"]["src/views/endpoints.hbs"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+this["JST"]["src/views/endpoints-table.hbs"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     var helper, alias1=helpers.helperMissing, alias2="function", alias3=this.escapeExpression;
 
   return "<table class=\"table table-hover\">\n    <thead>\n        <tr class=\"table-head\">\n            <th>Id</th>\n            <th>Description</th>\n            <th>Timestamp</th>\n            <th>Duration</th>\n            <th>Status</th>\n            <th>Actions</th>\n        </tr>\n    </thead>\n    <tbody id=\"endpoints-table-content\">\n    </tbody>\n    <tfoot>\n        <tr>\n            <td colspan=\"6\">\n                <div>Total endpoints: "

@@ -186,18 +186,23 @@ body {
 }
 
 .history-nav {
-    width: 30%;
+    width: 40%;
     float: right;
 }
 
-#history-time-step {
-    width: 55%;
+.history-nav div,
+.history-nav select {
+    display: inline-block;
     font-weight: bold;
+    margin-bottom: 5px;
+}
+
+#history-time-step {
+    width: 50%;
 }
 
 .history-nav button {
-    margin-bottom: 10px;
-    font-weight: bold;
+    margin-bottom: 5px;
     color: #ffffff;
     background: #006dcc;
 }

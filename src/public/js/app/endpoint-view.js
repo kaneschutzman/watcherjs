@@ -3,14 +3,13 @@
  */
 define(['underscore', 'backbone', 'jquery', 'handlebars', 'templates', 'helper'], function (_, Backbone, $, Handlebars, JST, helper) {
 
-    var endpointTemplate = JST['src/views/endpoint.hbs'];
     var endpointInfoTemplate = JST['src/views/endpoint-info.hbs'];
     var approveAction = helper.approveAction;
     var infoDialog = helper.infoDialog;
 
     return Backbone.View.extend({
         tagName: 'tr',
-        template: endpointTemplate,
+        template: JST['src/views/endpoint-row.hbs'],
         infoDialog: infoDialog(),
         events: {
             'click .action-activate-endpoint': 'activate',
