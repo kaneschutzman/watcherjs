@@ -108,7 +108,7 @@ The application features can be summarized as follows:
 
 ## Release Notes
 
-Changelog: For change logs and release notes,
+Changelog: For changelogs and release notes,
 see the [changelog](https://github.com/jpsoroulas/watcherjs/blob/master/changelog.md) file.
 
 ## Installation

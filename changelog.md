@@ -1,7 +1,7 @@
 ## v2.5.0
 
 #### Bug Fixes
-Bug fixes
+Various bug fixes
 
 #### Features/improvements
 * Save endpoint status transitions at persistent storage to provide endpoint status history
