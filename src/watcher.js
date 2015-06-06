@@ -321,6 +321,9 @@ var httpConnectorFactory = connectors.httpConnectorFactory;
 var undetermined = constants.serviceStatus.undetermined;
 var watcherConfigured = constants.watcherEvents.watcherConfigured;
 var watcherReady = constants.watcherEvents.watcherReady;
+var endpointsStatusResolved = constants.watcherEvents.endpointsStatusResolved;
+var wjsConnected = constants.watcherEvents.wjsConnected;
+var wjsEndpointsUpdated = constants.watcherEvents.wjsEndpointsUpdated;
 var socketConnectorType = constants.connectorType.socket;
 var httpConnectorType = constants.connectorType.http;
 
@@ -471,6 +474,7 @@ watcher = stampit().state({
                             return (endpoint.processed === true);
                         })) {
                     this._notify();
+                    this.emitter.emit(endpointsStatusResolved);
                     setTimeout(_.bind(this._pollEndpoints, this), this.options.interval).unref();
                 }
             }
@@ -930,6 +934,15 @@ watcher = stampit().state({
                 host + '/' + port + '/' + interval + ')');
                 setTimeout(_.bind(_self._pollEndpoints, _self), 0).unref();
             });
+
+            var io = _self.server.io;
+            io.on('connection', function (socket) {
+                socket.emit(wjsConnected, { message: 'connected with watcher.js' });
+            });
+            _self.emitter.on(endpointsStatusResolved, function() {
+                io.emit(wjsEndpointsUpdated, { message: 'endpoints data updated!' });
+            });
+
             _self.db = dbConnFactory.create(_self.options.dbConnectionURL);
             return _self;
         }),

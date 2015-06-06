@@ -9,6 +9,7 @@
  */
 'use strict';
 var express = require('express');
+var http = require('http');
 var path = require('path');
 var favicon = require('serve-favicon');
 var morgan = require('morgan');
@@ -61,7 +62,10 @@ var httpServer = stampit().methods({
 
     start: function start(callback) {
         var app = this._app;
-        this._server = app.listen(app.get('port'), app.get('host'), callback);
+        this._server = http.Server(app);
+        var io = require('socket.io')(this._server);
+        this._server.listen(app.get('port'), app.get('host'), callback);
+        this.io = io;
     },
 
     addListener: function addListener(event, callback) {

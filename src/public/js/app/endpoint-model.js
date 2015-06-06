@@ -43,7 +43,6 @@ define(['backbone', 'jquery', 'moment', 'moment-duration-format'], function (Bac
             doHistory: function (queryOptions, callback) {
                 var _self = this;
                 var endpointId = _self.id;
-                console.log('get history for endpoint ' + endpointId);
                 $.ajax({
                     url: '/history/endpoints/' + endpointId + '/' + queryOptions.from + '/' + queryOptions.to,
                     success: function (response, status, jqXHR) {
