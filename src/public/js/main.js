@@ -1,11 +1,11 @@
 /**
  * Created by jpsoroulas.
  */
-define(['underscore', 'jquery', 'helper', 'endpoints-model', 'endpoints-view', 'endpoint-form', 'jquery-ui-bootstrap', 'jquery-ui'],
+define(['socket.io', 'underscore', 'jquery', 'helper', 'endpoints-model', 'endpoints-view', 'endpoint-form', 'jquery-ui-bootstrap', 'jquery-ui'],
 
-    function (_, $, helper, EndpointsModel, EndpointsView, EndpointFormView) {
+    function (io, _, $, helper, EndpointsModel, EndpointsView, EndpointFormView) {
 
-       $(document).tooltip();
+        $(document).tooltip();
 
         var errorDialog = helper.infoDialog();
         var endpointsModel = new EndpointsModel();
@@ -40,5 +40,18 @@ define(['underscore', 'jquery', 'helper', 'endpoints-model', 'endpoints-view', '
             });
         }
 
-        setInterval(refreshData, 30000);
+        //setInterval(refreshData, 30000);
+
+        var socket = io.connect(getRootUrl());
+        socket.on('wjs-connected', function (data) {
+            console.log(data);
+        });
+        socket.on('wjs-endpoints-updated', function (data) {
+            console.log(data);
+            refreshData();
+        });
+
+        function getRootUrl() {
+            return $(location).attr('protocol') + "//" + $(location).attr('host');
+        }
     });

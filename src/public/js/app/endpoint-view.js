@@ -78,7 +78,6 @@ define(['underscore', 'backbone', 'jquery', 'handlebars', 'templates', 'helper']
         },
 
         history: function (event) {
-            console.log('click history');
             this.endpointHistory.render(this.model);
         },
 

@@ -34,7 +34,6 @@ define(['underscore', 'backbone', 'jquery', 'highcharts', 'handlebars', 'templat
             this._resetTimeRange(dayInMills);
             var _self = this;
             var endpointId = model.id;
-            console.log('render history for endpoint ' + endpointId);
             this.model = model;
 
             this.$el.dialog(_.defaults({
@@ -76,7 +75,6 @@ define(['underscore', 'backbone', 'jquery', 'highcharts', 'handlebars', 'templat
 
         timeRangeStepChange: function (event) {
             var step = $(event.target).val();
-            console.log('History time step has been changed to ' + step);
             this._resetTimeRange(step * dayInMills);
             this._redrawChart();
         },

@@ -64,7 +64,10 @@ connectorType = {
 
 watcherEvents = {
     watcherConfigured: 'watcher-configured',
-    watcherReady: 'watcher-ready'
+    watcherReady: 'watcher-ready',
+    endpointsStatusResolved: 'endpoints-status-resolved',
+    wjsConnected: 'wjs-connected',
+    wjsEndpointsUpdated: 'wjs-endpoints-updated'
 };
 
 /**
