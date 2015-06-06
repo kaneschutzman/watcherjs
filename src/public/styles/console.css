@@ -178,7 +178,7 @@ body {
 }
 
 .history-time-range {
-    margin-top: 5px;
+    margin-top: 6px;
 }
 
 #history-time {
@@ -186,7 +186,7 @@ body {
 }
 
 .history-nav {
-    width: 40%;
+    width: 50%;
     float: right;
 }
 

@@ -17,7 +17,8 @@ define(['underscore', 'backbone', 'jquery', 'highcharts', 'handlebars', 'templat
         events: {
             'click #history-control-ff': 'moveForward',
             'click #history-control-rw': 'moveBackwards',
-            'change #history-time-step': 'timeRangeStepChange'
+            'change #history-time-step': 'timeRangeStepChange',
+            'click #history-control-rt': 'resetTimeRange'
         },
 
         initialize: function () {
@@ -41,11 +42,6 @@ define(['underscore', 'backbone', 'jquery', 'highcharts', 'handlebars', 'templat
                 height: 530,
                 autoOpen: true,
                 title: 'History'
-                //buttons: {
-                //    'OK': function () {
-                //        $(this).dialog('close');
-                //    }
-                //}
             }, dialogDefaults));
 
             this.$el.html(this.template({}));
@@ -76,6 +72,11 @@ define(['underscore', 'backbone', 'jquery', 'highcharts', 'handlebars', 'templat
         timeRangeStepChange: function (event) {
             var step = $(event.target).val();
             this._resetTimeRange(step * dayInMills);
+            this._redrawChart();
+        },
+
+        resetTimeRange: function(event) {
+            this._resetTimeRange(this._timeStep);
             this._redrawChart();
         },
 
