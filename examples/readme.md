@@ -1,6 +1,6 @@
 # Examples
 
-Here is various example of how to use the watcher.js API.
+Here are various examples of how to use the watcher.js API.
 
 ## Create a _http connector_
 
@@ -77,9 +77,10 @@ var app = require('../src/watcher');
 
 app.watcherFactory.create().start();
 
-
-/*The web console can be accessed at:
-http://localhost:7777/console*/
+/*
+The web console can be accessed at:
+http://localhost:7777/console
+*/
 ```
 
 ## Start watcher.js with extended configuration
@@ -176,11 +177,13 @@ var options = {
 // Start the watcher
 watcherFactory.create(options).start();
 
-/*After starting the watcher the following status requests could be made in order to
+/*
+After starting the watcher the following status requests could be made in order to
 retrieve the status for the services with id 'node.js' and 'expressjs' respectively
 http://localhost:7777/endpoint/node.js
 http://localhost:7777/endpoint/expressjs
 Whereas the request http://localhost:7777/custom-route?id=node.js
 is the user defined route which returns: 'Service status: <status>' where status
-the status of the 'node.js'.*/
+the status of the 'node.js'.
+*/
 ```
