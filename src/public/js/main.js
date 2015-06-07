@@ -7,7 +7,7 @@ define(['socket.io', 'underscore', 'jquery', 'helper', 'endpoints-model', 'endpo
 
         $(document).tooltip();
 
-        var errorDialog = helper.infoDialog();
+        var infoDialog = helper.infoDialog();
         var endpointsModel = new EndpointsModel();
         var endpointsView = new EndpointsView({
             collection: endpointsModel
@@ -26,16 +26,16 @@ define(['socket.io', 'underscore', 'jquery', 'helper', 'endpoints-model', 'endpo
             endpointsModel.fetch({
                 //reset: true,
                 success: function () {
-                    errorDialog.dialog('close');
+                    infoDialog.dialog('close');
                     endpointsView.render();
                 },
                 error: function (endpoints, response) {
-                    if (0 == response.status) {
-                        errorDialog.text('Wait the connection to be restored, or refresh the page by pressing F5.');
+                    if (0 === response.status) {
+                        infoDialog.text('Unknown problem with watcher.js');
                     } else {
-                        errorDialog.text('Error while processing the request: ' + response.statusText);
+                        infoDialog.text('Error while processing the request: ' + response.statusText);
                     }
-                    errorDialog.dialog('open');
+                    infoDialog.dialog('open');
                 }
             });
         }
@@ -44,10 +44,16 @@ define(['socket.io', 'underscore', 'jquery', 'helper', 'endpoints-model', 'endpo
 
         var socket = io.connect(getRootUrl());
         socket.on('wjs-connected', function (data) {
+            infoDialog.dialog('close');
             console.log(data.message);
         });
+
+        socket.on('connect_error', function (error) {
+            infoDialog.text('Connection error with watcher.js, wait to be restored.');
+            infoDialog.dialog('open');
+        });
+
         socket.on('wjs-endpoints-updated', function (data) {
-            console.log(data.message);
             refreshData();
         });
 
