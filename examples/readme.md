@@ -187,3 +187,18 @@ is the user defined route which returns: 'Service status: <status>' where status
 the status of the 'node.js'.
 */
 ```
+
+## Real time notification
+
+```html
+<script src="../src/public/js/lib/socket.io.min.js"></script>
+<script>
+    var socket = io.connect('http://localhost:7777');
+    socket.on('wjs-connected', function (data) {
+        console.log(data.message);
+    });
+    socket.on('wjs-endpoints-updated', function (data) {
+        console.log(data.message);
+    });
+</script>
+```

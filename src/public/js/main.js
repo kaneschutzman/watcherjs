@@ -44,10 +44,10 @@ define(['socket.io', 'underscore', 'jquery', 'helper', 'endpoints-model', 'endpo
 
         var socket = io.connect(getRootUrl());
         socket.on('wjs-connected', function (data) {
-            console.log(data);
+            console.log(data.message);
         });
         socket.on('wjs-endpoints-updated', function (data) {
-            console.log(data);
+            console.log(data.message);
             refreshData();
         });
 

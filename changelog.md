@@ -1,3 +1,12 @@
+## v2.5.2
+
+#### Features/improvements
+* API documentation typos fixes/additions.
+* Example with real time event notification.
+* Minor refactor.
+
+----
+
 ## v2.5.1
 
 #### Features/improvements
