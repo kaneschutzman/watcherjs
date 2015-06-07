@@ -65,8 +65,9 @@ Detailed information about the REST interface and examples can be found at:
 ### Real time event notification
 A [socket.io](http://socket.io/) client can be used for real time event notification from the system. At the moment
 a client could be notified when the endpoints status has been updated (this feature is used by the web console
-to update the display of the monitored endpoints).
-See at [watcher events](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/classes/WatcherEvents.html).
+to update the display of the monitored endpoints). More information and examples can be found at:
+[watcher events](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/classes/WatcherEvents.html) and
+[real-time-notification](examples/real-time-notification.html)
 
 ----
 

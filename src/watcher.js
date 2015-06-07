@@ -16,6 +16,9 @@
  * __web gui__ is implemented. For the REST API implementation the [express](http://expressjs.com) web framework is used.
  * The REST interface description with references to the respective application API can be found at
  * __{{#crossLinkModule "watcher-http"}}{{/crossLinkModule}}__.
+ * Moreover, a [socket.io](http://socket.io/) client can be used for real time event notification from the system. At the moment
+ * a client could be notified when the endpoints status has been updated. More information and examples can be found at
+ * __{{#crossLink "WatcherEvents"}}{{/crossLink}}__ and the examples source directory.
  *
  *
  * ###Configuration
