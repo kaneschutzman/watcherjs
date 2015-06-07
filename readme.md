@@ -50,7 +50,7 @@ application's http interface, and the other that refers to the service endpoints
 
 Detailed documentation and examples can be found at:
 [watcher](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/modules/watcher.html),
-[watcher-full.js](examples/watcher-full.js) and [watcher-minimal.js](examples/watcher-minimal.js)
+[watcher-extended.js](examples/watcher-extended.js) and [watcher-minimal.js](examples/watcher-minimal.js)
 
 ### _[REST API](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/modules/watcher-http.html)_
 The entire application API is exposed as REST services. For the REST API implementation
@@ -60,7 +60,7 @@ __route extension points__ in order to build custom responses for the status req
 Detailed information about the REST interface and examples can be found at:
 [watcher-http](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/modules/watcher-http.html) and
 [watcher](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/modules/watcher.html) and
-[watcher-full.js](examples/watcher-full.js)
+[watcher-extended.js](examples/watcher-extended.js)
 
 ----
 
