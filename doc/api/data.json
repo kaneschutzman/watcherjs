@@ -39,6 +39,7 @@
             },
             "classes": {
                 "ServiceStatus": 1,
+                "WatcherEvents": 1,
                 "ResolverEvents": 1
             },
             "fors": {},
@@ -166,13 +167,14 @@
             "submodules": {},
             "classes": {
                 "ServiceStatus": 1,
+                "WatcherEvents": 1,
                 "ResolverEvents": 1
             },
             "fors": {},
             "namespaces": {},
             "tag": "module",
             "file": "src/constants.js",
-            "line": 73,
+            "line": 94,
             "description": "Holds application's constants"
         },
         "database": {
@@ -379,6 +381,20 @@
             "line": 13,
             "description": "Service status constants."
         },
+        "WatcherEvents": {
+            "name": "WatcherEvents",
+            "shortname": "WatcherEvents",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "constants",
+            "namespace": "",
+            "file": "src/constants.js",
+            "line": 65,
+            "description": "System events."
+        },
         "ResolverEvents": {
             "name": "ResolverEvents",
             "shortname": "ResolverEvents",
@@ -390,7 +406,7 @@
             "module": "constants",
             "namespace": "",
             "file": "src/constants.js",
-            "line": 73,
+            "line": 94,
             "description": "__{{#crossLink \"StatusResolver\"}}{{/crossLink}}__ constants."
         },
         "DBConnectionFactory": {
@@ -1033,7 +1049,31 @@
         },
         {
             "file": "src/constants.js",
-            "line": 79,
+            "line": 74,
+            "description": "Event fired for the connected socket-io clients, when the connection with system has been established.",
+            "itemtype": "property",
+            "name": "wjsConnected",
+            "type": "String",
+            "static": 1,
+            "final": 1,
+            "class": "WatcherEvents",
+            "module": "constants"
+        },
+        {
+            "file": "src/constants.js",
+            "line": 83,
+            "description": "Event fired for the connected socket-io clients, when the endpoints status has been updated.",
+            "itemtype": "property",
+            "name": "wjsEndpointsUpdated",
+            "type": "String",
+            "static": 1,
+            "final": 1,
+            "class": "WatcherEvents",
+            "module": "constants"
+        },
+        {
+            "file": "src/constants.js",
+            "line": 100,
             "description": "Event fired when the service status has been resolved.",
             "itemtype": "property",
             "name": "resolved",

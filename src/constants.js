@@ -62,11 +62,32 @@ connectorType = {
     http: 'http'
 };
 
+/**
+ * System events.
+ *
+ * @class WatcherEvents
+ */
 watcherEvents = {
-    watcherConfigured: 'watcher-configured',
-    watcherReady: 'watcher-ready',
+    wjsConfigured: 'wjs-configured',
+    wjsReady: 'wjs-ready',
     endpointsStatusResolved: 'endpoints-status-resolved',
+    /**
+     * Event fired for the connected socket-io clients, when the connection with system has been established.
+     *
+     * @property wjsConnected
+     * @type String
+     * @static
+     * @final
+     */
     wjsConnected: 'wjs-connected',
+    /**
+     * Event fired for the connected socket-io clients, when the endpoints status has been updated.
+     *
+     * @property wjsEndpointsUpdated
+     * @type String
+     * @static
+     * @final
+     */
     wjsEndpointsUpdated: 'wjs-endpoints-updated'
 };
 
