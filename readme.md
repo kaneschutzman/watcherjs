@@ -62,16 +62,22 @@ Detailed information about the REST interface and examples can be found at:
 [watcher](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/modules/watcher.html) and
 [watcher-extended.js](examples/watcher-extended.js)
 
+### Real time event notification
+A [socket.io](http://socket.io/) client can be used for real time event notification from the system. At the moment
+a client could be notified when the endpoints status has been updated (this feature is used by the web console
+to update the display of the monitored endpoints).
+See at [watcher events](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/classes/WatcherEvents.html),
+
 ----
 
 ## Watcher web console
 On top of the application's REST services, a simple but handy web GUI is implemented, the _watcher web console_.
 The console enables the user to dynamically add/remove/modify and monitor endpoints visually.
 It can be accessed at http://localhost:`<port>`/console, where `<port>` the http-server port defined at
-application startup (7777, if default configuration is used). The refresh data interval is set to 30 sec.
+application startup (7777, if default configuration is used).
 Screenshots from the console follow below.
 
-The console illustrates the list of the monitored services along with their related information.
+The console illustrates the list of the monitored endpoints along with their related information.
 More specifically, the endpoint id (Id), the endpoint description (Description), the endpoint status (Status),
 the timestamp of the current status (Timestamp) and the period where the current status has lasted (Duration).
 At the column 'Actions' the user can activate/deactivate the endpoint (eye icon),

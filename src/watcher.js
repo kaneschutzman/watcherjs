@@ -319,8 +319,8 @@ var up = constants.serviceStatus.up;
 var socketConnectorFactory = connectors.socketConnectorFactory;
 var httpConnectorFactory = connectors.httpConnectorFactory;
 var undetermined = constants.serviceStatus.undetermined;
-var watcherConfigured = constants.watcherEvents.watcherConfigured;
-var watcherReady = constants.watcherEvents.watcherReady;
+var wjsConfigured = constants.watcherEvents.wjsConfigured;
+var wjsReady = constants.watcherEvents.wjsReady;
 var endpointsStatusResolved = constants.watcherEvents.endpointsStatusResolved;
 var wjsConnected = constants.watcherEvents.wjsConnected;
 var wjsEndpointsUpdated = constants.watcherEvents.wjsEndpointsUpdated;
@@ -910,7 +910,7 @@ watcher = stampit().state({
                 });
                 _self.stop();
             }
-            _self.emitter.emit(watcherConfigured);
+            _self.emitter.emit(wjsConfigured);
             return _self;
         },
 
@@ -929,7 +929,7 @@ watcher = stampit().state({
                 interval = _self.options.interval;
 
             _self.server.start(function () {
-                _self.emitter.emit(watcherReady);
+                _self.emitter.emit(wjsReady);
                 logger.info('Watcher is up and running (host/port/interval): (' +
                 host + '/' + port + '/' + interval + ')');
                 setTimeout(_.bind(_self._pollEndpoints, _self), 0).unref();

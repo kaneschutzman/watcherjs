@@ -60,6 +60,7 @@
                                 <li><a href="../classes/TransactionalExecutor.html">TransactionalExecutor</a></li>
                                 <li><a href="../classes/Validator.html">Validator</a></li>
                                 <li><a href="../classes/Watcher.html">Watcher</a></li>
+                                <li><a href="../classes/WatcherEvents.html">WatcherEvents</a></li>
                                 <li><a href="../classes/WatcherFactory.html">WatcherFactory</a></li>
                                 <li><a href="../classes/WatcherHttp.html">WatcherHttp</a></li>
                             </ul>
@@ -176,11 +177,32 @@ connectorType = {
     http: &#x27;http&#x27;
 };
 
+/**
+ * System events.
+ *
+ * @class WatcherEvents
+ */
 watcherEvents = {
-    watcherConfigured: &#x27;watcher-configured&#x27;,
-    watcherReady: &#x27;watcher-ready&#x27;,
+    wjsConfigured: &#x27;wjs-configured&#x27;,
+    wjsReady: &#x27;wjs-ready&#x27;,
     endpointsStatusResolved: &#x27;endpoints-status-resolved&#x27;,
+    /**
+     * Event fired for the connected socket-io clients, when the connection with system has been established.
+     *
+     * @property wjsConnected
+     * @type String
+     * @static
+     * @final
+     */
     wjsConnected: &#x27;wjs-connected&#x27;,
+    /**
+     * Event fired for the connected socket-io clients, when the endpoints status has been updated.
+     *
+     * @property wjsEndpointsUpdated
+     * @type String
+     * @static
+     * @final
+     */
     wjsEndpointsUpdated: &#x27;wjs-endpoints-updated&#x27;
 };
 

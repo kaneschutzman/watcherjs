@@ -23,6 +23,7 @@ YUI.add("yuidoc-meta", function(Y) {
         "TransactionalExecutor",
         "Validator",
         "Watcher",
+        "WatcherEvents",
         "WatcherFactory",
         "WatcherHttp"
     ],
