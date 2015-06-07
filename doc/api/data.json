@@ -2,7 +2,7 @@
     "project": {
         "name": "watcher.js",
         "description": "app watcher",
-        "version": "2.5.2",
+        "version": "2.5.3",
         "url": ""
     },
     "files": {

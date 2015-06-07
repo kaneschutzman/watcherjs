@@ -188,14 +188,18 @@ the status of the 'node.js'.
 */
 ```
 
-## Real time notification
+## Real time event notification
 
 ```html
 <script src="../src/public/js/lib/socket.io.min.js"></script>
 <script>
+    //modify the watcherjs URL if needed
     var socket = io.connect('http://localhost:7777');
     socket.on('wjs-connected', function (data) {
         console.log(data.message);
+    });
+    socket.on('connect_error', function (error) {
+        console.log('Connection error with watcherjs, wait to be restored.');
     });
     socket.on('wjs-endpoints-updated', function (data) {
         console.log(data.message);

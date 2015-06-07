@@ -1,3 +1,14 @@
+## v2.5.3
+
+#### Bug Fixes
+Fix, on connection error a warning message should be appeared
+
+#### Features/improvements
+* API documentation typos fixes/additions.
+* Example with real time event notification update.
+
+----
+
 ## v2.5.2
 
 #### Features/improvements
