@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="watcher.js" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 2.5.3</em>
+            <em>API Docs for: 2.5.x</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -168,13 +168,13 @@ var resolutionStrategy = {
          //for &#39;socket&#39; connector, on connection. resolve the status as up
          return up;
      },
-     resolveOnConversation: function resolveOnConnection(connection) {
+     resolveOnConversation: function resolveOnConversation(connection, chunk) {
          //in this implementation, for &#39;socket&#39; connector there is no need to do something
          //since the resolution is performed on connection.
          //For &#39;http&#39; connector any received data means that the service is up
          return up;
      },
-     resolveNow: function resolveOnConnection(connection) {
+     resolveNow: function resolveNow(connection) {
          //return always undefined
      }
 };
