@@ -40,13 +40,13 @@ var resolutionStrategy = {
         //for 'socket' connector, on connection. resolve the status as up
         return up;
     },
-    resolveOnConversation: function resolveOnConnection(connection) {
+    resolveOnConversation: function resolveOnConversation(connection, chunk) {
         //in this implementation, for 'socket' connector there is no need to do something
         //since the resolution is performed on connection.
         //For 'http' connector any received data means that the service is up
         return up;
     },
-    resolveNow: function resolveOnConnection(connection) {
+    resolveNow: function resolveNow(connection) {
         //return always undefined
     }
 };
