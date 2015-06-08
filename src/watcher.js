@@ -114,8 +114,8 @@
  *          //mark as down only for demonstration purposes
  *           return down;
  *       },
- *       resolveOnConversation: function resolveOnConnection(connection) {},
- *       resolveNow: function resolveOnConnection(connection) {}
+ *       resolveOnConversation: function resolveOnConversation(connection, chunk) {},
+ *       resolveNow: function resolveNow(connection) {}
  *   };
  *
  * var options = {
