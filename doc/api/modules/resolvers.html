@@ -114,7 +114,7 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/src_resolvers.js.html#l307"><code>src&#x2F;resolvers.js:307</code></a>
+            Defined in: <a href="../files/src_resolvers.js.html#l310"><code>src&#x2F;resolvers.js:310</code></a>
         </div>
 
 </div>
@@ -138,7 +138,8 @@ of the service status. The outcome of the service status could be one of the fol
 <li><strong><a href="../classes/ServiceStatus.html#property_undetermined" class="crosslink">undetermined</a></strong>, when no decision can be made.</li>
 <li><strong><a href="../classes/ServiceStatus.html#property_unreachable" class="crosslink">unreachable</a></strong>, status that is used by the connector
 when no connection with the endpoint can be made. A default implementation is provided by the
-<strong><a href="../classes/ResolutionStrategy.html" class="crosslink">ResolutionStrategy</a></strong>.</li>
+<strong><a href="../classes/ResolutionStrategy.html" class="crosslink">ResolutionStrategy</a></strong>. Note that the <strong><em>undetermined</em></strong> status is considered as
+a valid service status and NOT &#39;undefined&#39;.</li>
 </ul>
 <h3 id="exported-objects">Exported objects</h3>
 <ul>
@@ -165,13 +166,14 @@ var resolutionStrategy = {
           //it is ok, do nothing since there is no state
      },
      resolveOnConnection: function resolveOnConnection(connection) {
-         //for &#39;socket&#39; connector, on connection. resolve the status as up
+         // For &#39;socket&#39; connector, resolve the status as up on connection
+         // Note that this method is applied only for &#39;socket&#39; connector
          return up;
      },
      resolveOnConversation: function resolveOnConversation(connection, chunk) {
-         //in this implementation, for &#39;socket&#39; connector there is no need to do something
-         //since the resolution is performed on connection.
-         //For &#39;http&#39; connector any received data means that the service is up
+         // For a &#39;socket&#39; connector, in this implementation, this method is not invoked,
+         // since the resolution is performed at &#39;resolveOnConnection&#39; method.
+         // For a &#39;http&#39; connector, in this implementation, any received data means that the service is up
          return up;
      },
      resolveNow: function resolveNow(connection) {
