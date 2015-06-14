@@ -39,24 +39,73 @@
         </div>
 
         <h3>
-<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Welcome to watcher.js project.</h3>
+            <a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Welcome to watcher.js project.
+        </h3>
 
-<p>Watcher.js is a node.js based application that can be used to monitor service status. It is not a competitor of
-    <a href="http://www.nagios.org/">nagios</a> or <a href="http://www.zabbix.com/">zabbix</a> or any other advanced monitoring tool. Although, it can be a solution for simple cases.
-    The application architecture is simple. At regular intervals service specific defined messages, either as http requests or as raw data to sockets,
-    are send to the service endpoints to find out their status. On the service status resolution, the status is stored internally
-    and is made available either programmatically or via REST requests. The application, at design level, is extensible since custom defined
-    behaviors can be easily applied.</p>
+        <p>Watcher.js is a node.js based application that can be used to monitor service status. It is not a competitor of
+            <a href="http://www.nagios.org/">nagios</a> or <a href="http://www.zabbix.com/">zabbix</a> or any other advanced monitoring tool. Although, it can be a solution for simple cases.
+            The application architecture is simple. At regular intervals service specific defined messages, either as http requests or as raw data to sockets,
+            are send to the service endpoints to find out their status. On the service status resolution, the status is stored internally
+            and is made available either programmatically or via REST requests. The application, at design level, is extensible since custom defined
+            behaviors can be easily applied.</p>
 
-<h3>
-<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+          <h3>
+              Application extension points
+          </h3>
+            <ul>
+                <li>
+                    Resolution strategies<br>
+                    A <strong><i>resolution strategy</i></strong> is the strategy for service status resolution.
+                    The strategy is described by a set of methods. Each method is called at a specific stage during the
+                    conversation with the endpoint and returns the outcome of the service status.
+                </li>
+                <li>
+                    Route extensions<br>
+                    A <strong><i>route extension</i></strong> is user defined route extension for building custom responses
+                    for the status requests. A route extension is a function that accepts the endpoints registry as parameter
+                    and return a function that conforms to <a href="http://expressjs.com/guide/routing.html">express route conventions</a>.
+                </li>
+            </ul>
 
-<p>Written by <a href="https://github.com/jpsoroulas">John Psoroulas</a>, 2015.</p>
+          <h3>
+              API / REST API summary
+          </h3>
+          <ul>
+              <li>
+                  Get information/status for endpoint(s)
+              </li>
+              <li>
+                  Add/remove endpoint
+              </li>
+              <li>
+                  Activate/deactivate endpoint
+              </li>
+              <li>
+                  Enable/disable email notification on erroneous service status
+              </li>
+              <li>
+                  Store endpoint configuration
+              </li>
+              <li>
+                  Query endpoint(s) status history
+              </li>
+          </ul>
+
+          <h3>
+              Web console
+          </h3>
+          <p>On top of the application's REST services, a simple but handy web GUI is implemented, the watcher web console.
+          The console enables the user to perform the exposed REST services visually.</p>
+
+          <h3>
+            Authors and Contributors
+          </h3>
+          <p>Written by <a href="https://github.com/jpsoroulas">John Psoroulas</a>, 2015.</p>
 
       </section>
 
     </div>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-    
+
   </body>
 </html>
