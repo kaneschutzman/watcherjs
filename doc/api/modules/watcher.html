@@ -210,7 +210,7 @@ monitored service.</p>
 <pre class="code prettyprint"><code class="lang-javascript">// Here is the configuration of three endpoints. Two of them are accessed via sockets and refer to the services
 // &#39;service-1&#39; and &#39;service-2&#39; hosted at &#39;11.222.333.444&#39; and &#39;11.222.333.555&#39; respectively, whereas the other is
 // accessed via http and refers to the service &#39;service-3&#39; that is also hosted at &#39;11.222.333.555&#39; (note that we use
-// the notation _service_ since the _endpoint_ and the _service_ is the same component).
+// the notation &#39;service&#39; since the &#39;endpoint&#39; and the &#39;service&#39; is the same component).
 // Fix the module paths
 var watcher = require(&#39;watcher&#39;);
 var constants = require(&#39;constants&#39;);
@@ -310,11 +310,11 @@ the status of the &#39;service-1&#39;.
 </code></pre>
 <p><strong>Proxied services</strong></p>
 <pre class="code prettyprint"><code class="lang-javascript">// Proxied services
-// Here is the case where a proxy controls the status of two service (e.g. _proxied-service-1_
-// and _proxied-service-2_). The proxy is hosted at &#39;11.222.333.444&#39; and can be accessed via http.
+// Here is the case where a proxy controls the status of two service (e.g. &#39;proxied-service-1&#39;
+// and &#39;proxied-service-2&#39;). The proxy is hosted at &#39;11.222.333.444&#39; and can be accessed via http.
 // Two http endpoints at the proxy are created, the &#39;endpoint-1&#39; and &#39;endpoint-2&#39; each one of them
-// is connected with the respective monitored proxied services (note that we use the notation _endpoint_ since
-// the _endpoint_ is not the monitored _service_).
+// is connected with the respective monitored proxied services (note that we use the notation &#39;endpoint&#39; since
+// the &#39;endpoint&#39; is not the monitored &#39;service&#39;).
 
 // Fix the module paths
 var watcherFactory = require(&#39;watcher&#39;).watcherFactory;

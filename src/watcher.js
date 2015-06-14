@@ -98,7 +98,7 @@
  * // Here is the configuration of three endpoints. Two of them are accessed via sockets and refer to the services
  * // 'service-1' and 'service-2' hosted at '11.222.333.444' and '11.222.333.555' respectively, whereas the other is
  * // accessed via http and refers to the service 'service-3' that is also hosted at '11.222.333.555' (note that we use
- * // the notation _service_ since the _endpoint_ and the _service_ is the same component).
+ * // the notation 'service' since the 'endpoint' and the 'service' is the same component).
  * // Fix the module paths
  * var watcher = require('watcher');
  * var constants = require('constants');
@@ -199,11 +199,11 @@
  * __Proxied services__
  *    ```javascript
  * // Proxied services
- * // Here is the case where a proxy controls the status of two service (e.g. _proxied-service-1_
- * // and _proxied-service-2_). The proxy is hosted at '11.222.333.444' and can be accessed via http.
+ * // Here is the case where a proxy controls the status of two service (e.g. 'proxied-service-1'
+ * // and 'proxied-service-2'). The proxy is hosted at '11.222.333.444' and can be accessed via http.
  * // Two http endpoints at the proxy are created, the 'endpoint-1' and 'endpoint-2' each one of them
- * // is connected with the respective monitored proxied services (note that we use the notation _endpoint_ since
- * // the _endpoint_ is not the monitored _service_).
+ * // is connected with the respective monitored proxied services (note that we use the notation 'endpoint' since
+ * // the 'endpoint' is not the monitored 'service').
  *
  * // Fix the module paths
  * var watcherFactory = require('watcher').watcherFactory;
