@@ -99,17 +99,22 @@ a unbound resolution strategy (if any) could be selected.
 
 ----
 
-## API summary
+## API / REST API summary
 The application features can be summarized as follows:
 
-  * add/remove endpoint
-  * activate/deactivate endpoint
-  * enable/disable email notification on erroneous service status
-  * store endpoint configuration (at the file system for easy modification)
+  * Get information/status for endpoint(s)
+  * Add/remove endpoint
+  * Activate/deactivate endpoint
+  * Enable/disable email notification on erroneous service status
+  * Store endpoint configuration (at the file system for easy modification)
   * Query endpoint(s) status history
-  * define custom _status resolution strategy_ for specific endpoint
-  * define pool of custom _unbound status resolution strategies_
-  * define route extensions for building custom responses for the _status requests_
+
+## Extension points
+The application's extensions points can be summarized as follows:
+
+  * Define custom _status resolution strategy_ for specific endpoint
+  * Define pool of custom _unbound status resolution strategies_
+  * Define route extensions for building custom responses for the _status requests_
 
 ----
 
