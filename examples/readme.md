@@ -2,7 +2,7 @@
 
 Here are various examples of how to use the watcher.js API.
 
-## Create a _http connector_
+## Create a _http connector_ with default resolution strategy
 
 ```js
 'use strict';
@@ -19,7 +19,79 @@ var connector = httpConnectorFactory.create(({
 connector.start();
 ```
 
-## Create a _socket connector_
+## Create a _http connector_ with custom resolution strategy
+
+```js
+'use strict';
+var s = require('underscore.string');
+var connectors = require('../src/connectors');
+var httpConnectorFactory = connectors.httpConnectorFactory;
+var constants = require('../src/constants');
+var up = constants.serviceStatus.up;
+var undetermined = constants.serviceStatus.undetermined;
+
+// Create a custom resolution strategy. In this implementation,
+// the received data chunks are stored internally and the final evaluation
+// is made when the response is completed
+var resolutionStrategy = {
+    data: [],
+    reset: function reset() {
+        // Clear the state
+        this.data = [];
+    },
+    resolveOnConnection: function resolveOnConnection(connection) {
+        // This method is not applied for 'http' connector type
+        return void 0;
+    },
+    resolveOnConversation: function resolveOnConversation(connection, chunk) {
+        // Store the received data chunks
+        this.data.push(chunk);
+        // return undefined, to perform the evaluation when the response is completed.
+        // Remind that a 'undetermined' status is a valid service status. If this method returns
+        // 'undetermined', the method 'resolvedNow' will not be called since the status is considered
+        // resolved as 'undetermined' by the method 'resolveOnConversation'.
+        return void 0;
+    },
+    resolveNow: function resolveNow(connection) {
+        // Make the final evaluation when the response is completed
+        return s.include(this.data.join(''), 'Node.js') ? up : undetermined;
+    }
+};
+
+// Create the 'http' connector
+var connector = httpConnectorFactory.create(({
+    url: 'https://nodejs.org/',
+    timeout: 3000,
+    resolutionStrategy: resolutionStrategy
+}));
+
+// Start the connector
+connector.start();
+```
+
+## Create a _socket connector_ with default resolution strategy
+
+```js
+'use strict';
+var connectors = require('../src/connectors');
+var resolvers = require('../src/resolvers');
+var constants = require('../src/constants');
+
+var socketConnectorFactory = connectors.socketConnectorFactory;
+
+// Create the connector
+// Since the resolutionStrategy property is not set, the default onConnectionResolution strategy is used.
+var connector = socketConnectorFactory.create({
+    host: 'nodejs.org',
+    port: 80,
+    timeout: 2000
+});
+
+// Start the connector
+connector.start();
+```
+
+## Create a _socket connector_ with custom resolution strategy
 
 ```js
 'use strict';
@@ -34,29 +106,30 @@ var socketConnectorFactory = connectors.socketConnectorFactory;
 // An even simpler strategy than the default implementation (no data state is kept)
 var resolutionStrategy = {
     reset: function reset() {
-        //it is ok, do nothing since there is no state
+        // It is ok, do nothing since there is no state
     },
     resolveOnConnection: function resolveOnConnection(connection) {
-        //for 'socket' connector, on connection. resolve the status as up
+        // For 'socket' connector, resolve the status as 'up' on connection
+        // Note that this method is applied only for 'socket' connector
         return up;
     },
     resolveOnConversation: function resolveOnConversation(connection, chunk) {
-        //in this implementation, for 'socket' connector there is no need to do something
-        //since the resolution is performed on connection.
-        //For 'http' connector any received data means that the service is up
+        // For a 'socket' connector, in this implementation, this method is not invoked,
+        // since the resolution is performed at 'resolveOnConnection' method.
+        // For a 'http' connector, in this implementation, any received data means that the service is up
         return up;
     },
     resolveNow: function resolveNow(connection) {
-        //return always undefined
+        // In this implementation, return always undefined
     }
 };
 
-// Create the connector
+// Create a 'socket' connector with a custom resolution strategy
 var connector = socketConnectorFactory.create({
     host: 'nodejs.org',
     port: 80,
     timeout: 2000,
-    // if the property is not set, the default onConnectionResolution strategy is used.
+    // If the property is not set, the default onConnectionResolution strategy is used.
     resolutionStrategy: resolutionStrategy
 });
 

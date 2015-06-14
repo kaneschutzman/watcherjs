@@ -29,8 +29,8 @@ A service could be marked as:
  * _unreachable_, status that is used by the connector when no connection with the endpoint can be made.
 
 Detailed documentation and examples can be found at:
-[resolvers](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/modules/resolvers.html) and
-[socket-connector.js](examples/socket-connector.js)
+[resolvers](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/modules/resolvers.html),
+[socket-connector-extended.js](examples/socket-connector-extended.js) and [http-connector-extended.js](examples/http-connector-extended.js)
 
 ### _[Connectors](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/modules/connectors.html)_
 A connector is responsible for connecting, communicating and determining the service status using the _status resolver_
@@ -41,7 +41,8 @@ http(s) protocol.
 
 Detailed documentation and examples can be found at:
 [connectors](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/modules/connectors.html),
-[socket-connector.js](examples/socket-connector.js) and [socket-connector.js](examples/http-connector.js)
+[socket-connector.js](examples/socket-connector.js), [socket-connector-extended.js](examples/socket-connector-extended.js),
+[http-connector.js](examples/http-connector.js) and [http-connector-extended.js](examples/http-connector-extended.js)
 
 ### _[Watcher](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/modules/watcher.html)_
 This is the main application component. It provides the factory method for creating an application instance.

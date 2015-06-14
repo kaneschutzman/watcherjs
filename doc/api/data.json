@@ -229,8 +229,8 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/resolvers.js",
-            "line": 307,
-            "description": "###Overview\nProvides the status resolvers and resolution strategies.\nThe status resolver implements the context of the applying strategy for service status resolution, whereas the\n_resolution strategy_ the strategy itself.\nThe _strategy_ is described by the following set of methods,\n__{{#crossLink \"ResolutionStrategy/resolveOnConnection:method\"}}{{/crossLink}}__,\n__{{#crossLink \"ResolutionStrategy/resolveOnConversation:method\"}}{{/crossLink}}__,\n__{{#crossLink \"ResolutionStrategy/resolveNow:method\"}}{{/crossLink}}__ and\n__{{#crossLink \"ResolutionStrategy/reset:method\"}}{{/crossLink}}__.\nEach method is called at a specific stage of the conversation with the endpoint, and returns the outcome\nof the service status. The outcome of the service status could be one of the following:\n* __{{#crossLink \"ServiceStatus/up:property\"}}{{/crossLink}}__, when the service is up and running.\n* __{{#crossLink \"ServiceStatus/down:property\"}}{{/crossLink}}__, when the service is down.\n* __{{#crossLink \"ServiceStatus/undetermined:property\"}}{{/crossLink}}__, when no decision can be made.\n* __{{#crossLink \"ServiceStatus/unreachable:property\"}}{{/crossLink}}__, status that is used by the connector\nwhen no connection with the endpoint can be made. A default implementation is provided by the\n__{{#crossLink \"ResolutionStrategy\"}}{{/crossLink}}__.\n\n###Exported objects\n* __{{#crossLink \"ResolutionStrategyFactory\"}}{{/crossLink}}__\n* __{{#crossLink \"StatusResolverFactory\"}}{{/crossLink}}__\n* __{{#crossLink \"OnConnectionResolutionFactory\"}}{{/crossLink}}__\n\n###API Usage samples\n   ```javascript\n// statusResolverFactory with onConnectionResolutionFactory\nvar resolvers = require('resolvers');\nvar statusResolverFactory = resolvers.statusResolverFactory;\nvar onConnectionResolutionFactory = resolvers.onConnectionResolutionFactory;\nvar resolver = statusResolverFactory.create(onConnectionResolutionFactory.create());\n   ```\n\n   ```javascript\n// A custom resolver\n// Fix the module paths\nvar constants = require('constants');\nvar resolvers = require('resolvers');\nvar up = constants.serviceStatus.up;\nvar statusResolverFactory = resolvers.statusResolverFactory;\n// An even simpler strategy than the default implementation (no data state is kept)\nvar resolutionStrategy = {\n     reset: function reset() {\n          //it is ok, do nothing since there is no state\n     },\n     resolveOnConnection: function resolveOnConnection(connection) {\n         //for 'socket' connector, on connection. resolve the status as up\n         return up;\n     },\n     resolveOnConversation: function resolveOnConversation(connection, chunk) {\n         //in this implementation, for 'socket' connector there is no need to do something\n         //since the resolution is performed on connection.\n         //For 'http' connector any received data means that the service is up\n         return up;\n     },\n     resolveNow: function resolveNow(connection) {\n         //return always undefined\n     }\n};\nvar resolver = statusResolverFactory.create(resolutionStrategy);\n   ```"
+            "line": 310,
+            "description": "###Overview\nProvides the status resolvers and resolution strategies.\nThe status resolver implements the context of the applying strategy for service status resolution, whereas the\n_resolution strategy_ the strategy itself.\nThe _strategy_ is described by the following set of methods,\n__{{#crossLink \"ResolutionStrategy/resolveOnConnection:method\"}}{{/crossLink}}__,\n__{{#crossLink \"ResolutionStrategy/resolveOnConversation:method\"}}{{/crossLink}}__,\n__{{#crossLink \"ResolutionStrategy/resolveNow:method\"}}{{/crossLink}}__ and\n__{{#crossLink \"ResolutionStrategy/reset:method\"}}{{/crossLink}}__.\nEach method is called at a specific stage of the conversation with the endpoint, and returns the outcome\nof the service status. The outcome of the service status could be one of the following:\n* __{{#crossLink \"ServiceStatus/up:property\"}}{{/crossLink}}__, when the service is up and running.\n* __{{#crossLink \"ServiceStatus/down:property\"}}{{/crossLink}}__, when the service is down.\n* __{{#crossLink \"ServiceStatus/undetermined:property\"}}{{/crossLink}}__, when no decision can be made.\n* __{{#crossLink \"ServiceStatus/unreachable:property\"}}{{/crossLink}}__, status that is used by the connector\nwhen no connection with the endpoint can be made. A default implementation is provided by the\n__{{#crossLink \"ResolutionStrategy\"}}{{/crossLink}}__. Note that the __*undetermined*__ status is considered as\na valid service status and NOT 'undefined'.\n\n###Exported objects\n* __{{#crossLink \"ResolutionStrategyFactory\"}}{{/crossLink}}__\n* __{{#crossLink \"StatusResolverFactory\"}}{{/crossLink}}__\n* __{{#crossLink \"OnConnectionResolutionFactory\"}}{{/crossLink}}__\n\n###API Usage samples\n   ```javascript\n// statusResolverFactory with onConnectionResolutionFactory\nvar resolvers = require('resolvers');\nvar statusResolverFactory = resolvers.statusResolverFactory;\nvar onConnectionResolutionFactory = resolvers.onConnectionResolutionFactory;\nvar resolver = statusResolverFactory.create(onConnectionResolutionFactory.create());\n   ```\n\n   ```javascript\n// A custom resolver\n// Fix the module paths\nvar constants = require('constants');\nvar resolvers = require('resolvers');\nvar up = constants.serviceStatus.up;\nvar statusResolverFactory = resolvers.statusResolverFactory;\n// An even simpler strategy than the default implementation (no data state is kept)\nvar resolutionStrategy = {\n     reset: function reset() {\n          //it is ok, do nothing since there is no state\n     },\n     resolveOnConnection: function resolveOnConnection(connection) {\n         // For 'socket' connector, resolve the status as up on connection\n         // Note that this method is applied only for 'socket' connector\n         return up;\n     },\n     resolveOnConversation: function resolveOnConversation(connection, chunk) {\n         // For a 'socket' connector, in this implementation, this method is not invoked,\n         // since the resolution is performed at 'resolveOnConnection' method.\n         // For a 'http' connector, in this implementation, any received data means that the service is up\n         return up;\n     },\n     resolveNow: function resolveNow(connection) {\n         //return always undefined\n     }\n};\nvar resolver = statusResolverFactory.create(resolutionStrategy);\n   ```"
         },
         "utils": {
             "name": "utils",
@@ -450,7 +450,7 @@
             "module": "resolvers",
             "namespace": "",
             "file": "src/resolvers.js",
-            "line": 86,
+            "line": 88,
             "description": "A resolution strategy implements *the strategy* for resolving the status of a service.\nEach strategy should implement the following methods:\n__{{#crossLink \"ResolutionStrategy/resolveOnConnection:method\"}}{{/crossLink}}__,\n__{{#crossLink \"ResolutionStrategy/resolveOnConversation:method\"}}{{/crossLink}}__,\n__{{#crossLink \"ResolutionStrategy/resolveNow:method\"}}{{/crossLink}}__,\n__{{#crossLink \"ResolutionStrategy/reset:method\"}}{{/crossLink}}__.\nThis is a simple default implementation."
         },
         "ResolutionStrategyFactory": {
@@ -464,7 +464,7 @@
             "module": "resolvers",
             "namespace": "",
             "file": "src/resolvers.js",
-            "line": 173,
+            "line": 175,
             "description": "ResolutionStrategy factory.",
             "static": 1
         },
@@ -479,7 +479,7 @@
             "module": "resolvers",
             "namespace": "",
             "file": "src/resolvers.js",
-            "line": 190,
+            "line": 192,
             "description": "The status resolver provides the context and implements the logic for applying\nand coordinating the resolution strategy for the service. This is the component\nthat connectors directly deal with."
         },
         "StatusResolverFactory": {
@@ -493,7 +493,7 @@
             "module": "resolvers",
             "namespace": "",
             "file": "src/resolvers.js",
-            "line": 264,
+            "line": 267,
             "description": "StatusResolver factory.",
             "static": 1
         },
@@ -508,7 +508,7 @@
             "module": "resolvers",
             "namespace": "",
             "file": "src/resolvers.js",
-            "line": 289,
+            "line": 292,
             "description": "An implementation of resolution strategy that on the service connection the service status\nis resolved as *up*.",
             "extends": "ResolutionStrategy"
         },
@@ -523,7 +523,7 @@
             "module": "resolvers",
             "namespace": "",
             "file": "src/resolvers.js",
-            "line": 307,
+            "line": 310,
             "description": "OnConnectionResolution factory.",
             "static": 1
         },
@@ -1141,7 +1141,7 @@
         },
         {
             "file": "src/resolvers.js",
-            "line": 98,
+            "line": 100,
             "description": "Holds the data received from the service.",
             "itemtype": "property",
             "name": "data",
@@ -1151,7 +1151,7 @@
         },
         {
             "file": "src/resolvers.js",
-            "line": 106,
+            "line": 108,
             "description": "Clears the state (the data received from the service).",
             "itemtype": "method",
             "name": "reset",
@@ -1160,7 +1160,7 @@
         },
         {
             "file": "src/resolvers.js",
-            "line": 114,
+            "line": 116,
             "description": "The method is called when the connection with the service is established.\nNote that it applies only in cases that a __SocketConnector is used__.\nThe method could potentially trigger a handshaking protocol with the service.\nThe default implementation returns undefined.",
             "itemtype": "method",
             "name": "resolveOnConnection",
@@ -1179,7 +1179,7 @@
         },
         {
             "file": "src/resolvers.js",
-            "line": 129,
+            "line": 131,
             "description": "The method is called when the connector receives data from the server.\nAny data could be received after a successful connection with a service.\nSuccessful connections for a HttpConnector connector type are consider all http\nservice responses with status code 2xx. Whereas for a SocketConnector when the connection\nis established. Note that, currently, the data is transmitted as string encoded as __utf-8__.\nThis default implementation resolves the status as __*up*__ if any chunk of data is received.",
             "itemtype": "method",
             "name": "resolveOnConversation",
@@ -1203,7 +1203,7 @@
         },
         {
             "file": "src/resolvers.js",
-            "line": 154,
+            "line": 156,
             "description": "The method is called when the resolution strategy must determine the service status\nimmediately (for example when a connection error or a connection timeout is occurred).\nOrdinarily, it is the last method that is get called since the strategy must end up a result.\nAt this default implementation, the service status is resolved as __*up*__ if any data\nhas been received.",
             "itemtype": "method",
             "name": "resolveNow",
@@ -1215,7 +1215,7 @@
         },
         {
             "file": "src/resolvers.js",
-            "line": 179,
+            "line": 181,
             "description": "Creates a ResolutionStrategy instance.",
             "static": 1,
             "itemtype": "method",
@@ -1229,7 +1229,7 @@
         },
         {
             "file": "src/resolvers.js",
-            "line": 198,
+            "line": 200,
             "description": "States whether the status has been resolved or not. True if it\nresolved, otherwise false.",
             "access": "private",
             "tagname": "",
@@ -1240,7 +1240,7 @@
         },
         {
             "file": "src/resolvers.js",
-            "line": 207,
+            "line": 209,
             "description": "Resets the resolver state.",
             "itemtype": "method",
             "name": "reset",
@@ -1249,7 +1249,7 @@
         },
         {
             "file": "src/resolvers.js",
-            "line": 217,
+            "line": 219,
             "description": "This method is called from the connector when a chunk of data has been received.\nInternally, it uses the applying status resolution strategy.",
             "itemtype": "method",
             "name": "consumeAndResolve",
@@ -1262,8 +1262,8 @@
         },
         {
             "file": "src/resolvers.js",
-            "line": 238,
-            "description": "It is the last method that is get called when the service status has been resolved. If no status is\nspecified the resolver forces resolution strategy to end up a result. This method is also called\nby the service connectors when the service status can be resolved by them (for example when\nthe connection can not be established, the connector resolves the status as *unreachable*)",
+            "line": 240,
+            "description": "It is the last method that is get called when the service status has been resolved. If no status is\nspecified (the status is undefined) the resolver forces resolution strategy to end up a result.\n__Mark that the *undetermined* status is considered as a valid service status and NOT 'undefined'__.\nThis method is also called by the service connectors when the service status can be resolved by them\n(for example when the connection can not be established, the connector resolves the status as *unreachable*)",
             "itemtype": "method",
             "name": "resolved",
             "params": [
@@ -1279,7 +1279,7 @@
         },
         {
             "file": "src/resolvers.js",
-            "line": 270,
+            "line": 273,
             "description": "Creates a StatusResolver instance.",
             "static": 1,
             "itemtype": "method",
@@ -1300,7 +1300,7 @@
         },
         {
             "file": "src/resolvers.js",
-            "line": 296,
+            "line": 299,
             "description": "Always returns *up*",
             "itemtype": "method",
             "name": "resolveOnConnection",
@@ -1316,7 +1316,7 @@
         },
         {
             "file": "src/resolvers.js",
-            "line": 313,
+            "line": 316,
             "description": "Creates an OnConnectionResolution instance.",
             "static": 1,
             "itemtype": "method",
@@ -1330,7 +1330,7 @@
         },
         {
             "file": "src/resolvers.js",
-            "line": 324,
+            "line": 327,
             "description": "Exported module object",
             "class": "OnConnectionResolutionFactory",
             "module": "resolvers"
@@ -2142,7 +2142,7 @@
         },
         {
             "message": "Missing item type\nExported module object",
-            "line": " src/resolvers.js:324"
+            "line": " src/resolvers.js:327"
         },
         {
             "message": "Missing item type\nCreated by jpsoroulas.",

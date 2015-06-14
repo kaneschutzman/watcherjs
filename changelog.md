@@ -1,3 +1,10 @@
+## v2.5.4
+
+#### Features/improvements
+* Documentation and examples updates.
+
+----
+
 ## v2.5.3
 
 #### Bug Fixes

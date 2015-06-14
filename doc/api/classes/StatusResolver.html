@@ -114,7 +114,7 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/src_resolvers.js.html#l190"><code>src&#x2F;resolvers.js:190</code></a>
+            Defined in: <a href="../files/src_resolvers.js.html#l192"><code>src&#x2F;resolvers.js:192</code></a>
         </div>
 
             Module: <a href="../modules/resolvers.html">resolvers</a>
@@ -196,7 +196,7 @@ that connectors directly deal with.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_resolvers.js.html#l217"><code>src&#x2F;resolvers.js:217</code></a>
+        <a href="../files/src_resolvers.js.html#l219"><code>src&#x2F;resolvers.js:219</code></a>
         </p>
 
 
@@ -237,7 +237,7 @@ Internally, it uses the applying status resolution strategy.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_resolvers.js.html#l207"><code>src&#x2F;resolvers.js:207</code></a>
+        <a href="../files/src_resolvers.js.html#l209"><code>src&#x2F;resolvers.js:209</code></a>
         </p>
 
 
@@ -274,7 +274,7 @@ Internally, it uses the applying status resolution strategy.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_resolvers.js.html#l238"><code>src&#x2F;resolvers.js:238</code></a>
+        <a href="../files/src_resolvers.js.html#l240"><code>src&#x2F;resolvers.js:240</code></a>
         </p>
 
 
@@ -283,9 +283,10 @@ Internally, it uses the applying status resolution strategy.</p>
 
     <div class="description">
         <p>It is the last method that is get called when the service status has been resolved. If no status is
-specified the resolver forces resolution strategy to end up a result. This method is also called
-by the service connectors when the service status can be resolved by them (for example when
-the connection can not be established, the connector resolves the status as <em>unreachable</em>)</p>
+specified (the status is undefined) the resolver forces resolution strategy to end up a result.
+<strong>Mark that the <em>undetermined</em> status is considered as a valid service status and NOT &#39;undefined&#39;</strong>.
+This method is also called by the service connectors when the service status can be resolved by them
+(for example when the connection can not be established, the connector resolves the status as <em>unreachable</em>)</p>
 
     </div>
 
@@ -328,7 +329,7 @@ the connection can not be established, the connector resolves the status as <em>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_resolvers.js.html#l198"><code>src&#x2F;resolvers.js:198</code></a>
+                            <a href="../files/src_resolvers.js.html#l200"><code>src&#x2F;resolvers.js:200</code></a>
                             </p>
                     
                     

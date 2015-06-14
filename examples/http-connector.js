@@ -1,7 +1,7 @@
 /**
  * Created by jpsoroulas.
  */
-// An example of creating http connector
+// An example of creating http connector with default resolution strategy
 'use strict';
 var connectors = require('../src/connectors');
 var httpConnectorFactory = connectors.httpConnectorFactory;

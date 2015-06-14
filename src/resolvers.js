@@ -19,7 +19,8 @@
  * * __{{#crossLink "ServiceStatus/undetermined:property"}}{{/crossLink}}__, when no decision can be made.
  * * __{{#crossLink "ServiceStatus/unreachable:property"}}{{/crossLink}}__, status that is used by the connector
  * when no connection with the endpoint can be made. A default implementation is provided by the
- * __{{#crossLink "ResolutionStrategy"}}{{/crossLink}}__.
+ * __{{#crossLink "ResolutionStrategy"}}{{/crossLink}}__. Note that the __*undetermined*__ status is considered as
+ * a valid service status and NOT 'undefined'.
  *
  * ###Exported objects
  * * __{{#crossLink "ResolutionStrategyFactory"}}{{/crossLink}}__
@@ -48,13 +49,14 @@
  *           //it is ok, do nothing since there is no state
  *      },
  *      resolveOnConnection: function resolveOnConnection(connection) {
- *          //for 'socket' connector, on connection. resolve the status as up
+ *          // For 'socket' connector, resolve the status as up on connection
+ *          // Note that this method is applied only for 'socket' connector
  *          return up;
  *      },
  *      resolveOnConversation: function resolveOnConversation(connection, chunk) {
- *          //in this implementation, for 'socket' connector there is no need to do something
- *          //since the resolution is performed on connection.
- *          //For 'http' connector any received data means that the service is up
+ *          // For a 'socket' connector, in this implementation, this method is not invoked,
+ *          // since the resolution is performed at 'resolveOnConnection' method.
+ *          // For a 'http' connector, in this implementation, any received data means that the service is up
  *          return up;
  *      },
  *      resolveNow: function resolveNow(connection) {
@@ -237,9 +239,10 @@ statusResolver = stampit.compose(eventDispatcher, stampit().state({
 
     /**
      * It is the last method that is get called when the service status has been resolved. If no status is
-     * specified the resolver forces resolution strategy to end up a result. This method is also called
-     * by the service connectors when the service status can be resolved by them (for example when
-     * the connection can not be established, the connector resolves the status as *unreachable*)
+     * specified (the status is undefined) the resolver forces resolution strategy to end up a result.
+     * __Mark that the *undetermined* status is considered as a valid service status and NOT 'undefined'__.
+     * This method is also called by the service connectors when the service status can be resolved by them
+     * (for example when the connection can not be established, the connector resolves the status as *unreachable*)
      *
      * @method resolved
      * @param {String} [status] the service status if resolved.
