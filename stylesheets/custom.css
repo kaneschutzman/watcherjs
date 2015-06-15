@@ -1,0 +1,13 @@
+pre {
+    font-size: 12px;
+    line-height: 22px;
+    color: #d2d8ba;
+}
+
+pre {
+    padding-left: 1em;
+    margin-left: -1em;
+    border-left-width: 1px;
+    border-left-style: solid;
+    border-left-color: #626557;
+}

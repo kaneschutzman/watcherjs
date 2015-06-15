@@ -1,118 +1,149 @@
 <!doctype html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Watcherjs by jpsoroulas</title>
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/github-dark.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/respond.js"></script>
-    <!--[if lt IE 9]>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="chrome=1">
+      <title>Watcherjs by jpsoroulas</title>
+      <link rel="stylesheet" href="stylesheets/styles.css">
+      <link rel="stylesheet" href="stylesheets/github-dark.css">
+      <link rel="stylesheet" href="stylesheets/sh_vim-dark.css">
+      <link rel="stylesheet" href="stylesheets/custom.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+      <script src="javascripts/respond.js"></script>
+      <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <!--[if lt IE 8]>
-    <link rel="stylesheet" href="stylesheets/ie.css">
-    <![endif]-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+      <![endif]-->
+      <!--[if lt IE 8]>
+      <link rel="stylesheet" href="stylesheets/ie.css">
+      <![endif]-->
+      <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
-  </head>
-  <body>
-      <div id="header">
-        <nav>
-          <li class="fork"><a href="https://github.com/jpsoroulas/watcherjs">View On GitHub</a></li>
-          <li class="downloads"><a href="https://github.com/jpsoroulas/watcherjs/zipball/master">ZIP</a></li>
-          <li class="downloads"><a href="https://github.com/jpsoroulas/watcherjs/tarball/master">TAR</a></li>
-          <li class="title">DOWNLOADS</li>
-        </nav>
-      </div><!-- end header -->
+    </head>
+    <body>
+        <div id="header">
+            <nav>
+              <li class="fork"><a href="https://github.com/jpsoroulas/watcherjs">View On GitHub</a></li>
+              <li class="downloads"><a href="https://github.com/jpsoroulas/watcherjs/zipball/master">ZIP</a></li>
+              <li class="downloads"><a href="https://github.com/jpsoroulas/watcherjs/tarball/master">TAR</a></li>
+              <li class="title">DOWNLOADS</li>
+            </nav>
+        </div><!-- end header -->
 
-    <div class="wrapper">
+        <div class="wrapper">
 
-      <section>
-        <div id="title">
-          <h1>Watcherjs</h1>
-          <p>A Node.js/Express based application for service monitoring</p>
-          <hr>
-          <span class="credits left">Project maintained by <a href="https://github.com/jpsoroulas">jpsoroulas</a></span>
-          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+            <section>
+                <div id="title">
+                  <h1>Watcherjs</h1>
+                  <p>A Node.js/Express based application for service monitoring</p>
+                  <hr>
+                  <span class="credits left">Project maintained by <a href="https://github.com/jpsoroulas">jpsoroulas</a></span>
+                  <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+                </div>
+
+                <h3>
+                    <a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Welcome to watcher.js project.
+                </h3>
+
+            <p>Watcher.js is a node.js based application that can be used to monitor service status. It is not a competitor of
+                <a href="http://www.nagios.org/">nagios</a> or <a href="http://www.zabbix.com/">zabbix</a> or any other advanced monitoring tool. Although, it can be a solution for simple cases.
+                The application architecture is simple. At regular intervals service specific defined messages, either as http requests or as raw data to sockets,
+                are send to the service endpoints to find out their status. On the service status resolution, the status is stored internally
+                and is made available either programmatically or via REST requests. The application, at design level, is extensible since custom defined
+                behaviors can be easily applied.</p>
+
+              <h3>
+                  Application extension points
+              </h3>
+                <ul>
+                    <li>
+                        Resolution strategies<br>
+                        A <strong><i>resolution strategy</i></strong> is the strategy for service status resolution.
+                        The strategy is described by a set of methods. Each method is called at a specific stage during the
+                        conversation with the endpoint and returns the outcome of the service status.<p>
+
+
+<pre class="sh_sourceCode">
+<span class="sh_comment">// Here is an example of custom resolution strategy implementation.</span>
+<span class="sh_comment">// The received data chunks are stored internally and the final</span>
+<span class="sh_comment">// evaluation is made when the response is completed.</span>
+<span class="sh_keyword">var</span> resolutionStrategy <span class="sh_symbol">=</span> <span class="sh_cbracket">{</span>
+  data: [],
+  reset: <span class="sh_keyword">function</span> <span class="sh_function">reset</span><span class="sh_symbol">()</span> <span class="sh_cbracket">{</span>
+      this.data = [];
+    },
+    resolveOnConnection: <span class="sh_keyword">function</span> <span class="sh_function">resolveOnConnection</span><span class="sh_symbol">(</span>connection<span class="sh_symbol">)</span> <span class="sh_cbracket">{</span>
+        <span class="sh_comment">// This method is not applied for 'http' connector type.</span>
+        return void 0;
+    <span class="sh_cbracket">}</span>,
+    resolveOnConversation: <span class="sh_keyword">function</span> <span class="sh_function">resolveOnConversation</span><span class="sh_symbol">(</span>connection, chunk<span class="sh_symbol">)</span> <span class="sh_cbracket">{</span>
+        <span class="sh_comment">// Store the received data chunks.</span>
+        this.data.<span class="sh_function">push</span><span class="sh_symbol">(</span>chunk<span class="sh_symbol">)</span>;
+        <span class="sh_comment">// Return undefined, to perform the evaluation when</span>
+        <span class="sh_comment">// the response is completed.</span>
+        return void 0;
+    <span class="sh_cbracket">}</span>,
+    resolveNow: <span class="sh_keyword">function</span> <span class="sh_function">resolveNow</span><span class="sh_symbol">(</span>connection<span class="sh_symbol">)</span> <span class="sh_cbracket">{</span>
+        <span class="sh_comment">// Make the final evaluation when the response is completed.</span>
+        return s.<span class="sh_function">include</span><span class="sh_symbol">(</span>this.data.<span class="sh_function">join</span><span class="sh_symbol">(</span><span class="sh_string">''</span><span class="sh_symbol">)</span>, <span class="sh_string">'Node.js'</span><span class="sh_symbol">)</span> ? <span class="sh_string">up</span> : <span class="sh_string">undetermined</span>;
+    <span class="sh_cbracket">}</span>
+<span class="sh_cbracket">}</span>;
+</pre>
+
+                    </li>
+                    <li>
+                        Route extensions<br>
+                        A <strong><i>route extension</i></strong> is user defined route extension for building custom responses
+                        for the status requests. A route extension is a function that accepts the endpoints registry as parameter
+                        and return a function that conforms to <a href="http://expressjs.com/guide/routing.html">express route conventions</a>.
+                    </li>
+                </ul>
+
+              <h3>
+                  API / REST API summary
+              </h3>
+              <ul>
+                  <li>
+                      Get information/status for endpoint(s)
+                  </li>
+                  <li>
+                      Add/remove endpoint
+                  </li>
+                  <li>
+                      Activate/deactivate endpoint
+                  </li>
+                  <li>
+                      Enable/disable email notification on erroneous service status
+                  </li>
+                  <li>
+                      Store endpoint configuration
+                  </li>
+                  <li>
+                      Query endpoint(s) status history
+                  </li>
+              </ul>
+
+              <h3>
+                  Real time event notification
+              </h3>
+              <p>
+                  A <a href="http://socket.io/">socket.io</a> client can be used for real time event notification from the system. At the moment a client
+                  could be notified when the endpoints status has been updated
+              </p>
+              <h3>
+                  Web console
+              </h3>
+              <p>On top of the application's REST services, a simple but handy web GUI is implemented, the watcher web console.
+              The console enables the user to perform the exposed REST services visually.</p>
+
+              <h3>
+                Authors and Contributors
+              </h3>
+              <p>Written by <a href="https://github.com/jpsoroulas">John Psoroulas</a>, 2015.</p>
+
+        </section>
+
         </div>
+        <!--[if !IE]><script>fixScale(document);</script><![endif]-->
 
-        <h3>
-            <a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Welcome to watcher.js project.
-        </h3>
-
-        <p>Watcher.js is a node.js based application that can be used to monitor service status. It is not a competitor of
-            <a href="http://www.nagios.org/">nagios</a> or <a href="http://www.zabbix.com/">zabbix</a> or any other advanced monitoring tool. Although, it can be a solution for simple cases.
-            The application architecture is simple. At regular intervals service specific defined messages, either as http requests or as raw data to sockets,
-            are send to the service endpoints to find out their status. On the service status resolution, the status is stored internally
-            and is made available either programmatically or via REST requests. The application, at design level, is extensible since custom defined
-            behaviors can be easily applied.</p>
-
-          <h3>
-              Application extension points
-          </h3>
-            <ul>
-                <li>
-                    Resolution strategies<br>
-                    A <strong><i>resolution strategy</i></strong> is the strategy for service status resolution.
-                    The strategy is described by a set of methods. Each method is called at a specific stage during the
-                    conversation with the endpoint and returns the outcome of the service status.
-                </li>
-                <li>
-                    Route extensions<br>
-                    A <strong><i>route extension</i></strong> is user defined route extension for building custom responses
-                    for the status requests. A route extension is a function that accepts the endpoints registry as parameter
-                    and return a function that conforms to <a href="http://expressjs.com/guide/routing.html">express route conventions</a>.
-                </li>
-            </ul>
-
-          <h3>
-              API / REST API summary
-          </h3>
-          <ul>
-              <li>
-                  Get information/status for endpoint(s)
-              </li>
-              <li>
-                  Add/remove endpoint
-              </li>
-              <li>
-                  Activate/deactivate endpoint
-              </li>
-              <li>
-                  Enable/disable email notification on erroneous service status
-              </li>
-              <li>
-                  Store endpoint configuration
-              </li>
-              <li>
-                  Query endpoint(s) status history
-              </li>
-          </ul>
-
-          <h3>
-              Real time event notification
-          </h3>
-          <p>
-              A <a href="http://socket.io/">socket.io</a> client can be used for real time event notification from the system. At the moment a client
-              could be notified when the endpoints status has been updated
-          </p>
-          <h3>
-              Web console
-          </h3>
-          <p>On top of the application's REST services, a simple but handy web GUI is implemented, the watcher web console.
-          The console enables the user to perform the exposed REST services visually.</p>
-
-          <h3>
-            Authors and Contributors
-          </h3>
-          <p>Written by <a href="https://github.com/jpsoroulas">John Psoroulas</a>, 2015.</p>
-
-      </section>
-
-    </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-
-  </body>
+    </body>
 </html>
