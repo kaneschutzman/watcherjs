@@ -87,7 +87,7 @@ enable/disable notification (mail icon), delete the endpoint (cross icon) and sh
 (the last icon). Note that the deletion causes the permanent endpoint information removal from the storage
 (the dynamically added endpoints from the console are stored at the filesystem under the directory _storage_, see at
 [watcher](http://htmlpreview.github.io/?https://github.com/jpsoroulas/watcherjs/blob/master/doc/api/modules/watcher.html))
-At the bottom of the page some statistical is presented.
+At the bottom of the page some statistical is presented. All times are expressed as __UTC__.
 
 When the button 'Add endpoint' is pressed, the form of adding a new endpoint is appeared. The parameters that the user
 should set depends on the connector type ('socket' or 'http(s)'). Note the 'Resolution strategy' drop-down list where
@@ -142,7 +142,7 @@ to download and install project dependencies
 
 ## Quick Start
 Start the watcher.js with default configuration as show at the example
-[watcher-minimal.js](examples/watcher-minimal.js) and access the web console console at
+[watcher-minimal.js](examples/watcher-minimal.js) and access the web console at
 ```
 http://localhost:7777/console
 ```
@@ -155,8 +155,3 @@ Distributed under the terms of [the MIT license](LICENSE-MIT).
 ----
 
 Copyright &copy; 2015 John Psoroulas
-
-
-
-
-
