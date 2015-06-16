@@ -3,7 +3,7 @@
   <head>
       <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="chrome=1">
-      <title>Watcherjs by jpsoroulas</title>
+      <title>Watcher.js by jpsoroulas</title>
       <link rel="stylesheet" href="stylesheets/styles.css">
       <link rel="stylesheet" href="stylesheets/github-dark.css">
       <link rel="stylesheet" href="stylesheets/sh_vim-dark.css">
@@ -33,7 +33,7 @@
 
             <section>
                 <div id="title">
-                  <h1>Watcherjs</h1>
+                  <h1>Watcher.js</h1>
                   <p>A Node.js/Express based application for service monitoring</p>
                   <hr>
                   <span class="credits left">Project maintained by <a href="https://github.com/jpsoroulas">jpsoroulas</a></span>
@@ -72,18 +72,13 @@
       this.data = [];
     },
     resolveOnConnection: <span class="sh_keyword">function</span> <span class="sh_function">resolveOnConnection</span><span class="sh_symbol">(</span>connection<span class="sh_symbol">)</span> <span class="sh_cbracket">{</span>
-        <span class="sh_comment">// This method is not applied for 'http' connector type.</span>
         return void 0;
     <span class="sh_cbracket">}</span>,
     resolveOnConversation: <span class="sh_keyword">function</span> <span class="sh_function">resolveOnConversation</span><span class="sh_symbol">(</span>connection, chunk<span class="sh_symbol">)</span> <span class="sh_cbracket">{</span>
-        <span class="sh_comment">// Store the received data chunks.</span>
         this.data.<span class="sh_function">push</span><span class="sh_symbol">(</span>chunk<span class="sh_symbol">)</span>;
-        <span class="sh_comment">// Return undefined, to perform the evaluation when</span>
-        <span class="sh_comment">// the response is completed.</span>
         return void 0;
     <span class="sh_cbracket">}</span>,
     resolveNow: <span class="sh_keyword">function</span> <span class="sh_function">resolveNow</span><span class="sh_symbol">(</span>connection<span class="sh_symbol">)</span> <span class="sh_cbracket">{</span>
-        <span class="sh_comment">// Make the final evaluation when the response is completed.</span>
         return s.<span class="sh_function">include</span><span class="sh_symbol">(</span>this.data.<span class="sh_function">join</span><span class="sh_symbol">(</span><span class="sh_string">''</span><span class="sh_symbol">)</span>, <span class="sh_string">'Node.js'</span><span class="sh_symbol">)</span> ? <span class="sh_string">up</span> : <span class="sh_string">undetermined</span>;
     <span class="sh_cbracket">}</span>
 <span class="sh_cbracket">}</span>;
@@ -94,10 +89,24 @@
                         Route extensions<br>
                         A <strong><i>route extension</i></strong> is user defined route extension for building custom responses
                         for the status requests. A route extension is a function that accepts the endpoints registry as parameter
-                        and return a function that conforms to <a href="http://expressjs.com/guide/routing.html">express route conventions</a>.
+                        and return a function that conforms to <a href="http://expressjs.com/guide/routing.html">express route conventions</a>. <p>
+
+<pre class="sh_sourceCode">
+<span class="sh_comment">// Here is an example of route extension point implementation.</span>
+<span class="sh_keyword">var</span> routeExtension <span class="sh_symbol">=</span> <span class="sh_keyword">function</span> <span class="sh_function">service</span><span class="sh_symbol">(</span>registry<span class="sh_symbol">)</span> <span class="sh_cbracket">{</span>
+    return <span class="sh_keyword">function</span> <span class="sh_symbol">(</span>req, res, next<span class="sh_symbol">)</span> <span class="sh_cbracket">{</span>
+        <span class="sh_keyword">var</span> id = req.query.id;
+        <span class="sh_keyword">var</span> record = registry[id];
+        <span class="sh_keyword">if</span> <span class="sh_symbol">(</span>record<span class="sh_symbol">)</span> <span class="sh_cbracket">{</span>
+            res.<span class="sh_function">send</span><span class="sh_symbol">(</span><span class="sh_string">'Service status: '</span> + record.status<span class="sh_symbol">)</span>;
+        } <span class="sh_keyword">else</span> <span class="sh_cbracket">{</span>
+            res.<span class="sh_function">send</span><span class="sh_symbol">(</span><span class="sh_string">'Unknown service: '</span> + id<span class="sh_symbol">)</span>;
+        <span class="sh_cbracket">}</span>
+    <span class="sh_cbracket">}</span>;
+<span class="sh_cbracket">}</span>;
+</pre>
                     </li>
                 </ul>
-
               <h3>
                   API / REST API summary
               </h3>
@@ -134,6 +143,39 @@
               </h3>
               <p>On top of the application's REST services, a simple but handy web GUI is implemented, the watcher web console.
               The console enables the user to perform the exposed REST services visually.</p>
+
+                <div class="video-container">
+                    <video src="videos/demo.ogv" poster="images/demo.png" controls preload></video>
+                </div>
+                <p>
+
+               <h3>
+                   Quick start
+               </h3>
+                Put the following code into a file <i>watcher-start.js</i> at the project's route directory and execute it with the node program from the command line.
+                Access the web console at <a href="http://localhost:7777/console">http://localhost:7777/console</a><p>
+<pre class="sh_sourceCode">
+<span class="sh_comment">// Source code to start watcher.js with default configuration</span>
+<span class="sh_keyword">var</span> app <span class="sh_symbol">=</span> <span class="sh_function">require</span><span class="sh_symbol">(</span><span class="sh_string">'../src/watcher'</span><span class="sh_symbol">)</span>;
+app.watcherFactory.<span class="sh_function">create</span><span class="sh_symbol">(</span><span class="sh_symbol">)</span>.<span class="sh_function">start</span><span class="sh_symbol">(</span><span class="sh_symbol">)</span>;
+</pre>
+<pre class="sh_none">% node watcher-start.js</pre>
+
+               <h3>
+                   Docs/Examples
+               </h3>
+                Detailed documentation and examples can be found at
+                <ul>
+                    <li>
+                        <a href="https://github.com/jpsoroulas/watcherjs">watcher.js</a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/jpsoroulas/watcherjs/tree/master/doc/api">watcher.js doc API</a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/jpsoroulas/watcherjs/tree/master/examples">watcher.js examples directory</a>
+                    </li>
+                </ul>
 
               <h3>
                 Authors and Contributors

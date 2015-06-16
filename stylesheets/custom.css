@@ -11,3 +11,9 @@ pre {
     border-left-style: solid;
     border-left-color: #626557;
 }
+
+.video-container, video {
+    width: 500px;
+    height: 400px;
+    margin: auto;
+}
