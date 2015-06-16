@@ -6,9 +6,9 @@ define(['backbone', 'jquery', 'moment', 'moment-duration-format'], function (Bac
     return Backbone.Model.extend({
             //url: '/endpoint',
             parse: function (endpoint) {
-                var timestamp = moment(endpoint.timestamp);
+                var timestamp = moment(endpoint.timestamp).utc();
                 var since = moment(endpoint.since);
-                endpoint.timestamp = timestamp.format('MMMM Do YYYY, h:mm:ss');
+                endpoint.timestamp = timestamp.format('MMMM Do YYYY, HH:mm:ss');
                 endpoint.since = moment.duration(timestamp.diff(since)).format('d[d],h[h]:m[m]:s[s]');
                 return endpoint;
             },

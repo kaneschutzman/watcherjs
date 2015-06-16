@@ -1,3 +1,11 @@
+## v2.5.5
+
+#### Bug Fixes
+* web console timestamps are not displayed at UTC #2
+* API documentation typos fixes/additions.
+
+----
+
 ## v2.5.4
 
 #### Features/improvements
@@ -8,18 +16,20 @@
 ## v2.5.3
 
 #### Bug Fixes
-Fix, on connection error a warning message should be appeared
+* Fix, on connection error a warning message should be appeared
+* API documentation typos fixes/additions.
 
 #### Features/improvements
-* API documentation typos fixes/additions.
 * Example with real time event notification update.
 
 ----
 
 ## v2.5.2
 
-#### Features/improvements
+#### Bug Fixes
 * API documentation typos fixes/additions.
+
+#### Features/improvements
 * Example with real time event notification.
 * Minor refactor.
 
@@ -39,7 +49,7 @@ Fix, on connection error a warning message should be appeared
 ## v2.5.0
 
 #### Bug Fixes
-Various bug fixes.
+* Various bug fixes.
 
 #### Features/improvements
 * Save endpoint status transitions at persistent storage to provide endpoint status history.
@@ -54,7 +64,7 @@ Various bug fixes.
 ## v2.0.0
 
 #### Bug Fixes
-Various bug fixes.
+* Various bug fixes.
 
 #### Features/improvements
 * Expose functionality as REST services.
